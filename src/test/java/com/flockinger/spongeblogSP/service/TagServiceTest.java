@@ -18,9 +18,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.flockinger.spongeblogSP.dto.PostLink;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.TagPostsDTO;
+import com.flockinger.spongeblogSP.dto.link.PostLink;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 

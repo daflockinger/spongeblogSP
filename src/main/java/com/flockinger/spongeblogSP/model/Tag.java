@@ -2,13 +2,13 @@ package com.flockinger.spongeblogSP.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -22,7 +22,7 @@ public class Tag extends BaseModel{
 	@Length(max=150)
 	private String name;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
 	private List<Post> posts;
 	
 	public String getName() {

@@ -17,14 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
-import com.flockinger.spongeblogSP.service.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

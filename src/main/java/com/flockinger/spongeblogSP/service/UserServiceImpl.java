@@ -1,7 +1,6 @@
 package com.flockinger.spongeblogSP.service;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;

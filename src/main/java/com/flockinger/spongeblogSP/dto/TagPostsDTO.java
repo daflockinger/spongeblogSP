@@ -2,6 +2,8 @@ package com.flockinger.spongeblogSP.dto;
 
 import java.util.List;
 
+import com.flockinger.spongeblogSP.dto.link.PostLink;
+
 public class TagPostsDTO {
 	private String name;
 	private List<PostLink> posts;

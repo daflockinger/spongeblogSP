@@ -1,9 +1,16 @@
-package com.flockinger.spongeblogSP.dto;
+package com.flockinger.spongeblogSP.dto.link;
 
-public class PostLink {
+public class CategoryLink {
 	private Long id;
 	private String link;
+	private Integer rank;
 	
+	public Integer getRank() {
+		return rank;
+	}
+	public void setRank(Integer rank) {
+		this.rank = rank;
+	}
 	public Long getId() {
 		return id;
 	}
