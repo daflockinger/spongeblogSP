@@ -51,6 +51,12 @@
     		<artifactId>commons-lang3</artifactId>
     		<version>3.5</version>
 		</dependency>
+		<dependency>
+    		<groupId>org.apache.commons</groupId>
+    		<artifactId>commons-collections4</artifactId>
+    		<version>4.1</version>
+		</dependency>
+		
 		<!-- 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -71,6 +77,27 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+    		<groupId>org.powermock</groupId>
+    		<artifactId>powermock-core</artifactId>
+    		<version>1.6.6</version>
+    		<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.powermock</groupId>
+    		<artifactId>powermock-api-mockito</artifactId>
+    		<version>1.6.6</version>
+    		<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.mockito</groupId>
+    		<artifactId>mockito-all</artifactId>
+    		<version>1.10.19</version>
+    		<scope>test</scope>
+		</dependency>
+		
+		
+		
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
