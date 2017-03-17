@@ -3,10 +3,12 @@ package com.flockinger.spongeblogSP.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -14,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
@@ -30,7 +34,7 @@ import com.flockinger.spongeblogSP.model.enums.PostStatus;
 public class Post extends BaseModel{
 	
 	@NotNull
-	@Max(150)
+	@Length(max=150)
 	@Column(columnDefinition="VARCHAR(150)")
 	private String title;
 	
@@ -54,7 +58,7 @@ public class Post extends BaseModel{
 	@ManyToOne
 	private Category category;
 	
-	@ManyToMany(mappedBy="posts")
+	@ManyToMany
 	private List<Tag> tags;
 	
 	

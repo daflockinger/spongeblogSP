@@ -17,7 +17,7 @@ public class Category extends BaseModel {
 	@NotNull
 	private String name;
 
-	@ManyToOne
+	@ManyToOne(optional=true)
 	private Category parent;
 	
 	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)

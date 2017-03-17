@@ -49,8 +49,10 @@ public class CategoryServiceTest {
 		assertEquals("main category", categoryPost.getName());
 		List<PostLink> links = categoryPost.getPosts();
 		assertNotNull(links);
-		assertTrue(links.size() == 1);
+		assertTrue(links.size() == 3);
 		assertTrue(links.stream().anyMatch(link -> link.getId() == 1));
+		assertTrue(links.stream().anyMatch(link -> link.getId() == 3));
+		assertTrue(links.stream().anyMatch(link -> link.getId() == 5));
 		
 		assertTrue(categoryPost.getSubCategories().size() == 1);
 		CategoryLink subCategory = categoryPost.getSubCategories().stream().findFirst().get();
