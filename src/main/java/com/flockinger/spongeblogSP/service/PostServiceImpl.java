@@ -95,12 +95,12 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void deletePost(PostDTO post) throws EntityIsNotExistingException {
-		if (!isPostExisting(post.getId())) {
+	public void deletePost(Long id) throws EntityIsNotExistingException {
+		if (!isPostExisting(id)) {
 			throw new EntityIsNotExistingException("Post");
 		}
 
-		dao.delete(post.getId());
+		dao.delete(id);
 	}
 
 	private List<PostLink> map(List<Long> ids) {

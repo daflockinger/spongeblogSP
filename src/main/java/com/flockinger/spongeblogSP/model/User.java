@@ -9,17 +9,20 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
 import com.flockinger.spongeblogSP.model.enums.UserRole;
 
 @Entity
+@Audited
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "login" }) }
 ,indexes={@Index(columnList="login")})
 public class User extends BaseModel{
@@ -43,7 +46,8 @@ public class User extends BaseModel{
 	@Enumerated(EnumType.STRING)
 	private List<UserRole> roles;
 	
-	
+	@OneToMany(mappedBy="author", targetEntity=Post.class)
+	private List<Post> posts;
 	
 	public String getEmail() {
 		return email;

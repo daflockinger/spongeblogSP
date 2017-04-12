@@ -1,26 +1,20 @@
 package com.flockinger.spongeblogSP.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Date;
 import java.util.List;
 
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.dto.PostDTO;
 import com.flockinger.spongeblogSP.dto.TagDTO;
@@ -31,15 +25,16 @@ import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 import com.google.common.collect.ImmutableList;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-public class PostServiceTest {
+public class PostServiceTest extends BaseServiceTest {
 
 	@Autowired
 	private PostService service;
 
+	@Autowired
+	private PostDAO dao;
+
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetAllPosts_withPaging_shouldReturnPageContent() {
 		Pageable secondPageDateDescending = createPage(1, 3, createSort(Direction.DESC, "created"));
 
@@ -52,6 +47,7 @@ public class PostServiceTest {
 	}
 
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetAllPostWithStatus_withValidStatus_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
@@ -65,6 +61,7 @@ public class PostServiceTest {
 	}
 
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetAllPostFromCategoryId_withValidCategory_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
@@ -76,6 +73,7 @@ public class PostServiceTest {
 	}
 
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetAllPostFromCategoryIdAndStatus_withValidCategoryAndStatus_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
@@ -86,6 +84,7 @@ public class PostServiceTest {
 	}
 
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetAllPostFromAuthor_withValidAuthor_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
@@ -99,6 +98,7 @@ public class PostServiceTest {
 	}
 
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetAllPostFromAuthorAndStatus_withValidAuthorAndStatus_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
@@ -108,6 +108,7 @@ public class PostServiceTest {
 	}
 
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetPost_withValidId_shouldReturnPost() throws EntityIsNotExistingException {
 		PostDTO post = service.getPost(1l);
 
@@ -138,7 +139,8 @@ public class PostServiceTest {
 	}
 
 	@Test
-	public void testCreateUpdateDeletePost_withValidPost_shouldCreateAndDeleteThenPost()
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testCreatePost_withValidPost_shouldCreateAndDeleteThenPost()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
 
@@ -177,8 +179,14 @@ public class PostServiceTest {
 		assertNotNull(savedPost.getTags());
 		assertTrue(savedPost.getTags().size() == 1);
 		assertEquals("fancy", savedPost.getTags().stream().findFirst().get().getName());
+	}
 
-		// update post
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testUpdatePost_withValidPost_shouldCreateAndDeleteThenPost()
+			throws DuplicateEntityException, EntityIsNotExistingException {
+		Date freshDate = new Date();
+		PostDTO savedPost = service.getPost(1l);
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
@@ -212,16 +220,21 @@ public class PostServiceTest {
 		assertTrue(updatedPost.getTags().size() == 2);
 		assertTrue(updatedPost.getTags().stream().anyMatch(tag -> tag.getName().equals("fancy")));
 		assertTrue(updatedPost.getTags().stream().anyMatch(tag -> tag.getName().equals("cold")));
+	}
 
-		// remove new post
-		service.deletePost(updatedPost);
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testDeletePost_withValidPost_shouldCreateAndDeleteThenPost()
+			throws DuplicateEntityException, EntityIsNotExistingException {
+		service.deletePost(1l);
+		assertFalse(dao.exists(1l));
 	}
 
 	@Test(expected = DataIntegrityViolationException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreatePost_withPostWithInvalidNonExistingUserOnCreate_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
-
 		PostDTO freshPost = new PostDTO();
 		freshPost.setAuthor(getTestUser(123l));
 		freshPost.setCategory(getTestCategory(2l));
@@ -232,35 +245,15 @@ public class PostServiceTest {
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
-
-		PostDTO savedPost = service.getPost(freshId);
-
-		service.deletePost(savedPost);
+		service.createPost(freshPost).getId();
 	}
 
 	@Test(expected = JpaObjectRetrievalFailureException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdatePost_withPostWithInvalidNonExistingUserOnUpdate_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
-
-		PostDTO freshPost = new PostDTO();
-		freshPost.setAuthor(getTestUser(1l));
-		freshPost.setCategory(getTestCategory(2l));
-		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
-		freshPost.setStatus(PostStatus.PUBLIC);
-		freshPost.setTitle("Fresh out of the box");
-		freshPost.setTags(ImmutableList.of(getTag(1l)));
-
-		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
-
-		PostDTO savedPost = service.getPost(freshId);
-
-		// update post
+		PostDTO savedPost = service.getPost(1l);
 		savedPost.setAuthor(getTestUser(232l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
@@ -270,21 +263,14 @@ public class PostServiceTest {
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(2l)));
 
-		try {
-			service.updatePost(savedPost);
-		} catch (JpaObjectRetrievalFailureException exception) {
-			throw exception;
-		} finally {
-			// remove new post
-			service.deletePost(savedPost);
-		}
+		service.updatePost(savedPost);
 	}
 
 	@Test(expected = DataIntegrityViolationException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreatePost_withPostWithInvalidNonExistingCategoryOnCreate_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
-
 		PostDTO freshPost = new PostDTO();
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(254l));
@@ -295,35 +281,15 @@ public class PostServiceTest {
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
-
-		PostDTO savedPost = service.getPost(freshId);
-
-		service.deletePost(savedPost);
+		service.createPost(freshPost).getId();
 	}
 
 	@Test(expected = JpaObjectRetrievalFailureException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdatePost_withPostWithInvalidNonExistingCategoryOnUpdate_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
-
-		PostDTO freshPost = new PostDTO();
-		freshPost.setAuthor(getTestUser(1l));
-		freshPost.setCategory(getTestCategory(2l));
-		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
-		freshPost.setStatus(PostStatus.PUBLIC);
-		freshPost.setTitle("Fresh out of the box");
-		freshPost.setTags(ImmutableList.of(getTag(1l)));
-
-		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
-
-		PostDTO savedPost = service.getPost(freshId);
-
-		// update post
+		PostDTO savedPost = service.getPost(1l);
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(156l));
 		savedPost.setContent("Some updated new content...");
@@ -333,21 +299,14 @@ public class PostServiceTest {
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(2l)));
 
-		try {
-			service.updatePost(savedPost);
-		} catch (JpaObjectRetrievalFailureException exception) {
-			throw exception;
-		} finally {
-			// remove new post
-			service.deletePost(savedPost);
-		}
+		service.updatePost(savedPost);
 	}
 
 	@Test(expected = DataIntegrityViolationException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreatePost_withPostWithInvalidNonExistingTagOnCreate_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
-
 		PostDTO freshPost = new PostDTO();
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
@@ -361,32 +320,15 @@ public class PostServiceTest {
 		// create new Post
 		Long freshId = service.createPost(freshPost).getId();
 
-		PostDTO savedPost = service.getPost(freshId);
-
-		service.deletePost(savedPost);
+		service.getPost(freshId);
 	}
 
 	@Test(expected = JpaObjectRetrievalFailureException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdatePost_withPostWithInvalidNonExistingTagOnUpdate_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
-
-		PostDTO freshPost = new PostDTO();
-		freshPost.setAuthor(getTestUser(1l));
-		freshPost.setCategory(getTestCategory(2l));
-		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
-		freshPost.setStatus(PostStatus.PUBLIC);
-		freshPost.setTitle("Fresh out of the box");
-		freshPost.setTags(ImmutableList.of(getTag(1l)));
-
-		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
-
-		PostDTO savedPost = service.getPost(freshId);
-
-		// update post
+		PostDTO savedPost = service.getPost(1l);
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
@@ -396,17 +338,11 @@ public class PostServiceTest {
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1345l), getTag(2l)));
 
-		try {
-			service.updatePost(savedPost);
-		} catch (JpaObjectRetrievalFailureException exception) {
-			throw exception;
-		} finally {
-			// remove new post
-			service.deletePost(savedPost);
-		}
+		service.updatePost(savedPost);
 	}
 
 	@Test(expected = DuplicateEntityException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreatePost_withPostWithAlreadyExistingTitle_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		Date freshDate = new Date();
@@ -418,62 +354,26 @@ public class PostServiceTest {
 		freshPost.setCreated(freshDate);
 		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
-		freshPost.setTitle("but");
+		freshPost.setTitle("somethings");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
-
-		PostDTO savedPost = service.getPost(freshId);
-
-		service.deletePost(savedPost);
+		service.createPost(freshPost).getId();
 	}
 
 	@Test(expected = DataIntegrityViolationException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdatePost_withPostWithAlreadyExistingTitle_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
-		Date freshDate = new Date();
+		PostDTO savedPost = service.getPost(2l);
+		savedPost.setTitle("somethings");
 
-		PostDTO freshPost = new PostDTO();
-		freshPost.setAuthor(getTestUser(1l));
-		freshPost.setCategory(getTestCategory(2l));
-		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
-		freshPost.setStatus(PostStatus.PUBLIC);
-		freshPost.setTitle("Fresh out of the box");
-		freshPost.setTags(ImmutableList.of(getTag(1l)));
-
-		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
-
-		PostDTO savedPost = service.getPost(freshId);
-
-		// update post
-		savedPost.setAuthor(getTestUser(2l));
-		savedPost.setCategory(getTestCategory(1l));
-		savedPost.setContent("Some fresh new content...");
-		savedPost.setCreated(freshDate);
-		savedPost.setModified(freshDate);
-		savedPost.setStatus(PostStatus.MAINTENANCE);
-		savedPost.setTitle("but");
-		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(2l)));
-
-		try {
-			service.updatePost(savedPost);
-		} catch (DataIntegrityViolationException exception) {
-			throw exception;
-		} finally {
-			// remove new post
-			service.deletePost(savedPost);
-		}
+		service.updatePost(savedPost);
 	}
 
 	@Test(expected = EntityIsNotExistingException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testDelete_withNonExitingId_shouldThrowException() throws EntityIsNotExistingException {
-		PostDTO post = new PostDTO();
-		post.setId(3423543l);
-		service.deletePost(post);
+		service.deletePost(3423543l);
 	}
 
 	private TagDTO getTag(Long id) {

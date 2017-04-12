@@ -11,9 +11,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
+@Audited
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) }
 ,indexes={@Index(columnList="name")})
 public class Tag extends BaseModel{
@@ -22,7 +24,7 @@ public class Tag extends BaseModel{
 	@Length(max=150)
 	private String name;
 	
-	@ManyToMany(mappedBy="tags",fetch = FetchType.LAZY)
+	@ManyToMany(mappedBy="tags",fetch = FetchType.LAZY,cascade={CascadeType.ALL})
 	private List<Post> posts;
 	
 	public String getName() {

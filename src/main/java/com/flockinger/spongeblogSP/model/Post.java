@@ -3,25 +3,26 @@ package com.flockinger.spongeblogSP.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
 @Entity
+@Audited
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "title" }) }
 ,indexes={@Index(columnList="title"),
 		//for editing
@@ -59,6 +60,9 @@ public class Post extends BaseModel{
 	private Category category;
 	
 	@ManyToMany
+	@JoinTable(name="post_tags",
+		      joinColumns=@JoinColumn(name="posts_id", referencedColumnName="id"),
+		      inverseJoinColumns=@JoinColumn(name="tags_id", referencedColumnName="id"))
 	private List<Tag> tags;
 	
 	

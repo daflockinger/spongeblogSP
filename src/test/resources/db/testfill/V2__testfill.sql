@@ -4,8 +4,8 @@ insert into user (id, login, nick_name, password, registered, email) values (2,"
 
 
 insert into blog (id, name, status) values (1,"test blog","ACTIVE");
-insert into blog_settings (blog_id, settings, settings_key) values (1,"blog theme","all-black");
-insert into blog_settings (blog_id, settings, settings_key) values (1,"footer","hide");
+insert into blog_settings (blog_id, settings, settings_key) values (1,"all-black","blog theme");
+insert into blog_settings (blog_id, settings, settings_key) values (1,"hide","footer");
 
 insert into category (id, name, rank, parent_id) values (1, "main category", 1, null);
 insert into category (id, name, rank, parent_id) values (2, "sub category", 1, 1);
