@@ -1,0 +1,12 @@
+language: java
+jdk:
+- oraclejdk8
+services:
+- mysql
+before_install:
+- mysql -e 'drop database if exists spongeblog;'
+- mysql -e 'create database spongeblog;'
+- mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('root');"
+- mysql -e "SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('root');"
+script:
+- mvn test -B
