@@ -10,6 +10,6 @@ public class BlubController {
 
 	@RequestMapping(path="/blub",method=RequestMethod.GET)
 	public String getBlub(){
-		return "blub blub";
+		return "blub blub"; 
 	}
 }
