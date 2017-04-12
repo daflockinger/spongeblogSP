@@ -5,15 +5,19 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.stereotype.Repository;
 
 import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
-import com.flockinger.spongeblogSP.model.projection.PostId;
 
 @Repository
-public interface PostDAO extends PagingAndSortingRepository<Post,Long>{
+public interface PostDAO extends PagingAndSortingRepository<Post,Long>, RevisionRepository<Post, Long, Integer>{
 	Post findByTitle(String title);
+	
+	List<Post> findByTagsId(Long id);
+	
+	List<Post> findByAuthorId(Long id);
 	
 	@Query("select distinct id from Post")
 	List<Long> findAllIdsDistinct (Pageable pageable);

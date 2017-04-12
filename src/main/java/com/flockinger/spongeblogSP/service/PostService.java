@@ -29,5 +29,5 @@ public interface PostService {
 	
 	void updatePost(PostDTO post) throws EntityIsNotExistingException, DuplicateEntityException;
 	
-	void deletePost(PostDTO post) throws EntityIsNotExistingException;
+	void deletePost(Long id) throws EntityIsNotExistingException;
 }

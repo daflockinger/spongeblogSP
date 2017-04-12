@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dao.TagDAO;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.TagPostsDTO;
@@ -30,6 +31,9 @@ public class TagServiceImpl implements TagService {
 
 	@Autowired
 	private TagDAO dao;
+	
+	@Autowired
+	private PostDAO postDao;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -107,7 +111,15 @@ public class TagServiceImpl implements TagService {
 		if (!dao.exists(id)) {
 			throw new EntityIsNotExistingException("Tag");
 		}
-
+		List<Post> postsWithTag = postDao.findByTagsId(id);
+		postsWithTag.forEach(post -> {
+			post.setTags(
+					post.getTags().stream().filter(tag -> tag.getId() != id).collect(Collectors.toList())
+					);
+			});
+		
+		postDao.save(postsWithTag);
+		
 		dao.delete(id);
 	}
 

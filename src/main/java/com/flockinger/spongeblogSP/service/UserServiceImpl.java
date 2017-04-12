@@ -4,16 +4,19 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dao.UserDAO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.User;
 
 @Service
@@ -21,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDAO dao;
+	
+	@Autowired
+	private PostDAO postDao;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -73,11 +79,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public void deleteUser(Long id) throws EntityIsNotExistingException {
-		if (dao.exists(id)) {
-			dao.delete(id);
-		} else {
+		if (!dao.exists(id)) {
 			throw new EntityIsNotExistingException("User with ID " + id);
 		}
+		List<Post> posts = postDao.findByAuthorId(id);
+		posts.forEach(post -> post.setAuthor(null));
+		
+		postDao.save(posts);
+		
+		dao.delete(id);
 	}
 
 	private User map(UserEditDTO userDTO) {

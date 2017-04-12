@@ -9,9 +9,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.MapKeyColumn;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
+
 import com.flockinger.spongeblogSP.model.enums.BlogStatus;
 
 @Entity
+@Audited
 public class Blog extends BaseModel{
 	
 	@NotNull

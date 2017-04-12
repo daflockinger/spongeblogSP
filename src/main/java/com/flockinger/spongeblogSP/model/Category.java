@@ -11,7 +11,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
+
 @Entity
+@Audited
 public class Category extends BaseModel {
 
 	@NotNull
@@ -20,7 +23,7 @@ public class Category extends BaseModel {
 	@ManyToOne(optional=true)
 	private Category parent;
 	
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true, cascade={CascadeType.REMOVE})
 	private List<Category> subCategories;
 
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
