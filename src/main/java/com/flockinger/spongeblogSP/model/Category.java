@@ -8,7 +8,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -20,10 +19,11 @@ public class Category extends BaseModel {
 	@NotNull
 	private String name;
 
-	@ManyToOne(optional=true)
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "parent_id", nullable = true, updatable = true, insertable = true)
 	private Category parent;
-	
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true, cascade={CascadeType.REMOVE})
+
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = { CascadeType.REMOVE })
 	private List<Category> subCategories;
 
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
@@ -57,10 +57,6 @@ public class Category extends BaseModel {
 
 	public List<Post> getPosts() {
 		return posts;
-	}
-
-	public void setPosts(List<Post> posts) {
-		this.posts = posts;
 	}
 
 	public Integer getRank() {

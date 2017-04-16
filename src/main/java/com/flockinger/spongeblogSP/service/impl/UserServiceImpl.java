@@ -1,4 +1,4 @@
-package com.flockinger.spongeblogSP.service;
+package com.flockinger.spongeblogSP.service.impl;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -11,13 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.flockinger.spongeblogSP.dao.CategoryDAO;
 import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dao.UserDAO;
+import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
+import com.flockinger.spongeblogSP.model.Category;
 import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.User;
+import com.flockinger.spongeblogSP.service.UserService;
+import com.flockinger.spongeblogSP.service.VersioningService;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,6 +36,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	private VersioningService<User,UserDAO> versionService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -88,6 +97,19 @@ public class UserServiceImpl implements UserService {
 		postDao.save(posts);
 		
 		dao.delete(id);
+	}
+	
+	
+	@Override
+	public Boolean isLoginCorrect(LoginDTO credentials) {
+		User logInUser = dao.findByLoginAndPassword(credentials.getLogin(), credentials.getPassword());
+		return logInUser != null;
+	}
+	
+	
+	@Override
+	public void rewind(Long id) throws NoVersionFoundException {
+		versionService.rewind(id, dao);
 	}
 
 	private User map(UserEditDTO userDTO) {

@@ -6,11 +6,12 @@ import org.springframework.data.domain.Pageable;
 
 import com.flockinger.spongeblogSP.dto.PostDTO;
 import com.flockinger.spongeblogSP.dto.link.PostLink;
+import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
-public interface PostService {
+public interface PostService extends Versionable{
 	List<PostLink> getAllPosts(Pageable pageable);
 	
 	List<PostLink> getAllPostsWithStatus(PostStatus status, Pageable pageable);
@@ -25,9 +26,9 @@ public interface PostService {
 	
 	PostDTO getPost(Long id) throws EntityIsNotExistingException;
 	
-	PostDTO createPost(PostDTO post) throws DuplicateEntityException;
+	PostDTO createPost(PostDTO post) throws DuplicateEntityException, DependencyNotFoundException;
 	
-	void updatePost(PostDTO post) throws EntityIsNotExistingException, DuplicateEntityException;
+	void updatePost(PostDTO post) throws EntityIsNotExistingException, DuplicateEntityException, DependencyNotFoundException;
 	
 	void deletePost(Long id) throws EntityIsNotExistingException;
 }

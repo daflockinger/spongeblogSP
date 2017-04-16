@@ -9,12 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.flockinger.spongeblogSP.dao.UserDAO;
+import com.flockinger.spongeblogSP.service.BaseServiceTest;
 import com.flockinger.spongeblogSP.service.UserService;
-import com.flockinger.spongeblogSP.service.UserServiceImpl;
+import com.flockinger.spongeblogSP.service.impl.UserServiceImpl;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class SpongeblogSpApplicationTests {
+public class SpongeblogSpApplicationTests extends BaseServiceTest{
 	
 	@Autowired
 	private UserService service;

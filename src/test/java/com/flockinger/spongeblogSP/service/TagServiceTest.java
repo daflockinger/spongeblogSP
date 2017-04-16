@@ -22,14 +22,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.flockinger.spongeblogSP.dao.TagDAO;
+import com.flockinger.spongeblogSP.dto.BlogDTO;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.TagPostsDTO;
 import com.flockinger.spongeblogSP.dto.link.PostLink;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.Tag;
+import com.flockinger.spongeblogSP.model.enums.BlogStatus;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
+import com.flockinger.spongeblogSP.service.impl.TagServiceImpl;
+import com.google.common.collect.ImmutableMap;
 
 public class TagServiceTest extends BaseServiceTest {
 
@@ -329,5 +334,30 @@ public class TagServiceTest extends BaseServiceTest {
 		TagServiceImpl realService = new TagServiceImpl();
 
 		Whitebox.<Tag>invokeMethod(realService, "filterNonPublicPosts", new Tag());
+	}
+	
+	@Test
+	@FlywayTest(invokeCleanDB=true)
+	public void testRewind_withExistingPrevVersion_shouldRewind()
+			throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+		Long id = service.createTag("guide").getId();
+		
+		TagDTO tagToUpdate = new TagDTO();
+		tagToUpdate.setId(id);
+		tagToUpdate.setName("fancy guide");
+		service.updateTag(tagToUpdate);
+		TagPostsDTO updatedTag = service.getTag(id);
+		assertEquals("fancy guide",updatedTag.getName());
+		
+		
+		service.rewind(id);
+		TagPostsDTO rewindTag = service.getTag(id);
+		assertEquals("guide",rewindTag.getName());
+	}
+
+	@Test(expected=NoVersionFoundException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testRewind_withNoPreviousVersion_shouldThrowException() throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+		service.rewind(1l);
 	}
 }

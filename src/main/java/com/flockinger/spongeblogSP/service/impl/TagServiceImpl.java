@@ -1,4 +1,4 @@
-package com.flockinger.spongeblogSP.service;
+package com.flockinger.spongeblogSP.service.impl;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
@@ -22,9 +22,12 @@ import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.TagPostsDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.Tag;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
+import com.flockinger.spongeblogSP.service.TagService;
+import com.flockinger.spongeblogSP.service.VersioningService;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -37,6 +40,9 @@ public class TagServiceImpl implements TagService {
 
 	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	private VersioningService<Tag,TagDAO> versionService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -121,6 +127,11 @@ public class TagServiceImpl implements TagService {
 		postDao.save(postsWithTag);
 		
 		dao.delete(id);
+	}
+	
+	@Override
+	public void rewind(Long id) throws NoVersionFoundException {
+		versionService.rewind(id, dao);
 	}
 
 	private TagPostsDTO mapToPostDto(Tag tag) {

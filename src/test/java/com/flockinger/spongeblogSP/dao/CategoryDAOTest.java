@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,58 +17,43 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.flockinger.spongeblogSP.model.Category;
+import com.flockinger.spongeblogSP.service.BaseServiceTest;
+import com.flockinger.spongeblogSP.service.CategoryService;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@DirtiesContext(classMode=ClassMode.BEFORE_CLASS)
-public class CategoryDAOTest {
+
+public class CategoryDAOTest extends BaseServiceTest{
 	
 	@Autowired
-	private TestService testService;
-	
-	private Long createdId;
-	
-	@Before
-	public void setup(){
-		Category category = new Category();
-		category.setName("brand new");
-		category.setRank(-1);
-		createdId = testService.save(category).getId();
-		
-	}
-	
-	@After
-	public void teardown(){
-		testService.delete(createdId);
-	}
-	
+	private TestService dao;
 	
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdate_WithCategoryWithoutRelatives_ShouldWork(){
-		testService.update(getTestUpdatedCategory());
+		dao.update(getTestUpdatedCategory());
 		
-		Category saved = testService.findOne(createdId);
+		Category saved = dao.findOne(1l);
 		assertNotNull(saved);
-		assertEquals("changed name",saved.getName());
-		assertTrue(saved.getRank() == 23);
+		assertEquals("main category",saved.getName());
+		assertTrue(saved.getRank() == 1);
 	}
 	
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" },invokeCleanDB=true)
 	public void testUpdate_WithCategoryWithOnlyChildren_ShouldWork(){		
 		Category kid1 = new Category();
 		kid1.setName("some child");
 		kid1.setRank(3);
-		kid1.setParent(testService.findOne(createdId));
-		testService.save(kid1);
+		kid1.setParent(dao.findOne(2l));
+		dao.save(kid1);
 		Category kid2 = new Category();
 		kid2.setName("another kid");
 		kid2.setRank(4);
-		kid2.setParent(testService.findOne(createdId));
-		testService.save(kid2);
+		kid2.setParent(dao.findOne(2l));
+		dao.save(kid2);
 						
-		testService.update(getTestUpdatedCategory());
+		dao.update(getTestUpdatedCategory());
 				
-		Category saved = testService.findOne(createdId);
+		Category saved = dao.findOne(2l);
 		assertNotNull(saved);
 		assertEquals("changed name",saved.getName());
 		assertTrue(saved.getRank() == 23);
@@ -77,19 +63,17 @@ public class CategoryDAOTest {
 		assertTrue(saved.getSubCategories().stream().anyMatch(kid -> kid.getName().equals("another kid")));
 		assertTrue(saved.getSubCategories().stream().anyMatch(kid -> kid.getRank() == 3));
 		assertTrue(saved.getSubCategories().stream().anyMatch(kid -> kid.getRank() == 4));
-		
-		testService.delete(kid1.getId());
-		testService.delete(kid2.getId());
 	}
 	
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdate_WithCategoryWithOnlyParent_ShouldWork(){
 		Category category = getTestUpdatedCategory();
-		category.setParent(testService.findOne(1l));
+		category.setParent( dao.findOne(1l));
 		
-		testService.update(category);
+		dao.update(category);
 				
-		Category saved = testService.findOne(createdId);
+		Category saved =  dao.findOne(2l);
 		assertNotNull(saved);
 		assertEquals("changed name",saved.getName());
 		assertTrue(saved.getRank() == 23);
@@ -100,25 +84,26 @@ public class CategoryDAOTest {
 	}
 	
 	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdate_WithCategoryWithParentAndChildren_ShouldWork(){
 		Category kid1 = new Category();
 		kid1.setName("some child");
 		kid1.setRank(3);
-		kid1.setParent(testService.findOne(createdId));
-		testService.save(kid1);
+		kid1.setParent(dao.findOne(2l));
+		dao.save(kid1);
 		Category kid2 = new Category();
 		kid2.setName("another kid");
 		kid2.setRank(4);
-		kid2.setParent(testService.findOne(createdId));
-		testService.save(kid2);
+		kid2.setParent(dao.findOne(2l));
+		dao.save(kid2);
 		
 		Category category = getTestUpdatedCategory();
-		category.setParent(testService.findOne(1l));
+		category.setParent(dao.findOne(1l));
 		
-		testService.update(category);
+		dao.update(category);
 				
 		
-		Category saved = testService.findOne(createdId);
+		Category saved = dao.findOne(2l);
 		assertNotNull(saved);
 		assertEquals("changed name",saved.getName());
 		assertTrue(saved.getRank() == 23);
@@ -132,25 +117,22 @@ public class CategoryDAOTest {
 		assertNotNull(category.getParent());
 		assertEquals("main category", category.getParent().getName());
 		assertTrue(category.getParent().getRank() == 1);
-		
-		testService.delete(kid1.getId());
-		testService.delete(kid2.getId());
 	}
 	
 	@Test(expected=JpaObjectRetrievalFailureException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdate_WithCategoryWithNotExistingParent_ShouldThrowException(){
 		Category absentParent = new Category();
 		absentParent.setId(23476l);
 		Category category = getTestUpdatedCategory();
 		category.setParent(absentParent);
 		
-		testService.update(category);
+		dao.update(category);
 		
 	}
 	
 	private Category getTestUpdatedCategory(){
-		Category category = new Category();
-		category.setId(createdId);
+		Category category = dao.findOne(2l);
 		category.setName("changed name");
 		category.setRank(23);
 		

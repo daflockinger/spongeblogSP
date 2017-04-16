@@ -5,14 +5,13 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.stereotype.Repository;
 
 import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
 @Repository
-public interface PostDAO extends PagingAndSortingRepository<Post,Long>, RevisionRepository<Post, Long, Integer>{
+public interface PostDAO extends PagingAndSortingRepository<Post,Long>, VersionDAO<Post>{
 	Post findByTitle(String title);
 	
 	List<Post> findByTagsId(Long id);

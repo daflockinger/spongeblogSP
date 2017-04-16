@@ -7,7 +7,7 @@ import com.flockinger.spongeblogSP.dto.TagPostsDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 
-public interface TagService {
+public interface TagService extends Versionable{
 	
 	List<TagDTO> getAllTags();
 	

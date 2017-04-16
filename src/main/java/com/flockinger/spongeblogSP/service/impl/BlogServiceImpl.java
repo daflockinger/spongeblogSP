@@ -1,4 +1,4 @@
-package com.flockinger.spongeblogSP.service;
+package com.flockinger.spongeblogSP.service.impl;
 
 
 import org.modelmapper.ModelMapper;
@@ -10,7 +10,10 @@ import com.flockinger.spongeblogSP.dao.BlogDAO;
 import com.flockinger.spongeblogSP.dto.BlogDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.model.Blog;
+import com.flockinger.spongeblogSP.service.BlogService;
+import com.flockinger.spongeblogSP.service.VersioningService;
 
 @Service
 public class BlogServiceImpl implements BlogService{
@@ -20,6 +23,9 @@ public class BlogServiceImpl implements BlogService{
 	
 	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	private VersioningService<Blog,BlogDAO> versionService;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -64,6 +70,11 @@ public class BlogServiceImpl implements BlogService{
 			throw new EntityIsNotExistingException("Blog");
 		}
 		dao.delete(id);
+	}
+	
+	@Override
+	public void rewind(Long id) throws NoVersionFoundException {
+		versionService.rewind(id, dao);
 	}
 	
 	private Blog map(BlogDTO tagDto) {

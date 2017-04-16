@@ -7,8 +7,9 @@ import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.dto.CategoryPostsDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.OrphanedDependingEntitiesException;
 
-public interface CategoryService {
+public interface CategoryService extends Versionable {
 
 	List<CategoryDTO> getAllCategories();
 	
@@ -20,6 +21,6 @@ public interface CategoryService {
 	
 	void updateCategory(CategoryDTO tag) throws EntityIsNotExistingException;
 	
-	void deleteCategory(Long id) throws EntityIsNotExistingException;
+	void deleteCategory(Long id) throws EntityIsNotExistingException, OrphanedDependingEntitiesException;
 
 }

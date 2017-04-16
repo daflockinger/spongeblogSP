@@ -7,9 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -53,13 +55,13 @@ public class Post extends BaseModel{
 	@Column(columnDefinition="VARCHAR(150)")
 	private PostStatus status;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	private User author;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	private Category category;
 	
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(name="post_tags",
 		      joinColumns=@JoinColumn(name="posts_id", referencedColumnName="id"),
 		      inverseJoinColumns=@JoinColumn(name="tags_id", referencedColumnName="id"))
