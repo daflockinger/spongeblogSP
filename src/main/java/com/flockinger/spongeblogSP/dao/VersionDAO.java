@@ -2,11 +2,9 @@ package com.flockinger.spongeblogSP.dao;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.history.RevisionRepository;
-import org.springframework.stereotype.Repository;
 
-import com.flockinger.spongeblogSP.model.Blog;
+import com.flockinger.spongeblogSP.model.BaseModel;
 
-@Repository
-public interface BlogDAO extends VersionDAO<Blog> {
+public interface VersionDAO<M extends BaseModel> extends RevisionRepository<M,Long,Integer>, CrudRepository<M, Long>{
 
 }

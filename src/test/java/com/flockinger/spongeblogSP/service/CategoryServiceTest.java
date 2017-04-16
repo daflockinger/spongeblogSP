@@ -12,7 +12,6 @@ import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.flockinger.spongeblogSP.dao.CategoryDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
@@ -21,6 +20,8 @@ import com.flockinger.spongeblogSP.dto.link.CategoryLink;
 import com.flockinger.spongeblogSP.dto.link.PostLink;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
+import com.flockinger.spongeblogSP.exception.OrphanedDependingEntitiesException;
 import com.flockinger.spongeblogSP.model.Category;
 
 public class CategoryServiceTest extends BaseServiceTest {
@@ -71,7 +72,19 @@ public class CategoryServiceTest extends BaseServiceTest {
 		assertTrue(categoryPost.getSubCategories().size() == 1);
 		CategoryLink subCategory = categoryPost.getSubCategories().stream().findFirst().get();
 		assertTrue(subCategory.getId() == 2l);
-		assertTrue(subCategory.getRank() == 1);
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testGetCategory_withValidIdAndParent_shouldReturnCorrectCategory() throws EntityIsNotExistingException {
+		CategoryPostsDTO categoryPost = service.getCategory(2l);
+
+		assertNotNull(categoryPost);
+		assertEquals("sub category", categoryPost.getName());
+
+		assertNotNull(categoryPost.getParent());
+		assertTrue(categoryPost.getParent() == 1l);
+		assertTrue(categoryPost.getRank() == 1);
 	}
 
 	@Test(expected = EntityIsNotExistingException.class)
@@ -136,7 +149,7 @@ public class CategoryServiceTest extends BaseServiceTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testDeleteCategory_withValidNameAndChildren_shouldDeleteCategoryWithChildren()
-			throws DuplicateEntityException, EntityIsNotExistingException {
+			throws DuplicateEntityException, EntityIsNotExistingException, OrphanedDependingEntitiesException {
 		CategoryDTO category = new CategoryDTO();
 		category.setName("improved category");
 		category.setRank(2);
@@ -161,10 +174,10 @@ public class CategoryServiceTest extends BaseServiceTest {
 	}
 	
 
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test(expected = OrphanedDependingEntitiesException.class)
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testDeleteCategory_withCategoryWithPosts_shouldThrowException()
-			throws DuplicateEntityException, EntityIsNotExistingException {
+			throws DuplicateEntityException, EntityIsNotExistingException, OrphanedDependingEntitiesException {
 		service.deleteCategory(1l);
 	}
 
@@ -179,10 +192,43 @@ public class CategoryServiceTest extends BaseServiceTest {
 
 	@Test(expected = EntityIsNotExistingException.class)
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testDeleteCategory_withNotValidId_shouldDeleteCategory() throws EntityIsNotExistingException {
+	public void testDeleteCategory_withNotValidId_shouldDeleteCategory() throws EntityIsNotExistingException, OrphanedDependingEntitiesException {
 		service.deleteCategory(23434234l);
 	}
 
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testRewind_withExistingPrevVersion_shouldRewind()
+			throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+		CategoryDTO oldCategory = map(dao.findOne(2l));
+		oldCategory.setRank(2);
+		service.updateCategory(oldCategory);
+
+		CategoryDTO category = map(dao.findOne(2l));
+		category.setId(2l);
+		category.setName("fancy active category");
+		category.setParentId(null);
+		category.setRank(1234);
+		service.updateCategory(category);
+		
+		CategoryDTO updatedCategory =  map(dao.findOne(2l));
+		assertEquals("fancy active category",updatedCategory.getName());
+		assertTrue(updatedCategory.getParentId() == null);
+		assertTrue(updatedCategory.getRank() == 1234);
+		
+		service.rewind(2l);
+		CategoryDTO rewindedCategory =  map(dao.findOne(2l));
+		assertEquals("sub category",rewindedCategory.getName());
+		assertTrue(rewindedCategory.getParentId() == 1l);
+		assertTrue(rewindedCategory.getRank() == 2);
+	}
+
+	@Test(expected=NoVersionFoundException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testRewind_withNoPreviousVersion_shouldThrowException() throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+		service.rewind(2l);
+	}
+	
 	private CategoryDTO map(Category category) {
 		return mapper.map(category, CategoryDTO.class);
 	}

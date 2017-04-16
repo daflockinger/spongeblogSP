@@ -16,6 +16,7 @@ spring:
     validationQuery: SELECT 1
 # Show or not log for each sql query
   jpa: 
+    database: mysql
     show-sql: true
     properties:
       hibernate:
@@ -25,6 +26,7 @@ spring:
 # the project
     hibernate:
       ddl-auto: validate
+
       
 ### config for getting Hibernate generated SQL
 #      ddl-auto: create-drop
@@ -40,3 +42,13 @@ spring:
 
 flyway:
   baseline-on-migrate: true
+  
+---
+spring: 
+  profiles: test
+  datasource:
+    url: jdbc:mysql://localhost:3306/testspongeblog?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+flyway:
+  baseline-on-migrate: true
+
+    

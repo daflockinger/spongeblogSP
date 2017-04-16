@@ -1,4 +1,4 @@
-package com.flockinger.spongeblogSP.service;
+package com.flockinger.spongeblogSP.service.impl;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,11 @@ import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.dto.CategoryPostsDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
+import com.flockinger.spongeblogSP.exception.OrphanedDependingEntitiesException;
 import com.flockinger.spongeblogSP.model.Category;
+import com.flockinger.spongeblogSP.service.CategoryService;
+import com.flockinger.spongeblogSP.service.VersioningService;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -26,6 +31,9 @@ public class CategoryServiceImpl implements CategoryService{
 	private CategoryDAO dao;
 	
 	private ModelMapper mapper;
+	
+	@Autowired
+	private VersioningService<Category,CategoryDAO> versionService;
 	
 	@Autowired
 	public CategoryServiceImpl(ModelMapper mapper) {
@@ -40,6 +48,12 @@ public class CategoryServiceImpl implements CategoryService{
 			@Override
 			protected void configure() {
 				map(source.getParent().getId(),destination.getParentId());
+			}
+		});
+		mapper.addMappings(new PropertyMap<Category, CategoryPostsDTO>() {
+			@Override
+			protected void configure() {
+				map().setParent(source.getParent().getId());
 			}
 		});
 	}
@@ -70,7 +84,6 @@ public class CategoryServiceImpl implements CategoryService{
 		if(!dao.exists(id)){
 			throw new EntityIsNotExistingException("Category");
 		}
-		
 		return mapToPostDto(dao.findOne(id));
 	}
 
@@ -99,12 +112,22 @@ public class CategoryServiceImpl implements CategoryService{
 
 	@Override
 	@Transactional
-	public void deleteCategory(Long id) throws EntityIsNotExistingException{
+	public void deleteCategory(Long id) throws EntityIsNotExistingException, 
+	OrphanedDependingEntitiesException{
 		if(!dao.exists(id)){
 			throw new EntityIsNotExistingException("Category");
 		}
+		if(CollectionUtils.isNotEmpty(dao.findOne(id).getPosts())){
+			throw new OrphanedDependingEntitiesException("Posts still connected to category."
+					+ "Please change category of posts before deletion!");
+		}
 		
 		dao.delete(id);
+	}
+	
+	@Override
+	public void rewind(Long id) throws NoVersionFoundException {
+		versionService.rewind(id, dao);
 	}
 	
 	private CategoryPostsDTO mapToPostDto(Category tag) {

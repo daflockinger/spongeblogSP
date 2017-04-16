@@ -2,11 +2,12 @@ package com.flockinger.spongeblogSP.service;
 
 import java.util.List;
 
+import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 
-public interface UserService {
+public interface UserService extends Versionable{
 	UserEditDTO getUser(Long id) throws EntityIsNotExistingException;
 
 	List<UserEditDTO> getAllUsers();
@@ -16,4 +17,6 @@ public interface UserService {
 	void updateUser(UserEditDTO user) throws EntityIsNotExistingException;
 
 	void deleteUser(Long id) throws EntityIsNotExistingException;
+	
+	Boolean isLoginCorrect(LoginDTO credentials);
 }

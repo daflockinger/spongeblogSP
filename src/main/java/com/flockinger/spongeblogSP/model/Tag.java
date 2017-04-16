@@ -24,7 +24,7 @@ public class Tag extends BaseModel{
 	@Length(max=150)
 	private String name;
 	
-	@ManyToMany(mappedBy="tags",fetch = FetchType.LAZY,cascade={CascadeType.ALL})
+	@ManyToMany(mappedBy="tags",fetch = FetchType.LAZY)
 	private List<Post> posts;
 	
 	public String getName() {

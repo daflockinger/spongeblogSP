@@ -8,7 +8,7 @@ import com.flockinger.spongeblogSP.dto.link.PostLink;
 public class CategoryPostsDTO {
 	
 	private String name;
-	private CategoryLink parent;
+	private Long parent;
 	private List<CategoryLink> subCategories;
 	private List<PostLink> posts;
 	private Integer rank;
@@ -21,11 +21,11 @@ public class CategoryPostsDTO {
 		this.name = name;
 	}
 
-	public CategoryLink getParent() {
+	public Long getParent() {
 		return parent;
 	}
 
-	public void setParent(CategoryLink parent) {
+	public void setParent(Long parent) {
 		this.parent = parent;
 	}
 

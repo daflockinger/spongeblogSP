@@ -1,8 +1,6 @@
 package com.flockinger.spongeblogSP.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Date;
 import java.util.List;
@@ -14,9 +12,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 
 public class UserServiceTest extends BaseServiceTest {
 
@@ -211,5 +211,81 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testDeleteUser_withNotExistingId_shouldThrowNotFoundException() throws EntityIsNotExistingException {
 		service.deleteUser(12345l);
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testIsLoginCorrect_withValidCredentials_shouldReturnTrue() {
+		LoginDTO login = new LoginDTO();
+		login.setLogin("flo");
+		login.setPassword("secret");
+		assertTrue(service.isLoginCorrect(login));
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testIsLoginCorrect_withWrongUserAndPass_shouldReturnFalse(){
+		LoginDTO login = new LoginDTO();
+		login.setLogin("hacker");
+		login.setPassword("1234");
+		assertFalse(service.isLoginCorrect(login));
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testIsLoginCorrect_withWrongUser_shouldReturnFalse(){
+		LoginDTO login = new LoginDTO();
+		login.setLogin("hacker");
+		login.setPassword("secret");
+		assertFalse(service.isLoginCorrect(login));
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testIsLoginCorrect_withWrongPass_shouldReturnFalse(){
+		LoginDTO login = new LoginDTO();
+		login.setLogin("flo");
+		login.setPassword("1234");
+		assertFalse(service.isLoginCorrect(login));
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testRewind_withExistingPrevVersion_shouldRewind()
+			throws com.flockinger.spongeblogSP.exception.NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+		UserEditDTO freshUser = service.getUser(1l);
+		freshUser.setRegistered(new Date());
+		service.updateUser(freshUser);
+		
+		UserEditDTO existingUser = service.getUser(1l);
+		existingUser.setNickName("seppi");
+		existingUser.setRegistered(new Date());
+		existingUser.setPassword("supersecret123");
+		existingUser.setEmail("sep@bla.cc");
+
+		service.updateUser(existingUser);
+
+		UserEditDTO updatedUser = service.getUser(1l);
+		assertNotNull(updatedUser);
+		assertEquals("seppi", updatedUser.getNickName());
+		assertNotNull(updatedUser.getRegistered());
+		assertEquals("supersecret123", updatedUser.getPassword());
+		assertEquals("sep@bla.cc", updatedUser.getEmail());
+		
+		service.rewind(1l);
+		
+		UserEditDTO rewindUser = service.getUser(1l);
+		assertNotNull(rewindUser);
+		assertEquals("daflo", rewindUser.getNickName());
+		assertNotNull(rewindUser.getRegistered());
+		assertEquals("secret", rewindUser.getPassword());
+		assertEquals("flo@kinger.cc", rewindUser.getEmail());
+		
+	}
+
+	@Test(expected=NoVersionFoundException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testRewind_withNoPreviousVersion_shouldThrowException() throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+		service.rewind(2l);
 	}
 }

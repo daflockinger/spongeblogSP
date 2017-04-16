@@ -15,7 +15,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 @SpringBootTest
 @ActiveProfiles(profiles={"default","test"})
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class }) 
-@FlywayTest 
+@FlywayTest(invokeCleanDB=false)
 @Transactional
 public abstract class BaseServiceTest {
 
