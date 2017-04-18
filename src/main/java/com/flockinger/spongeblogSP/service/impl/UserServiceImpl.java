@@ -7,19 +7,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.flockinger.spongeblogSP.dao.CategoryDAO;
 import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dao.UserDAO;
+import com.flockinger.spongeblogSP.dto.BlogAuthority;
+import com.flockinger.spongeblogSP.dto.BlogUserDetails;
 import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
-import com.flockinger.spongeblogSP.model.Category;
 import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.User;
 import com.flockinger.spongeblogSP.service.UserService;
@@ -34,12 +37,23 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private PostDAO postDao;
 
-	@Autowired
 	private ModelMapper mapper;
 	
 	@Autowired
 	private VersioningService<User,UserDAO> versionService;
 
+	@Autowired
+	public UserServiceImpl(ModelMapper mapper){
+		this.mapper = mapper;
+		
+		mapper.addMappings(new PropertyMap<User, BlogUserDetails>() {
+			@Override
+			protected void configure() {
+				map().setUsername(source.getLogin());
+			}
+		});
+	}
+	
 	@Override
 	@Transactional(readOnly = true)
 	public UserEditDTO getUser(Long id) throws EntityIsNotExistingException {
@@ -99,6 +113,26 @@ public class UserServiceImpl implements UserService {
 		dao.delete(id);
 	}
 	
+	@Override
+	@Transactional
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = dao.findByLogin(username);
+		
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found with username: " + username);
+		}
+		BlogUserDetails userDetails = mapUserDetails(user);
+		userDetails.setEnabled(user.getRegistered() != null);
+		
+		List<BlogAuthority> authorities = user.getRoles().stream()
+				.map(role -> new BlogAuthority(role.name()))
+				.collect(Collectors.toList());
+
+		userDetails.setAuthorities(authorities);
+		
+		return userDetails;
+	}
+	
 	
 	@Override
 	public Boolean isLoginCorrect(LoginDTO credentials) {
@@ -110,6 +144,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void rewind(Long id) throws NoVersionFoundException {
 		versionService.rewind(id, dao);
+	}
+	
+	private BlogUserDetails mapUserDetails(User user){
+		return mapper.map(user, BlogUserDetails.class);
 	}
 
 	private User map(UserEditDTO userDTO) {

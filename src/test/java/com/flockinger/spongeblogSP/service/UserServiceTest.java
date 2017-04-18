@@ -11,6 +11,8 @@ import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
@@ -22,7 +24,7 @@ public class UserServiceTest extends BaseServiceTest {
 
 	@Autowired
 	private UserService service;
-
+	
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetUser_withValidId_shouldReturnUser() throws EntityIsNotExistingException {
@@ -287,5 +289,35 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testRewind_withNoPreviousVersion_shouldThrowException() throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
 		service.rewind(2l);
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testLoadUserByUsername_withExistingUsername_shouldReturnCorrect(){
+		UserDetails details = service.loadUserByUsername("flo");
+		
+		assertNotNull(details);
+		assertEquals("secret",details.getPassword());
+		assertEquals("flo",details.getUsername());
+		assertTrue(details.isAccountNonExpired());
+		assertTrue(details.isAccountNonLocked());
+		assertTrue(details.isCredentialsNonExpired());
+		assertTrue(details.isEnabled());
+		assertNotNull(details.getAuthorities());
+		assertTrue(details.getAuthorities().size() == 1);
+		assertTrue(details.getAuthorities().stream().allMatch(auth -> auth.getAuthority().equals("ADMIN")));
+	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testLoadUserByUsername_withExistingUsernameButNoRoles_shouldReturnCorrect(){
+		UserDetails details = service.loadUserByUsername("nobody");
+		assertNotNull(details);
+	}
+	
+	@Test(expected=UsernameNotFoundException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testLoadUserByUsername_withNonExistingUsername_shouldThrowException() throws UsernameNotFoundException{
+		service.loadUserByUsername("nonExist");
 	}
 }
