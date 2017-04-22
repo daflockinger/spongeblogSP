@@ -1,6 +1,8 @@
 package com.flockinger.spongeblogSP.service.impl;
 
 
+import java.util.Iterator;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,11 +35,15 @@ public class BlogServiceImpl implements BlogService{
 		if(!isAnyBlogExistingAlready()){
 			throw new EntityIsNotExistingException("Blog");
 		}
-		return map(dao.findAll().iterator().next());
+		return map(fetchBlog());
 	}
 
 	private boolean isAnyBlogExistingAlready(){
 		return dao.findAll().iterator().hasNext();
+	}
+	
+	private Blog fetchBlog(){
+		return dao.findAll().iterator().next();
 	}
 	
 	@Override
@@ -52,29 +58,25 @@ public class BlogServiceImpl implements BlogService{
 	
 	@Override
 	@Transactional
-	public void updateBlog(BlogDTO blog) throws EntityIsNotExistingException {
-		if(!isBlogExisting(blog.getId())){
-			throw new EntityIsNotExistingException("Blog");
-		}
-		dao.save(map(blog));
+	public void updateBlog(BlogDTO blog) {
+		Blog toUpdateBlog = map(blog);
+		toUpdateBlog.setId(fetchBlog().getId());
+		
+		dao.save(toUpdateBlog);
 	}
 	
-	private boolean isBlogExisting(Long id){
-		return dao.findOne(id) != null;
-	}
-
 	@Override
 	@Transactional
-	public void deleteBlog(Long id) throws EntityIsNotExistingException {
-		if(!isBlogExisting(id)){
+	public void deleteBlog() throws EntityIsNotExistingException {
+		if(!isAnyBlogExistingAlready()){
 			throw new EntityIsNotExistingException("Blog");
 		}
-		dao.delete(id);
+		dao.delete(fetchBlog().getId());
 	}
 	
 	@Override
 	public void rewind(Long id) throws NoVersionFoundException {
-		versionService.rewind(id, dao);
+		versionService.rewind(fetchBlog().getId(), dao);
 	}
 	
 	private Blog map(BlogDTO tagDto) {

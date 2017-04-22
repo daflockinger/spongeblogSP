@@ -1,4 +1,4 @@
-package com.flockinger.spongeblogSP.config;
+package com.flockinger.spongeblogSP.config.oauth2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,31 +24,26 @@ import com.flockinger.spongeblogSP.service.UserService;
  * Oauth2 server implementation with UserDetails stored in DB
  *
  */
-@Configuration
+// @Configuration
 public class OauthConfig {
-	private static final String RESOURCE_ID = "spongeblog";
+	/*private static final String RESOURCE_ID = "spongeblog";
 
 	@Configuration
 	@EnableResourceServer
-	protected static class ResourceServerConfiguration extends
-			ResourceServerConfigurerAdapter {
+	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
 		@Override
 		public void configure(ResourceServerSecurityConfigurer resources) {
 			// @formatter:off
-			resources
-				.resourceId(RESOURCE_ID);
+			resources.resourceId(RESOURCE_ID);
 			// @formatter:on
 		}
 
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
-			http
-				.authorizeRequests()
-				.antMatchers("/secured").hasRole("ADMIN")
-				.antMatchers("/").authenticated();
-			
+			http.authorizeRequests().antMatchers("/secured").hasRole("ADMIN").antMatchers("/").authenticated();
+
 			// @formatter:on
 		}
 
@@ -56,8 +51,7 @@ public class OauthConfig {
 
 	@Configuration
 	@EnableAuthorizationServer
-	protected static class AuthorizationServerConfiguration extends
-			AuthorizationServerConfigurerAdapter {
+	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
 		private TokenStore tokenStore = new InMemoryTokenStore();
 
@@ -66,30 +60,21 @@ public class OauthConfig {
 		private AuthenticationManager authenticationManager;
 
 		@Autowired
-	    private UserService userService;
+		private UserService userService;
 
 		@Override
-		public void configure(AuthorizationServerEndpointsConfigurer endpoints)
-				throws Exception {
+		public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 			// @formatter:off
-			endpoints
-				.tokenStore(this.tokenStore)
-				.authenticationManager(this.authenticationManager)
-				.userDetailsService(userService);
+			endpoints.tokenStore(this.tokenStore).authenticationManager(this.authenticationManager)
+					.userDetailsService(userService);
 			// @formatter:on
 		}
 
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 			// @formatter:off
-			clients
-				.inMemory()
-					.withClient("clientapp")
-						.authorizedGrantTypes("password", "refresh_token")
-						.authorities("USER","ADMIN")
-						.scopes("read", "write")
-						.resourceIds(RESOURCE_ID)
-						.secret("123456");
+			clients.inMemory().withClient("clientapp").authorizedGrantTypes("password", "refresh_token")
+					.authorities("USER", "ADMIN").scopes("read", "write").resourceIds(RESOURCE_ID).secret("123456");
 			// @formatter:on
 		}
 
@@ -102,5 +87,5 @@ public class OauthConfig {
 			return tokenServices;
 		}
 
-}
+	}*/
 }

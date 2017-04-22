@@ -57,7 +57,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withValidData_shouldWork()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Date now = new Date();
+		Long now = new Date().getTime();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("sepp");
@@ -83,7 +83,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdateUser_withValidData_shouldWork()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Date now = new Date();
+		Long now = new Date().getTime();
 
 		UserEditDTO existingUser = service.getUser(1l);
 		existingUser.setNickName("seppi");
@@ -116,7 +116,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withAlreadyExistingUsername_shouldThrowDuplicateException()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Date now = new Date();
+		Long now = new Date().getTime();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("flo");
@@ -131,7 +131,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withNoPassword_shouldThrowException()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Date now = new Date();
+		Long now = new Date().getTime();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("kkkkflo");
@@ -157,7 +157,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withNoLogin_shouldThrowException()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Date now = new Date();
+		Long now = new Date().getTime();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setNickName("seppi");
@@ -171,7 +171,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withTooLongLogin_shouldThrowException()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Date now = new Date();
+		Long now = new Date().getTime();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin(generateTooLongLoginName());
@@ -256,12 +256,12 @@ public class UserServiceTest extends BaseServiceTest {
 	public void testRewind_withExistingPrevVersion_shouldRewind()
 			throws com.flockinger.spongeblogSP.exception.NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
 		UserEditDTO freshUser = service.getUser(1l);
-		freshUser.setRegistered(new Date());
+		freshUser.setRegistered(new Date().getTime());
 		service.updateUser(freshUser);
 		
 		UserEditDTO existingUser = service.getUser(1l);
 		existingUser.setNickName("seppi");
-		existingUser.setRegistered(new Date());
+		existingUser.setRegistered(new Date().getTime());
 		existingUser.setPassword("supersecret123");
 		existingUser.setEmail("sep@bla.cc");
 

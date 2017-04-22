@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -77,6 +80,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value="users",allEntries=true)
 	public UserEditDTO createUser(UserEditDTO user) throws DuplicateEntityException {
 		if (isUserExistingAlready(user)) {
 			throw new DuplicateEntityException("User " + user.getLogin());
@@ -91,6 +95,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value="users",allEntries=true)
 	public void updateUser(UserEditDTO user) throws EntityIsNotExistingException {
 		if (!dao.exists(user.getId())) {
 			throw new EntityIsNotExistingException("User");
@@ -101,6 +106,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value="users",allEntries=true)
 	public void deleteUser(Long id) throws EntityIsNotExistingException {
 		if (!dao.exists(id)) {
 			throw new EntityIsNotExistingException("User with ID " + id);
@@ -115,6 +121,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
+	@Cacheable(value="users")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = dao.findByLogin(username);
 		

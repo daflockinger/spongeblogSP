@@ -91,6 +91,17 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public List<PostLink> getPostsFromTagId(Long tagId, Pageable pageable) {
+		return map(dao.findByTagsId(tagId, pageable).stream().map(post -> post.getId()).collect(Collectors.toList()));
+	}
+
+	@Override
+	public List<PostLink> getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable) {
+		return map(dao.findByTagsIdAndStatus(tagId, status, pageable).stream().map(post -> post.getId())
+				.collect(Collectors.toList()));
+	}
+
+	@Override
 	public PostDTO getPost(Long id) throws EntityIsNotExistingException {
 		if (!isPostExisting(id)) {
 			throw new EntityIsNotExistingException("Post");
@@ -105,27 +116,27 @@ public class PostServiceImpl implements PostService {
 			throw new DuplicateEntityException("Post");
 		}
 		checkDependencies(post);
-		
+
 		return map(dao.save(map(post)));
 	}
 
-	private boolean isPostNameExistingAlready(PostDTO post) {		
+	private boolean isPostNameExistingAlready(PostDTO post) {
 		return dao.findByTitle(post.getTitle()) != null;
 	}
 
-	private void checkDependencies(PostDTO post) throws DependencyNotFoundException{
+	private void checkDependencies(PostDTO post) throws DependencyNotFoundException {
 		UserInfoDTO user = post.getAuthor();
-		if(user != null && !userDao.exists(user.getId())){
-			throw getDependencyException("User",user.getId());
+		if (user != null && !userDao.exists(user.getId())) {
+			throw getDependencyException("User", user.getId());
 		}
-		CategoryDTO category= post.getCategory();
-		if(category != null && !categoryDao.exists(category.getId())){
+		CategoryDTO category = post.getCategory();
+		if (category != null && !categoryDao.exists(category.getId())) {
 			throw getDependencyException("Category", category.getId());
 		}
 		List<TagDTO> tags = post.getTags();
 		Optional<TagDTO> nonExistingTag = tags.stream().filter(tag -> !tagDao.exists(tag.getId())).findAny();
-		
-		if(nonExistingTag.isPresent()){
+
+		if (nonExistingTag.isPresent()) {
 			throw getDependencyException("Tag", nonExistingTag.get().getId());
 		}
 	}
@@ -140,23 +151,24 @@ public class PostServiceImpl implements PostService {
 		if (!isPostExisting(post.getId())) {
 			throw new EntityIsNotExistingException("Post");
 		}
-		if(isNewNameDuplicate(post)){
+		if (isNewNameDuplicate(post)) {
 			throw new DuplicateEntityException("Post");
 		}
 		checkDependencies(post);
-		
+
 		dao.save(map(post));
 	}
 
 	private boolean isPostExisting(Long id) {
 		return dao.exists(id);
 	}
-	
-	private boolean isNewNameDuplicate(PostDTO post){
+
+	private boolean isNewNameDuplicate(PostDTO post) {
 		Post savedPost = dao.findByTitle(post.getTitle());
 		return savedPost != null && post.getId() != savedPost.getId();
 	}
 
+	// FIXME change that in set delete flag only!!!
 	@Override
 	public void deletePost(Long id) throws EntityIsNotExistingException {
 		if (!isPostExisting(id)) {

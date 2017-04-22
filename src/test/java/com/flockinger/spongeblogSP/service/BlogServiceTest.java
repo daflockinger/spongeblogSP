@@ -1,9 +1,7 @@
 package com.flockinger.spongeblogSP.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.util.Map;
 
@@ -73,10 +71,9 @@ public class BlogServiceTest extends BaseServiceTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testDelete_withValidBlog_shouldWork() throws EntityIsNotExistingException, DuplicateEntityException {
-		Long blogId = service.getBlog().getId();
-		service.deleteBlog(blogId);
+		service.deleteBlog();
 
-		assertNull(dao.findOne(blogId));
+		assertFalse(dao.findAll().iterator().hasNext());
 	}
 
 	@Test(expected = DuplicateEntityException.class)
@@ -90,23 +87,10 @@ public class BlogServiceTest extends BaseServiceTest {
 		service.createBlog(hackBlog);
 	}
 
-	@Test(expected = EntityIsNotExistingException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testUpdateBlog_withNotExistingId_shouldThrowException() throws EntityIsNotExistingException {
-		BlogDTO fakeBlog = new BlogDTO();
-		fakeBlog.setId(34l);
-		fakeBlog.setName("Spacy blog");
-		fakeBlog.setStatus(BlogStatus.DISABLED);
-		fakeBlog.setSettings(ImmutableMap.of("text-color", "white", "background-image", "bunny.jpg"));
-
-		service.updateBlog(fakeBlog);
-	}
-
 	@Test(expected = TransactionSystemException.class)
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdateBlog_withEmptyName_shouldThrowException() throws EntityIsNotExistingException {
 		BlogDTO fakeBlog = new BlogDTO();
-		fakeBlog.setId(1l);
 		fakeBlog.setStatus(BlogStatus.DISABLED);
 		fakeBlog.setSettings(ImmutableMap.of("text-color", "white", "background-image", "bunny.jpg"));
 
@@ -117,7 +101,6 @@ public class BlogServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdateBlog_withMissingStatus_shouldThrowException() throws EntityIsNotExistingException {
 		BlogDTO fakeBlog = new BlogDTO();
-		fakeBlog.setId(1l);
 		fakeBlog.setName("Free Blog");
 		fakeBlog.setSettings(ImmutableMap.of("text-color", "white", "background-image", "bunny.jpg"));
 
@@ -127,7 +110,7 @@ public class BlogServiceTest extends BaseServiceTest {
 	@Test(expected = EntityIsNotExistingException.class)
 	@FlywayTest(invokeCleanDB = true)
 	public void test_deleteBlog_withNotExistingId_shouldThrowException() throws EntityIsNotExistingException {
-		service.deleteBlog(3423l);
+		service.deleteBlog();
 	}
 
 	@Test
@@ -150,7 +133,7 @@ public class BlogServiceTest extends BaseServiceTest {
 		assertEquals(BlogStatus.ACTIVE,updatedBlog.getStatus());
 		assertEquals("red",updatedBlog.getSettings().get("color"));
 		
-		service.rewind(createdBlog.getId());
+		service.rewind(null);
 		BlogDTO rewindedBlog = service.getBlog();
 		assertEquals("new blog",rewindedBlog.getName());
 		assertEquals(BlogStatus.MAINTENANCE,rewindedBlog.getStatus());
@@ -160,6 +143,6 @@ public class BlogServiceTest extends BaseServiceTest {
 	@Test(expected=NoVersionFoundException.class)
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testRewind_withNoPreviousVersion_shouldThrowException() throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
-		service.rewind(service.getBlog().getId());
+		service.rewind(null);
 	}
 }

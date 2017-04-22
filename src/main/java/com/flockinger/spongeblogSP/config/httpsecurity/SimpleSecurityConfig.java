@@ -1,8 +1,9 @@
-package com.flockinger.spongeblogSP.config;
+package com.flockinger.spongeblogSP.config.httpsecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -21,11 +22,12 @@ import com.flockinger.spongeblogSP.service.UserService;
  * Implementation of simple HTTP Auth (user/password).
  *
  */
-/*@Configuration
+@Profile({"test","default"})
+@Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)*/
-public class SimpleSecurityConfig/* extends WebSecurityConfigurerAdapter*/ {
- /*
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
+ 
     private static String REALM="MY_TEST_REALM";
     
     @Autowired
@@ -53,9 +55,9 @@ public class SimpleSecurityConfig/* extends WebSecurityConfigurerAdapter*/ {
         return entryPoint;
     }
      
-     To allow Pre-flight [OPTIONS] request from browser 
+    // To allow Pre-flight [OPTIONS] request from browser 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
-    }*/
+    }
 }

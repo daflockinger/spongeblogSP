@@ -1,11 +1,9 @@
-# this is an example of the Uber API
-# as a demonstration of an API spec in YAML
 swagger: '2.0'
 info:
   title: SpongeblogSP API
   description: Spongeblog blogging API
   version: "1.0.0"
-# array of all schemes that your API supports
+# array of all schemes that your API supportsf
 schemes:
   - https
 # will be prefixed to all paths
@@ -18,13 +16,13 @@ parameters:
   PageNumber:
     name: page
     in: query
-    description: Page number from that on posts are returned.
+    description: Page number from that on entities are returned.
     required: false
     type: integer
-  PostsPerPage:
+  ItemsPerPage:
     name: size
     in: query
-    description: Posts per page. 
+    description: Entities per page. 
     required: false
     type: integer
   Status:
@@ -98,6 +96,26 @@ parameters:
     required: true
     type: integer
     format: int64
+  FromDate:
+    name: from
+    in: query
+    description: Get items from timestamp.
+    required: false
+    type: integer
+    format: int64
+  ToDate:
+    name: to
+    in: query
+    description: Get items until timestamp.
+    required: false
+    type: integer
+    format: int64
+  ImageKey:
+    name: image-key
+    in: path
+    description: Key of the Image.
+    required: true
+    type: string
 paths:
   /api/v1/posts:
     get:
@@ -105,7 +123,7 @@ paths:
       description: Returns all posts (paginated).
       parameters:
         - $ref: '#/parameters/PageNumber'
-        - $ref: '#/parameters/PostsPerPage'
+        - $ref: '#/parameters/ItemsPerPage'
       tags:
         - Posts
       responses:
@@ -116,10 +134,24 @@ paths:
             type: array
             items:
               type: string
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     post:
       summary: Create Post
       description: Creates new Post entry.
@@ -132,10 +164,24 @@ paths:
           description: Created Post.
           schema:
             $ref: '#/definitions/PostDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     put:
       summary: Update Post
       description: Updated a Post entry.
@@ -146,10 +192,24 @@ paths:
       responses:
         200:
           description: Post updated.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/posts/status/{status}:
     get:
       summary: Posts with status
@@ -157,7 +217,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Status'
         - $ref: '#/parameters/PageNumber'
-        - $ref: '#/parameters/PostsPerPage'
+        - $ref: '#/parameters/ItemsPerPage'
       tags:
         - Posts
       responses:
@@ -168,10 +228,24 @@ paths:
             type: array
             items:
               type: string
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/posts/category/{category-id}:
     get:
       summary: Posts from Category
@@ -179,7 +253,7 @@ paths:
       parameters:
         - $ref: '#/parameters/IdCategory'
         - $ref: '#/parameters/PageNumber'
-        - $ref: '#/parameters/PostsPerPage'
+        - $ref: '#/parameters/ItemsPerPage'
       tags:
         - Posts
       responses:
@@ -190,10 +264,24 @@ paths:
             type: array
             items:
               type: string
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/posts/category/{category-id}/{status}:
     get:
       summary: Posts from Category and Status
@@ -202,7 +290,7 @@ paths:
         - $ref: '#/parameters/IdCategory'
         - $ref: '#/parameters/Status'
         - $ref: '#/parameters/PageNumber'
-        - $ref: '#/parameters/PostsPerPage'
+        - $ref: '#/parameters/ItemsPerPage'
       tags:
         - Posts
       responses:
@@ -213,10 +301,24 @@ paths:
             type: array
             items:
               type: string
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/posts/author/{user-id}:
     get:
       summary: Posts from User
@@ -224,7 +326,7 @@ paths:
       parameters:
         - $ref: '#/parameters/IdUser'
         - $ref: '#/parameters/PageNumber'
-        - $ref: '#/parameters/PostsPerPage'
+        - $ref: '#/parameters/ItemsPerPage'
       tags:
         - Posts
       responses:
@@ -235,10 +337,24 @@ paths:
             type: array
             items:
               type: string
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/posts/author/{user-id}/{status}:
     get:
       summary: Posts from User and Status
@@ -247,7 +363,7 @@ paths:
         - $ref: '#/parameters/IdUser'
         - $ref: '#/parameters/Status'
         - $ref: '#/parameters/PageNumber'
-        - $ref: '#/parameters/PostsPerPage'
+        - $ref: '#/parameters/ItemsPerPage'
       tags:
         - Posts
       responses:
@@ -258,10 +374,24 @@ paths:
             type: array
             items:
               type: string
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/posts/{post-id}:
     get:
       summary: Get Post
@@ -275,10 +405,24 @@ paths:
           description: Post with id.
           schema:
             $ref: '#/definitions/PostDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     delete:
       summary: Delete Post
       description: Deletes a Post with defined Id.
@@ -289,10 +433,24 @@ paths:
       responses:
         200:
           description: Post deleted.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/posts/rewind/{post-id}:
     put:
       summary: Rewind Post
@@ -302,12 +460,26 @@ paths:
       tags: 
         - Posts
       responses:
-        201:
+        200:
           description: Previous Post restored.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/categories:
     get:
       summary: All Categorys
@@ -321,10 +493,24 @@ paths:
             type: array
             items:
               $ref: '#/definitions/CategoryDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     post:
       summary: Create Category
       description: Creates new Category entry.
@@ -337,10 +523,24 @@ paths:
           description: Created Category.
           schema:
             $ref: '#/definitions/CategoryDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     put:
       summary: Update Category
       description: Updated a Category entry.
@@ -351,10 +551,24 @@ paths:
       responses:
         200:
           description: Category updated.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/categories/{category-id}:
     get:
       summary: Get Category
@@ -368,10 +582,24 @@ paths:
           description: Category with id.
           schema:
             $ref: '#/definitions/CategoryPostsDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     delete:
       summary: Delete Category
       description: Deletes a Category with defined Id.
@@ -382,10 +610,24 @@ paths:
       responses:
         200:
           description: Category deleted.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/categories/children/{parent-category-id}:
     get:
       summary: Categorys of Parent.
@@ -401,10 +643,24 @@ paths:
             type: array
             items:
               $ref: '#/definitions/CategoryPostsDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/categories/rewind/{category-id}:
     put:
       summary: Rewind Category
@@ -416,10 +672,24 @@ paths:
       responses:
         201:
           description: Previous Category restored.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/blog:
     post:
       summary: Create Blog
@@ -433,10 +703,24 @@ paths:
           description: Created Blog.
           schema:
             $ref: '#/definitions/BlogDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     put:
       summary: Update Blog
       description: Updated a Blog entry.
@@ -447,10 +731,24 @@ paths:
       responses:
         200:
           description: Blog updated.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     get:
       summary: Get Blog
       description: Returns the Blog entry.
@@ -461,10 +759,24 @@ paths:
           description: Blog.
           schema:
             $ref: '#/definitions/BlogDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     delete:
       summary: Delete Blog
       description: Deletes existing Blog.
@@ -473,10 +785,24 @@ paths:
       responses:
         200:
           description: Blog deleted.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/blog/rewind:
     put:
       summary: Rewind Blog
@@ -486,10 +812,24 @@ paths:
       responses:
         200:
           description: Previous Blog restored.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/tags:
     get:
       summary: All Tags
@@ -503,10 +843,24 @@ paths:
             type: array
             items:
               $ref: '#/definitions/TagDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     post:
       summary: Create Tag
       description: Creates new Tag entry.
@@ -519,10 +873,24 @@ paths:
           description: Created Tag.
           schema:
             $ref: '#/definitions/TagDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     put:
       summary: Update Tag
       description: Updated a Tag entry.
@@ -533,10 +901,24 @@ paths:
       responses:
         200:
           description: Tag updated.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/tags/{tag-id}:
     get:
       summary: Get Tag
@@ -550,10 +932,24 @@ paths:
           description: Tag with id.
           schema:
             $ref: '#/definitions/TagPostsDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     delete:
       summary: Delete Tag
       description: Deletes a Tag with defined Id.
@@ -564,10 +960,24 @@ paths:
       responses:
         200:
           description: Tag deleted.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/tags/rewind/{tag-id}:
     put:
       summary: Rewind Tag
@@ -579,10 +989,24 @@ paths:
       responses:
         200:
           description: Previous Tag restored.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/users:
     get:
       summary: All Users
@@ -596,10 +1020,24 @@ paths:
             type: array
             items:
               $ref: '#/definitions/UserEditDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     post:
       summary: Create User
       description: Creates new User entry.
@@ -612,10 +1050,24 @@ paths:
           description: Created User.
           schema:
             $ref: '#/definitions/UserEditDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     put:
       summary: Update User
       description: Updated a User entry.
@@ -626,10 +1078,24 @@ paths:
       responses:
         200:
           description: User updated.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/users/{user-id}:
     get:
       summary: Get User
@@ -643,10 +1109,24 @@ paths:
           description: User with id.
           schema:
             $ref: '#/definitions/UserEditDTO'
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
     delete:
       summary: Delete User
       description: Deletes a User with defined Id.
@@ -657,10 +1137,24 @@ paths:
       responses:
         200:
           description: User deleted.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/users/rewind/{user-id}:
     put:
       summary: Rewind User
@@ -672,14 +1166,201 @@ paths:
       responses:
         200:
           description: Previous User restored.
-        default:
-          description: Unexpected error
+        400:
+          description: Bad request (validation failed).
           schema:
             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
+  /api/v1/images:
+    post:
+      summary: Uploads image file
+      description: Uploads image file and returns their link.
+      tags:
+        - Images
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: The uploaded image data
+          required: true
+          type: file
+      responses:
+        200:
+          description: Image Link.
+          schema:
+            $ref: '#/definitions/ImageLink'
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
+    get:
+      summary: Get all Images.
+      description: Returns a paginated list of all Images.
+      tags:
+        - Images
+      parameters:
+         - $ref: '#/parameters/PageNumber'
+         - $ref: '#/parameters/ItemsPerPage'
+         - $ref: '#/parameters/FromDate'
+         - $ref: '#/parameters/ToDate'
+      responses:
+        200:
+          description: Returns Image.
+          schema:
+            type: file
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
+  /api/v1/images/{image-key}:
+    get:
+      summary: Load Image.
+      description: Returns an Image file by key.
+      tags:
+        - Images
+      parameters:
+        - $ref: '#/parameters/ImageKey'
+      responses:
+        200:
+          description: Returns Image.
+          schema:
+            type: file
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
+    delete:
+      summary: Removes Image.
+      description: Removes Image from DB and storage.
+      tags:
+        - Images
+      parameters:
+        - $ref: '#/parameters/ImageKey'
+      responses:
+        200:
+          description: Image deleted.
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
+  /api/v1/images/link/{image-key}:
+    get:
+      summary: Load Image.
+      description: Returns the link to the Image by key.
+      tags:
+        - Images
+      parameters:
+        - $ref: '#/parameters/ImageKey'
+      responses:
+        200:
+          description: Returns Image link.
+          schema:
+            $ref: '#/definitions/ImageLink'
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
 definitions:
+  ImageLink:
+    type: object
+    properties:
+      key:
+        type: string
+        description: Key of the Image (id + '_' +filename). 
+      link:
+        type: string
+        description: URL of the Image.
   TagDTO:
     type: object
     properties:
+      id:
+        type: integer
+        format: int64
+        description: Unique identifier.
       name:
         type: string
         description: Tag name.
@@ -695,6 +1376,10 @@ definitions:
   CategoryDTO:
     type: object
     properties:
+      id:
+        type: integer
+        format: int64
+        description: Unique identifier.
       name:
         type: string
         description: Category display name.
@@ -711,6 +1396,10 @@ definitions:
   CategoryPostsDTO:
     type: object
     properties:
+      id:
+        type: integer
+        format: int64
+        description: Unique identifier.
       name:
         type: string
         description: Category display name.
@@ -735,6 +1424,10 @@ definitions:
   UserEditDTO:
     type: object
     properties:
+      id:
+        type: integer
+        format: int64
+        description: Unique identifier.
       login:
         type: string
         description: Login name of the User.
@@ -756,9 +1449,17 @@ definitions:
         description: Roles of the User (authorizations).
         items:
           type: string
+          enum:
+            - ADMIN
+            - AUTHOR
+            - LOCKED
   UserInfoDTO:
     type: object
     properties:
+      id:
+        type: integer
+        format: int64
+        description: Unique identifier.
       nickName:
         type: string
         description: Display nickname of the User.
@@ -772,6 +1473,10 @@ definitions:
   PostDTO:
     type: object
     properties:
+      id:
+        type: integer
+        format: int64
+        description: Unique identifier.
       content:
         type: string
         description: Post text/html content.
@@ -786,6 +1491,11 @@ definitions:
       status:
         type: string
         description: Display status of the Post.
+        enum:
+          - PUBLIC
+          - PRIVATE
+          - MAINTENANCE
+          - DELETED
       author:
         $ref: '#/definitions/UserInfoDTO'
       category:
@@ -804,13 +1514,15 @@ definitions:
       status:
         type: string
         description: Status of the Blog. 
+        enum: 
+          - ACTIVE
+          - DISABLED
+          - MAINTENANCE
       settings:
         type: object
         description: Settings map of the Blog.
         additionalProperties:
-          type: array
-          items:
-            type: string
+          type: string
   Error:
     type: object
     properties:

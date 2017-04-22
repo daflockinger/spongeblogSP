@@ -24,6 +24,10 @@ public interface PostService extends Versionable{
 	
 	List<PostLink> getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable);
 	
+	List<PostLink> getPostsFromTagId(Long tagId, Pageable pageable);
+	
+	List<PostLink> getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable);
+	
 	PostDTO getPost(Long id) throws EntityIsNotExistingException;
 	
 	PostDTO createPost(PostDTO post) throws DuplicateEntityException, DependencyNotFoundException;

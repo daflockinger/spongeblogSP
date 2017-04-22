@@ -16,6 +16,10 @@ public interface PostDAO extends PagingAndSortingRepository<Post,Long>, VersionD
 	
 	List<Post> findByTagsId(Long id);
 	
+	List<Post> findByTagsId(Long id, Pageable pageable);
+	
+	List<Post> findByTagsIdAndStatus(Long id, PostStatus status, Pageable pageable);
+	
 	List<Post> findByAuthorId(Long id);
 	
 	@Query("select distinct id from Post")
