@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.hateoas.ResourceSupport;
+
 import com.flockinger.spongeblogSP.model.enums.BlogStatus;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,15 +17,18 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * BlogDTO
  */
-public class BlogDTO {
+public class BlogDTO extends ResourceSupport {
 
 	@SerializedName("name")
+	@NotEmpty
 	private String name = null;
 
 	@SerializedName("status")
+	@NotNull
 	private BlogStatus status = null;
 
 	@SerializedName("settings")
+	@NotNull
 	private Map<String, String> settings = new HashMap<String, String>();
 
 	public BlogDTO name(String name) {

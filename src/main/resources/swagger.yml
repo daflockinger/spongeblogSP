@@ -32,21 +32,21 @@ parameters:
     required: true
     type: string
   IdCategory:
-    name: category-id
+    name: categoryId
     in: path
     description: Unique identifier of a Category;
     required: true
     type: integer
     format: int64
   IdUser:
-    name: user-id
+    name: userId
     in: path
     description: Unique identifier of a User;
     required: true
     type: integer
     format: int64
   IdPost:
-    name: post-id
+    name: postId
     in: path
     description: Unique identifier of a Post;
     required: true
@@ -90,7 +90,7 @@ parameters:
     type: integer
     format: int64
   IdTag:
-    name: tag-id
+    name: tagId
     in: path
     description: Unique identifier of a Tag;
     required: true
@@ -246,7 +246,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/posts/category/{category-id}:
+  /api/v1/posts/category/{categoryId}:
     get:
       summary: Posts from Category
       description: Returns all posts from defined Category.
@@ -282,7 +282,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/posts/category/{category-id}/{status}:
+  /api/v1/posts/category/{categoryId}/{status}:
     get:
       summary: Posts from Category and Status
       description: Returns all posts from defined Category and Status.
@@ -319,7 +319,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/posts/author/{user-id}:
+  /api/v1/posts/author/{userId}:
     get:
       summary: Posts from User
       description: Returns all posts from defined User.
@@ -355,7 +355,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/posts/author/{user-id}/{status}:
+  /api/v1/posts/author/{userId}/{status}:
     get:
       summary: Posts from User and Status
       description: Returns all posts from defined User and Status.
@@ -392,7 +392,80 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/posts/{post-id}:
+  /api/v1/posts/tag/{tagId}:
+    get:
+      summary: Posts from Tag
+      description: Returns all posts from defined Tag.
+      parameters:
+        - $ref: '#/parameters/IdTag'
+        - $ref: '#/parameters/PageNumber'
+        - $ref: '#/parameters/ItemsPerPage'
+      tags:
+        - Posts
+      responses:
+        200:
+          description: Post links.
+          schema:
+            description: Link to Post.
+            type: array
+            items:
+              type: string
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Untagized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
+  /api/v1/posts/tag/{tagId}/{status}:
+    get:
+      summary: Posts from Tag and Status
+      description: Returns all posts from defined Tag and Status.
+      parameters:
+        - $ref: '#/parameters/IdTag'
+        - $ref: '#/parameters/Status'
+        - $ref: '#/parameters/PageNumber'
+        - $ref: '#/parameters/ItemsPerPage'
+      tags:
+        - Posts
+      responses:
+        200:
+          description: Post links.
+          schema:
+            description: Link to Post.
+            type: array
+            items:
+              type: string
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Untagized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
+  /api/v1/posts/{postId}:
     get:
       summary: Get Post
       description: Fetches Post with defined Id.
@@ -451,7 +524,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/posts/rewind/{post-id}:
+  /api/v1/posts/rewind/{postId}:
     put:
       summary: Rewind Post
       description: Restores previous Post entry.
@@ -569,7 +642,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/categories/{category-id}:
+  /api/v1/categories/{categoryId}:
     get:
       summary: Get Category
       description: Fetches Category with defined Id.
@@ -661,7 +734,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/categories/rewind/{category-id}:
+  /api/v1/categories/rewind/{categoryId}:
     put:
       summary: Rewind Category
       description: Restores previous Category entry.
@@ -919,7 +992,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/tags/{tag-id}:
+  /api/v1/tags/{tagId}:
     get:
       summary: Get Tag
       description: Fetches Tag with defined Id.
@@ -978,7 +1051,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/tags/rewind/{tag-id}:
+  /api/v1/tags/rewind/{tagId}:
     put:
       summary: Rewind Tag
       description: Restores previous Tag entry.
@@ -1096,7 +1169,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/users/{user-id}:
+  /api/v1/users/{userId}:
     get:
       summary: Get User
       description: Fetches User with defined Id.
@@ -1155,7 +1228,7 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
-  /api/v1/users/rewind/{user-id}:
+  /api/v1/users/rewind/{userId}:
     put:
       summary: Rewind User
       description: Restores previous User entry.
@@ -1357,7 +1430,7 @@ definitions:
   TagDTO:
     type: object
     properties:
-      id:
+      tagId:
         type: integer
         format: int64
         description: Unique identifier.
@@ -1376,7 +1449,7 @@ definitions:
   CategoryDTO:
     type: object
     properties:
-      id:
+      categoryId:
         type: integer
         format: int64
         description: Unique identifier.
@@ -1396,7 +1469,7 @@ definitions:
   CategoryPostsDTO:
     type: object
     properties:
-      id:
+      categoryId:
         type: integer
         format: int64
         description: Unique identifier.
@@ -1424,7 +1497,7 @@ definitions:
   UserEditDTO:
     type: object
     properties:
-      id:
+      userId:
         type: integer
         format: int64
         description: Unique identifier.
@@ -1456,7 +1529,7 @@ definitions:
   UserInfoDTO:
     type: object
     properties:
-      id:
+      userId:
         type: integer
         format: int64
         description: Unique identifier.
@@ -1473,10 +1546,13 @@ definitions:
   PostDTO:
     type: object
     properties:
-      id:
+      postId:
         type: integer
         format: int64
         description: Unique identifier.
+      title:
+        type: string
+        description: The title of the Blog post. 
       content:
         type: string
         description: Post text/html content.
@@ -1532,4 +1608,7 @@ definitions:
       message:
         type: string
       fields:
-        type: string
+        type: object
+        description: Invalid fields.
+        additionalProperties:
+          type: string

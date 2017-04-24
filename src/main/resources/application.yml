@@ -30,6 +30,10 @@ spring:
     date-format: com.flockinger.spongeblogSP.config.swagger.RFC3339DateFormat
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
+#  http:
+#    multipart:
+#      max-file-size: 5300KB
+#      max-request-size: 5300KB
 
 ### config for getting Hibernate generated SQL
 #      ddl-auto: create-drop
@@ -51,7 +55,11 @@ flyway:
 #  level:
 #    org.springframework.security: DEBUG      
     
-    
+blog:
+  paging:
+    default-page: 0
+    default-items-per-page: 5
+
       
 #### Test Profile
 ---

@@ -1,61 +1,77 @@
 package com.flockinger.spongeblogSP.dto;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.hateoas.ResourceSupport;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
-import com.google.gson.annotations.SerializedName;
 
 import io.swagger.annotations.ApiModelProperty;
-
 /**
  * PostDTO
  */
-public class PostDTO {
-  @SerializedName("id")
-  private Long id = null;
+public class PostDTO  extends ResourceSupport {
+ 
+  @JsonProperty("postId")
+  private Long postId = null;
 
-  @SerializedName("title")
+  @JsonProperty("title")
+  @NotEmpty
   private String title = null;
 
-  @SerializedName("content")
+  @JsonProperty("content")
+  @NotNull
   private String content = null;
 
-  @SerializedName("created")
+  @JsonProperty("created")
+  @NotNull
+  @Min(0)
   private Long created = null;
 
-  @SerializedName("modified")
+  @JsonProperty("modified")
+  @NotNull
+  @Min(0)
   private Long modified = null;
 
-  @SerializedName("status")
+  @JsonProperty("status")
+  @NotNull
   private PostStatus status = null;
 
-  @SerializedName("author")
+  @JsonProperty("author")
   private UserInfoDTO author = null;
 
-  @SerializedName("category")
+  @JsonProperty("category")
+  @NotNull
   private CategoryDTO category = null;
 
-  @SerializedName("tags")
+  @JsonProperty("tags")
+  @NotNull
   private List<TagDTO> tags = new ArrayList<TagDTO>();
 
-  public PostDTO id(Long id) {
-    this.id = id;
+  public PostDTO postId(Long postId) {
+    this.postId = postId;
     return this;
   }
 
    /**
    * Unique identifier.
-   * @return id
+   * @return postId
   **/
-  @ApiModelProperty(example = "null", value = "Unique identifier.")
-  public Long getId() {
-    return id;
+  @ApiModelProperty(value = "Unique identifier.")
+  public Long getPostId() {
+    return postId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setPostId(Long postId) {
+    this.postId = postId;
   }
 
   public PostDTO title(String title) {
@@ -64,10 +80,10 @@ public class PostDTO {
   }
 
    /**
-   * Title of the post.
+   * The title of the Blog post.
    * @return title
   **/
-  @ApiModelProperty(example = "null", value = "Title of the post.")
+  @ApiModelProperty(value = "The title of the Blog post.")
   public String getTitle() {
     return title;
   }
@@ -85,7 +101,7 @@ public class PostDTO {
    * Post text/html content.
    * @return content
   **/
-  @ApiModelProperty(example = "null", value = "Post text/html content.")
+  @ApiModelProperty(value = "Post text/html content.")
   public String getContent() {
     return content;
   }
@@ -103,7 +119,7 @@ public class PostDTO {
    * Creation date of Post in long.
    * @return created
   **/
-  @ApiModelProperty(example = "null", value = "Creation date of Post in long.")
+  @ApiModelProperty(value = "Creation date of Post in long.")
   public Long getCreated() {
     return created;
   }
@@ -121,7 +137,7 @@ public class PostDTO {
    * Modification date of Post in long.
    * @return modified
   **/
-  @ApiModelProperty(example = "null", value = "Modification date of Post in long.")
+  @ApiModelProperty(value = "Modification date of Post in long.")
   public Long getModified() {
     return modified;
   }
@@ -139,7 +155,7 @@ public class PostDTO {
    * Display status of the Post.
    * @return status
   **/
-  @ApiModelProperty(example = "null", value = "Display status of the Post.")
+  @ApiModelProperty(value = "Display status of the Post.")
   public PostStatus getStatus() {
     return status;
   }
@@ -157,7 +173,7 @@ public class PostDTO {
    * Get author
    * @return author
   **/
-  @ApiModelProperty(example = "null", value = "")
+  @ApiModelProperty(value = "")
   public UserInfoDTO getAuthor() {
     return author;
   }
@@ -175,7 +191,7 @@ public class PostDTO {
    * Get category
    * @return category
   **/
-  @ApiModelProperty(example = "null", value = "")
+  @ApiModelProperty(value = "")
   public CategoryDTO getCategory() {
     return category;
   }
@@ -198,7 +214,7 @@ public class PostDTO {
    * Tags of Post.
    * @return tags
   **/
-  @ApiModelProperty(example = "null", value = "Tags of Post.")
+  @ApiModelProperty(value = "Tags of Post.")
   public List<TagDTO> getTags() {
     return tags;
   }
@@ -217,7 +233,7 @@ public class PostDTO {
       return false;
     }
     PostDTO postDTO = (PostDTO) o;
-    return Objects.equals(this.id, postDTO.id) &&
+    return Objects.equals(this.postId, postDTO.postId) &&
         Objects.equals(this.title, postDTO.title) &&
         Objects.equals(this.content, postDTO.content) &&
         Objects.equals(this.created, postDTO.created) &&
@@ -230,16 +246,15 @@ public class PostDTO {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, content, created, modified, status, author, category, tags);
+    return Objects.hash(postId, title, content, created, modified, status, author, category, tags);
   }
-
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PostDTO {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    postId: ").append(toIndentedString(postId)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
     sb.append("    created: ").append(toIndentedString(created)).append("\n");
@@ -262,5 +277,4 @@ public class PostDTO {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
 }

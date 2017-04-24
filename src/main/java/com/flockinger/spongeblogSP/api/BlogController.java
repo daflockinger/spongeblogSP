@@ -1,11 +1,15 @@
 package com.flockinger.spongeblogSP.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.flockinger.spongeblogSP.dto.Error;
-
+import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
+import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
+import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.dto.BlogDTO;
 
 import io.swagger.annotations.*;
@@ -25,7 +29,7 @@ public interface BlogController {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.DELETE)
-    ResponseEntity<?> apiV1BlogDelete();
+    ResponseEntity<?> apiV1BlogDelete() throws EntityIsNotExistingException;
 
 
     @ApiOperation(value = "Get Blog", notes = "Returns the Blog entry.", response = BlogDTO.class, tags={ "Blog", })
@@ -41,7 +45,7 @@ public interface BlogController {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.GET)
-    ResponseEntity<?> apiV1BlogGet();
+    ResponseEntity<?> apiV1BlogGet() throws EntityIsNotExistingException;
 
 
     @ApiOperation(value = "Create Blog", notes = "Creates new Blog entry.", response = BlogDTO.class, tags={ "Blog", })
@@ -57,7 +61,8 @@ public interface BlogController {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<?> apiV1BlogPost(@ApiParam(value = "" ,required=true ) @RequestBody BlogDTO blogEdit);
+    ResponseEntity<?> apiV1BlogPost(@ApiParam(value = "" ,required=true ) @RequestBody BlogDTO blogEdit,
+			BindingResult bindingResult) throws DtoValidationFailedException, DuplicateEntityException;
 
 
     @ApiOperation(value = "Update Blog", notes = "Updated a Blog entry.", response = Void.class, tags={ "Blog", })
@@ -73,7 +78,8 @@ public interface BlogController {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.PUT)
-    ResponseEntity<?> apiV1BlogPut(@ApiParam(value = "" ,required=true ) @RequestBody BlogDTO blogEdit);
+    ResponseEntity<?> apiV1BlogPut(@ApiParam(value = "" ,required=true ) @RequestBody BlogDTO blogEdit,
+			BindingResult bindingResult) throws DtoValidationFailedException, EntityIsNotExistingException;
 
 
     @ApiOperation(value = "Rewind Blog", notes = "Restores previous Blog entry.", response = Void.class, tags={ "Blog", })
@@ -89,5 +95,5 @@ public interface BlogController {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.PUT)
-    ResponseEntity<?> apiV1BlogRewindPut();
+    ResponseEntity<?> apiV1BlogRewindPut() throws NoVersionFoundException;
 }

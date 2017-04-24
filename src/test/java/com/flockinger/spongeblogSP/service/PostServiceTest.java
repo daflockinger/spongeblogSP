@@ -47,9 +47,9 @@ public class PostServiceTest extends BaseServiceTest {
 		List<PostLink> posts = service.getAllPosts(secondPageDateDescending);
 
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 6l);
-		assertTrue(posts.get(1).getId() == 5l);
-		assertTrue(posts.get(2).getId() == 4l);
+		assertTrue(posts.get(0).getPostId() == 6l);
+		assertTrue(posts.get(1).getPostId() == 5l);
+		assertTrue(posts.get(2).getPostId() == 4l);
 	}
 
 	@Test
@@ -59,11 +59,11 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getAllPostsWithStatus(PostStatus.PUBLIC, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 2l);
-		assertTrue(posts.get(2).getId() == 3l);
-		assertTrue(posts.get(3).getId() == 6l);
-		assertTrue(posts.get(4).getId() == 5l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
+		assertTrue(posts.get(2).getPostId() == 3l);
+		assertTrue(posts.get(3).getPostId() == 6l);
+		assertTrue(posts.get(4).getPostId() == 5l);
 	}
 
 	@Test
@@ -73,9 +73,9 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromCategoryId(1l, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 3l);
-		assertTrue(posts.get(2).getId() == 5l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 3l);
+		assertTrue(posts.get(2).getPostId() == 5l);
 	}
 
 	@Test
@@ -85,8 +85,8 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromCategoryIdWithStatus(2l, PostStatus.PUBLIC, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 2l);
-		assertTrue(posts.get(1).getId() == 6l);
+		assertTrue(posts.get(0).getPostId() == 2l);
+		assertTrue(posts.get(1).getPostId() == 6l);
 	}
 	
 	
@@ -97,8 +97,8 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromTagId(1l, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 2l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
 	}
 
 	@Test
@@ -108,8 +108,8 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromTagIdWithStatus(1l, PostStatus.PUBLIC, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 2l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
 	}
 	
 
@@ -120,11 +120,11 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromAuthorId(1l, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 2l);
-		assertTrue(posts.get(2).getId() == 3l);
-		assertTrue(posts.get(3).getId() == 6l);
-		assertTrue(posts.get(4).getId() == 5l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
+		assertTrue(posts.get(2).getPostId() == 3l);
+		assertTrue(posts.get(3).getPostId() == 6l);
+		assertTrue(posts.get(4).getPostId() == 5l);
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromAuthorIdWithStatus(1l, PostStatus.DELETED, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 4l);
+		assertTrue(posts.get(0).getPostId() == 4l);
 	}
 
 	@Test
@@ -185,7 +185,7 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
 		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
+		Long freshId = service.createPost(freshPost).getPostId();
 
 		PostDTO savedPost = service.getPost(freshId);
 
@@ -227,7 +227,7 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setTags(ImmutableList.of(getTag(3l)));
 		service.updatePost(savedPost);
 
-		PostDTO updatedPost = service.getPost(savedPost.getId());
+		PostDTO updatedPost = service.getPost(savedPost.getPostId());
 
 		assertNotNull(updatedPost);
 		// verifying author
@@ -274,7 +274,7 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		service.createPost(freshPost).getId();
+		service.createPost(freshPost).getPostId();
 		System.out.println();
 	}
 
@@ -311,7 +311,7 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		service.createPost(freshPost).getId();
+		service.createPost(freshPost).getPostId();
 	}
 
 	@Test(expected = DependencyNotFoundException.class)
@@ -348,7 +348,7 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setTags(ImmutableList.of(getTag(154l)));
 
 		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
+		Long freshId = service.createPost(freshPost).getPostId();
 
 		service.getPost(freshId);
 	}
@@ -387,7 +387,7 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setTitle("somethings");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		service.createPost(freshPost).getId();
+		service.createPost(freshPost).getPostId();
 	}
 
 	@Test(expected = DuplicateEntityException.class)
@@ -428,7 +428,7 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(3l)));
 		service.updatePost(savedPost);
 
-		PostDTO updatedPost = service.getPost(savedPost.getId());
+		PostDTO updatedPost = service.getPost(savedPost.getPostId());
 
 		assertNotNull(updatedPost);
 		// verifying author
@@ -452,9 +452,9 @@ public class PostServiceTest extends BaseServiceTest {
 		assertTrue(updatedPost.getTags().stream().anyMatch(tag -> tag.getName().equals("fancy")));
 		assertTrue(updatedPost.getTags().stream().anyMatch(tag -> tag.getName().equals("guide")));
 
-		service.rewind(savedPost.getId());
+		service.rewind(savedPost.getPostId());
 
-		PostDTO rewindPost = service.getPost(savedPost.getId());
+		PostDTO rewindPost = service.getPost(savedPost.getPostId());
 
 		assertNotNull(rewindPost);
 		// verifying author
@@ -493,7 +493,7 @@ public class PostServiceTest extends BaseServiceTest {
 
 	private CategoryDTO getTestCategory(Long id) {
 		CategoryDTO cat = new CategoryDTO();
-		cat.setId(id);
+		cat.setCategoryId(id);
 		return cat;
 	}
 

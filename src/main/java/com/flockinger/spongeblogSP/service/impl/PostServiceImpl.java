@@ -130,8 +130,8 @@ public class PostServiceImpl implements PostService {
 			throw getDependencyException("User", user.getId());
 		}
 		CategoryDTO category = post.getCategory();
-		if (category != null && !categoryDao.exists(category.getId())) {
-			throw getDependencyException("Category", category.getId());
+		if (category != null && !categoryDao.exists(category.getCategoryId())) {
+			throw getDependencyException("Category", category.getCategoryId());
 		}
 		List<TagDTO> tags = post.getTags();
 		Optional<TagDTO> nonExistingTag = tags.stream().filter(tag -> !tagDao.exists(tag.getId())).findAny();
@@ -148,7 +148,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void updatePost(PostDTO post)
 			throws EntityIsNotExistingException, DuplicateEntityException, DependencyNotFoundException {
-		if (!isPostExisting(post.getId())) {
+		if (!isPostExisting(post.getPostId())) {
 			throw new EntityIsNotExistingException("Post");
 		}
 		if (isNewNameDuplicate(post)) {
@@ -165,7 +165,7 @@ public class PostServiceImpl implements PostService {
 
 	private boolean isNewNameDuplicate(PostDTO post) {
 		Post savedPost = dao.findByTitle(post.getTitle());
-		return savedPost != null && post.getId() != savedPost.getId();
+		return savedPost != null && post.getPostId() != savedPost.getId();
 	}
 
 	// FIXME change that in set delete flag only!!!

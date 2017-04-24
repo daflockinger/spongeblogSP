@@ -2,44 +2,48 @@ package com.flockinger.spongeblogSP.dto;
 
 import java.util.Objects;
 
-import com.google.gson.annotations.SerializedName;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.hateoas.ResourceSupport;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * CategoryDTO
  */
-public class CategoryDTO {
+public class CategoryDTO extends ResourceSupport {
 
-	@SerializedName("id")
-	private Long id = null;
+	@JsonProperty("categoryId")
+	private Long categoryId = null;
 
-	@SerializedName("name")
+	@JsonProperty("name")
+	@NotEmpty
 	private String name = null;
 
-	@SerializedName("parentId")
+	@JsonProperty("parentId")
 	private Long parentId = null;
 
-	@SerializedName("rank")
+	@JsonProperty("rank")
 	private Integer rank = null;
 
-	public CategoryDTO id(Long id) {
-		this.id = id;
+	public CategoryDTO categoryId(Long categoryId) {
+		this.categoryId = categoryId;
 		return this;
 	}
 
 	/**
 	 * Unique identifier.
 	 * 
-	 * @return id
+	 * @return categoryId
 	 **/
-	@ApiModelProperty(example = "null", value = "Unique identifier.")
-	public Long getId() {
-		return id;
+	@ApiModelProperty(value = "Unique identifier.")
+	public Long getCategoryId() {
+		return categoryId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	public CategoryDTO name(String name) {
@@ -52,7 +56,7 @@ public class CategoryDTO {
 	 * 
 	 * @return name
 	 **/
-	@ApiModelProperty(example = "null", value = "Category display name.")
+	@ApiModelProperty(value = "Category display name.")
 	public String getName() {
 		return name;
 	}
@@ -71,7 +75,7 @@ public class CategoryDTO {
 	 * 
 	 * @return parentId
 	 **/
-	@ApiModelProperty(example = "null", value = "Id of parent Category.")
+	@ApiModelProperty(value = "Id of parent Category.")
 	public Long getParentId() {
 		return parentId;
 	}
@@ -90,7 +94,7 @@ public class CategoryDTO {
 	 * 
 	 * @return rank
 	 **/
-	@ApiModelProperty(example = "null", value = "Determines position of Category.")
+	@ApiModelProperty(value = "Determines position of Category.")
 	public Integer getRank() {
 		return rank;
 	}
@@ -108,13 +112,13 @@ public class CategoryDTO {
 			return false;
 		}
 		CategoryDTO categoryDTO = (CategoryDTO) o;
-		return Objects.equals(this.id, categoryDTO.id) && Objects.equals(this.name, categoryDTO.name)
+		return Objects.equals(this.categoryId, categoryDTO.categoryId) && Objects.equals(this.name, categoryDTO.name)
 				&& Objects.equals(this.parentId, categoryDTO.parentId) && Objects.equals(this.rank, categoryDTO.rank);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, parentId, rank);
+		return Objects.hash(categoryId, name, parentId, rank);
 	}
 
 	@Override
@@ -122,7 +126,7 @@ public class CategoryDTO {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class CategoryDTO {\n");
 
-		sb.append("    id: ").append(toIndentedString(id)).append("\n");
+		sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
 		sb.append("    name: ").append(toIndentedString(name)).append("\n");
 		sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
 		sb.append("    rank: ").append(toIndentedString(rank)).append("\n");
@@ -140,5 +144,4 @@ public class CategoryDTO {
 		}
 		return o.toString().replace("\n", "\n    ");
 	}
-
 }

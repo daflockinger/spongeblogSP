@@ -1,24 +1,25 @@
 package com.flockinger.spongeblogSP.dto;
 
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-import com.google.gson.annotations.SerializedName;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Error
  */
-public class Error {
-  @SerializedName("code")
+public class Error   {
+  @JsonProperty("code")
   private Integer code = null;
 
-  @SerializedName("message")
+  @JsonProperty("message")
   private String message = null;
 
-  @SerializedName("fields")
-  private String fields = null;
+  @JsonProperty("fields")
+  private Map<String, String> fields = new HashMap<String, String>();
 
   public Error code(Integer code) {
     this.code = code;
@@ -29,7 +30,7 @@ public class Error {
    * Get code
    * @return code
   **/
-  @ApiModelProperty(example = "null", value = "")
+  @ApiModelProperty(value = "")
   public Integer getCode() {
     return code;
   }
@@ -47,7 +48,7 @@ public class Error {
    * Get message
    * @return message
   **/
-  @ApiModelProperty(example = "null", value = "")
+  @ApiModelProperty(value = "")
   public String getMessage() {
     return message;
   }
@@ -56,21 +57,26 @@ public class Error {
     this.message = message;
   }
 
-  public Error fields(String fields) {
+  public Error fields(Map<String, String> fields) {
     this.fields = fields;
     return this;
   }
 
+  public Error putFieldsItem(String key, String fieldsItem) {
+    this.fields.put(key, fieldsItem);
+    return this;
+  }
+
    /**
-   * Get fields
+   * Invalid fields.
    * @return fields
   **/
-  @ApiModelProperty(example = "null", value = "")
-  public String getFields() {
+  @ApiModelProperty(value = "Invalid fields.")
+  public Map<String, String> getFields() {
     return fields;
   }
 
-  public void setFields(String fields) {
+  public void setFields(Map<String, String> fields) {
     this.fields = fields;
   }
 
@@ -94,7 +100,6 @@ public class Error {
     return Objects.hash(code, message, fields);
   }
 
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -117,6 +122,4 @@ public class Error {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
 }
-

@@ -66,6 +66,12 @@ public class BlogServiceTest extends BaseServiceTest {
 		savedBlog.setStatus(BlogStatus.ACTIVE);
 		savedBlog.setSettings(ImmutableMap.of("text-color", "black", "background-image", "enterprise.jpg"));
 		service.updateBlog(savedBlog);
+		
+		BlogDTO updatedBlog = service.getBlog();
+		assertEquals("Hyper-Space blog",updatedBlog.getName());
+		assertEquals(BlogStatus.ACTIVE,updatedBlog.getStatus());
+		assertThat(savedBlog.getSettings())
+		.containsAllEntriesOf(ImmutableMap.of("text-color", "black", "background-image", "enterprise.jpg"));
 	}
 
 	@Test
