@@ -152,7 +152,7 @@ public class PostServiceTest extends BaseServiceTest {
 		UserInfoDTO user = post.getAuthor();
 		assertNotNull(user);
 		assertEquals("flo@kinger.cc", user.getEmail());
-		assertTrue(user.getId() == 1l);
+		assertTrue(user.getUserId() == 1l);
 		assertEquals("daflo", user.getNickName());
 		assertNotNull(user.getRegistered());
 
@@ -486,7 +486,7 @@ public class PostServiceTest extends BaseServiceTest {
 
 	private TagDTO getTag(Long id) {
 		TagDTO tag = new TagDTO();
-		tag.setId(id);
+		tag.setTagId(id);
 
 		return tag;
 	}
@@ -499,7 +499,7 @@ public class PostServiceTest extends BaseServiceTest {
 
 	private UserInfoDTO getTestUser(Long id) {
 		UserInfoDTO user = new UserInfoDTO();
-		user.setId(id);
+		user.setUserId(id);
 		return user;
 	}
 

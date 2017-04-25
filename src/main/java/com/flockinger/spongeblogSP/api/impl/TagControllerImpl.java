@@ -1,9 +1,19 @@
 package com.flockinger.spongeblogSP.api.impl;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,39 +21,86 @@ import org.springframework.web.bind.annotation.RestController;
 import com.flockinger.spongeblogSP.api.TagController;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.TagPostsDTO;
+import com.flockinger.spongeblogSP.dto.link.PostLink;
+import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
+import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
+import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
+import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
+import com.flockinger.spongeblogSP.service.TagService;
 
 import io.swagger.annotations.*;
 
 @RestController
 public class TagControllerImpl implements TagController {
 
-    public ResponseEntity<?> apiV1TagsGet() {
-        // do some magic!
-        return new ResponseEntity<List<TagDTO>>(HttpStatus.OK);
-    }
+	@Autowired
+	private TagService service;
 
-    public ResponseEntity<?> apiV1TagsPost(@ApiParam(value = "" ,required=true ) @RequestBody TagDTO tagEdit) {
-        // do some magic!
-        return new ResponseEntity<TagDTO>(HttpStatus.OK);
-    }
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	public ResponseEntity<?> apiV1TagsGet() {
 
-    public ResponseEntity<?> apiV1TagsPut(@ApiParam(value = "" ,required=true ) @RequestBody TagDTO tagEdit) {
-        // do some magic!
-        return new ResponseEntity<Void>(HttpStatus.OK);
-    }
+		List<TagDTO> tags = service.getAllTags();
+		tags.forEach(tag -> addSelfLink(tag));
+		return new ResponseEntity<List<TagDTO>>(tags, HttpStatus.OK);
+	}
 
-    public ResponseEntity<?> apiV1TagsRewindTagIdPut(@ApiParam(value = "Unique identifier of a Tag;",required=true ) @PathVariable("tagId") Long tagId) {
-        // do some magic!
-        return new ResponseEntity<Void>(HttpStatus.OK);
-    }
+	public ResponseEntity<?> apiV1TagsPost(@ApiParam(value = "", required = true) @Valid @RequestBody TagDTO tagEdit, 
+			BindingResult bindingResult) throws DuplicateEntityException, DtoValidationFailedException {
+		
+		validateRequestBody(bindingResult);
+		TagDTO tag = service.createTag(tagEdit.getName());
+		return new ResponseEntity<TagDTO>(addSelfLink(tag), HttpStatus.CREATED);
+	}
 
-    public ResponseEntity<?> apiV1TagsTagIdDelete(@ApiParam(value = "Unique identifier of a Tag;",required=true ) @PathVariable("tagId") Long tagId) {
-        // do some magic!
-        return new ResponseEntity<Void>(HttpStatus.OK);
-    }
+	public ResponseEntity<?> apiV1TagsPut(@ApiParam(value = "", required = true) @Valid @RequestBody TagDTO tagEdit, 
+			BindingResult bindingResult) throws EntityIsNotExistingException, DtoValidationFailedException, DuplicateEntityException {
 
-    public ResponseEntity<?> apiV1TagsTagIdGet(@ApiParam(value = "Unique identifier of a Tag;",required=true ) @PathVariable("tagId") Long tagId) {
-        // do some magic!
-        return new ResponseEntity<TagPostsDTO>(HttpStatus.OK);
-    }
+		validateRequestBody(bindingResult);
+		assertIdForUpdate(tagEdit.getTagId());
+		service.updateTag(tagEdit);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	public ResponseEntity<?> apiV1TagsRewindTagIdPut(
+			@ApiParam(value = "Unique identifier of a Tag;", required = true) @PathVariable("tagId") Long tagId) throws NoVersionFoundException {
+		
+		service.rewind(tagId);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	public ResponseEntity<?> apiV1TagsTagIdDelete(
+			@ApiParam(value = "Unique identifier of a Tag;", required = true) @PathVariable("tagId") Long tagId) throws EntityIsNotExistingException {
+		service.deleteTag(tagId);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	public ResponseEntity<?> apiV1TagsTagIdGet(
+			@ApiParam(value = "Unique identifier of a Tag;", required = true) @PathVariable("tagId") Long tagId)
+			throws EntityIsNotExistingException {
+
+		TagDTO tag = service.getTag(tagId);
+		return new ResponseEntity<TagDTO>(addSelfLink(tag), HttpStatus.OK);
+	}
+	
+	private TagDTO addSelfLink(TagDTO tag) {
+		try {
+			tag.add(linkTo(methodOn(TagControllerImpl.class).apiV1TagsTagIdGet(tag.getTagId())).withSelfRel());
+		} catch (EntityIsNotExistingException e) {
+			logger.error("Not found after Persisting. Should not happen.");
+		}
+		return tag;
+	}
+	
+	private void assertIdForUpdate(Long id) throws DtoValidationFailedException{
+		if(id == null){
+			throw new DtoValidationFailedException("Id must not be null on update!", new ArrayList<>());
+		}
+	}
+	
+	private void validateRequestBody(BindingResult bindingResult) throws DtoValidationFailedException {
+		if (bindingResult.hasErrors()) {
+			throw new DtoValidationFailedException("Invalid field entries!", bindingResult.getFieldErrors());
+		}
+	}
 }

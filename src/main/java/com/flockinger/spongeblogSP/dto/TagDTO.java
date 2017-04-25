@@ -2,36 +2,40 @@ package com.flockinger.spongeblogSP.dto;
 
 import java.util.Objects;
 
-import com.google.gson.annotations.SerializedName;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.hateoas.ResourceSupport;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
-
 /**
  * TagDTO
  */
-public class TagDTO {
-  @SerializedName("id")
-  private Long id = null;
 
-  @SerializedName("name")
+public class TagDTO  extends ResourceSupport {
+  @JsonProperty("tagId")
+  private Long tagId = null;
+
+  @JsonProperty("name")
+  @NotEmpty
   private String name = null;
 
-  public TagDTO id(Long id) {
-    this.id = id;
+  public TagDTO tagId(Long tagId) {
+    this.tagId = tagId;
     return this;
   }
 
    /**
    * Unique identifier.
-   * @return id
+   * @return tagId
   **/
-  @ApiModelProperty(example = "null", value = "Unique identifier.")
-  public Long getId() {
-    return id;
+  @ApiModelProperty(value = "Unique identifier.")
+  public Long getTagId() {
+    return tagId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setTagId(Long tagId) {
+    this.tagId = tagId;
   }
 
   public TagDTO name(String name) {
@@ -43,7 +47,7 @@ public class TagDTO {
    * Tag name.
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Tag name.")
+  @ApiModelProperty(value = "Tag name.")
   public String getName() {
     return name;
   }
@@ -62,22 +66,21 @@ public class TagDTO {
       return false;
     }
     TagDTO tagDTO = (TagDTO) o;
-    return Objects.equals(this.id, tagDTO.id) &&
+    return Objects.equals(this.tagId, tagDTO.tagId) &&
         Objects.equals(this.name, tagDTO.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name);
+    return Objects.hash(tagId, name);
   }
-
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TagDTO {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    tagId: ").append(toIndentedString(tagId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -93,6 +96,4 @@ public class TagDTO {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
 }
-

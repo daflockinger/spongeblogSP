@@ -16,7 +16,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import com.flockinger.spongeblogSP.dao.TagDAO;
 import com.flockinger.spongeblogSP.dto.TagDTO;
-import com.flockinger.spongeblogSP.dto.TagPostsDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
@@ -60,9 +59,9 @@ public class TagServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateTag_withValidName_shouldWork() throws DuplicateEntityException, EntityIsNotExistingException {
 		String tagName = "ordinary";
-		Long newTagId = service.createTag(tagName).getId();
+		Long newTagId = service.createTag(tagName).getTagId();
 
-		TagPostsDTO newTag = service.getTag(newTagId);
+		TagDTO newTag = service.getTag(newTagId);
 
 		assertNotNull(newTag);
 		assertEquals("ordinary", newTag.getName());
@@ -73,11 +72,11 @@ public class TagServiceTest extends BaseServiceTest {
 	public void testUpdateTag_withValidName_shouldWork() throws DuplicateEntityException, EntityIsNotExistingException {
 
 		TagDTO savedTag = new TagDTO();
-		savedTag.setId(1l);
+		savedTag.setTagId(1l);
 		savedTag.setName("new better name");
 		service.updateTag(savedTag);
 
-		TagPostsDTO updatedTag = service.getTag(1l);
+		TagDTO updatedTag = service.getTag(1l);
 
 		assertNotNull(updatedTag);
 		assertEquals("new better name", updatedTag.getName());
@@ -109,12 +108,12 @@ public class TagServiceTest extends BaseServiceTest {
 		service.createTag(tooLoonTag.toString());
 	}
 
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test(expected = DuplicateEntityException.class)
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdateTag_withAlreadyExistingName_shouldThrowException()
 			throws DuplicateEntityException, EntityIsNotExistingException {
 		TagDTO savedTag = new TagDTO();
-		savedTag.setId(2l);
+		savedTag.setTagId(2l);
 		savedTag.setName("guide");
 		service.updateTag(savedTag);
 	}
@@ -129,18 +128,18 @@ public class TagServiceTest extends BaseServiceTest {
 	@FlywayTest(invokeCleanDB=true)
 	public void testRewind_withExistingPrevVersion_shouldRewind()
 			throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
-		Long id = service.createTag("guide").getId();
+		Long id = service.createTag("guide").getTagId();
 		
 		TagDTO tagToUpdate = new TagDTO();
-		tagToUpdate.setId(id);
+		tagToUpdate.setTagId(id);
 		tagToUpdate.setName("fancy guide");
 		service.updateTag(tagToUpdate);
-		TagPostsDTO updatedTag = service.getTag(id);
+		TagDTO updatedTag = service.getTag(id);
 		assertEquals("fancy guide",updatedTag.getName());
 		
 		
 		service.rewind(id);
-		TagPostsDTO rewindTag = service.getTag(id);
+		TagDTO rewindTag = service.getTag(id);
 		assertEquals("guide",rewindTag.getName());
 	}
 

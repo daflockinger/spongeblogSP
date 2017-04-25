@@ -1,43 +1,45 @@
 package com.flockinger.spongeblogSP.dto;
 
+
 import java.util.Objects;
 
-import com.google.gson.annotations.SerializedName;
+import org.springframework.hateoas.ResourceSupport;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
-
 /**
  * UserInfoDTO
  */
-public class UserInfoDTO {
-  @SerializedName("id")
-  private Long id = null;
+public class UserInfoDTO  extends ResourceSupport {
+  @JsonProperty("userId")
+  private Long userId = null;
 
-  @SerializedName("nickName")
+  @JsonProperty("nickName")
   private String nickName = null;
 
-  @SerializedName("email")
+  @JsonProperty("email")
   private String email = null;
 
-  @SerializedName("registered")
+  @JsonProperty("registered")
   private Long registered = null;
 
-  public UserInfoDTO id(Long id) {
-    this.id = id;
+  public UserInfoDTO userId(Long userId) {
+    this.userId = userId;
     return this;
   }
 
    /**
    * Unique identifier.
-   * @return id
+   * @return userId
   **/
-  @ApiModelProperty(example = "null", value = "Unique identifier.")
-  public Long getId() {
-    return id;
+  @ApiModelProperty(value = "Unique identifier.")
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public UserInfoDTO nickName(String nickName) {
@@ -49,7 +51,7 @@ public class UserInfoDTO {
    * Display nickname of the User.
    * @return nickName
   **/
-  @ApiModelProperty(example = "null", value = "Display nickname of the User.")
+  @ApiModelProperty(value = "Display nickname of the User.")
   public String getNickName() {
     return nickName;
   }
@@ -67,7 +69,7 @@ public class UserInfoDTO {
    * Email of User.
    * @return email
   **/
-  @ApiModelProperty(example = "null", value = "Email of User.")
+  @ApiModelProperty(value = "Email of User.")
   public String getEmail() {
     return email;
   }
@@ -85,7 +87,7 @@ public class UserInfoDTO {
    * Registration date of User in long.
    * @return registered
   **/
-  @ApiModelProperty(example = "null", value = "Registration date of User in long.")
+  @ApiModelProperty(value = "Registration date of User in long.")
   public Long getRegistered() {
     return registered;
   }
@@ -104,7 +106,7 @@ public class UserInfoDTO {
       return false;
     }
     UserInfoDTO userInfoDTO = (UserInfoDTO) o;
-    return Objects.equals(this.id, userInfoDTO.id) &&
+    return Objects.equals(this.userId, userInfoDTO.userId) &&
         Objects.equals(this.nickName, userInfoDTO.nickName) &&
         Objects.equals(this.email, userInfoDTO.email) &&
         Objects.equals(this.registered, userInfoDTO.registered);
@@ -112,16 +114,15 @@ public class UserInfoDTO {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, nickName, email, registered);
+    return Objects.hash(userId, nickName, email, registered);
   }
-
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserInfoDTO {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    nickName: ").append(toIndentedString(nickName)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    registered: ").append(toIndentedString(registered)).append("\n");
@@ -139,6 +140,4 @@ public class UserInfoDTO {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
 }
-

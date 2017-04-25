@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
+import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
@@ -43,6 +44,23 @@ public class UserServiceTest extends BaseServiceTest {
 	public void testGetUser_withNotExistingId_shouldThrowNotFoundException() throws EntityIsNotExistingException {
 		service.getUser(12345l);
 	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testGetUserInfo_withValidId_shouldReturnUser() throws EntityIsNotExistingException {
+		UserInfoDTO user = service.getUserInfo(1l);
+
+		assertNotNull(user);
+		assertEquals("daflo", user.getNickName());
+		assertNotNull(user.getRegistered());
+		assertEquals("flo@kinger.cc", user.getEmail());
+	}
+
+	@Test(expected = EntityIsNotExistingException.class)
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testGetUserInfo_withNotExistingId_shouldThrowNotFoundException() throws EntityIsNotExistingException {
+		service.getUserInfo(12345l);
+	}
 
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
@@ -66,7 +84,7 @@ public class UserServiceTest extends BaseServiceTest {
 		newUser.setPassword("supersecret123");
 		newUser.setEmail("sep@bla.cc");
 
-		Long savedId = service.createUser(newUser).getId();
+		Long savedId = service.createUser(newUser).getUserId();
 
 		UserEditDTO savedUser = service.getUser(savedId);
 
@@ -191,7 +209,7 @@ public class UserServiceTest extends BaseServiceTest {
 		return loginName.toString();
 	}
 
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test(expected = DuplicateEntityException.class)
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdateUser_withOtherExistingLoginName_shouldThrowIntegrityException()
 			throws EntityIsNotExistingException, DuplicateEntityException {

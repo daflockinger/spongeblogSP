@@ -1,7 +1,5 @@
 package com.flockinger.spongeblogSP.api;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,15 +8,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.flockinger.spongeblogSP.dto.Error;
 import com.flockinger.spongeblogSP.dto.PostDTO;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
-import com.flockinger.spongeblogSP.dto.Error;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 
 public interface PostController {

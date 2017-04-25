@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,12 +52,12 @@ public class TagServiceImpl implements TagService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public TagPostsDTO getTag(Long id) throws EntityIsNotExistingException {
+	public TagDTO getTag(Long id) throws EntityIsNotExistingException {
 		if (!dao.exists(id)) {
 			throw new EntityIsNotExistingException("Tag");
 		}
 		Tag tag = dao.findOne(id);
-		return mapToPostDto(tag);
+		return map(tag);
 	}
 
 	@Override
@@ -78,12 +79,20 @@ public class TagServiceImpl implements TagService {
 
 	@Override
 	@Transactional
-	public void updateTag(TagDTO tag) throws EntityIsNotExistingException {
-		if (!dao.exists(tag.getId())) {
+	public void updateTag(TagDTO tag) throws EntityIsNotExistingException, DuplicateEntityException {
+		if (!dao.exists(tag.getTagId())) {
 			throw new EntityIsNotExistingException("Tag");
+		}
+		if(isTagExistingWithOtherId(tag)){
+			throw new DuplicateEntityException("Tag");
 		}
 
 		dao.save(map(tag));
+	}
+	
+	private boolean isTagExistingWithOtherId(TagDTO toUpdateTag) {
+		Tag tag =dao.findByName(toUpdateTag.getName());
+		return tag != null && tag.getId() != toUpdateTag.getTagId();
 	}
 
 	@Override
@@ -107,10 +116,6 @@ public class TagServiceImpl implements TagService {
 	@Override
 	public void rewind(Long id) throws NoVersionFoundException {
 		versionService.rewind(id, dao);
-	}
-
-	private TagPostsDTO mapToPostDto(Tag tag) {
-		return mapper.map(tag, TagPostsDTO.class);
 	}
 
 	private Tag map(TagDTO tagDto) {

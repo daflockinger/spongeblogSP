@@ -1228,6 +1228,37 @@ paths:
             $ref: '#/definitions/Error'
         500:
           description: Internal Server Error.
+  /api/v1/users/info/{userId}:
+    get:
+      summary: Get User info
+      description: Fetches User info with defined Id.
+      parameters:
+        - $ref: '#/parameters/IdUser'
+      tags: 
+        - Users
+      responses:
+        200:
+          description: User info with id.
+          schema:
+            $ref: '#/definitions/UserInfoDTO'
+        400:
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized (need to log in / get token).
+        403:
+          description: Forbidden (no rights to access resource).
+        404:
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Internal Server Error.
   /api/v1/users/rewind/{userId}:
     put:
       summary: Rewind User

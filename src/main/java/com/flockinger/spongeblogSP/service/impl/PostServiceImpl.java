@@ -126,18 +126,18 @@ public class PostServiceImpl implements PostService {
 
 	private void checkDependencies(PostDTO post) throws DependencyNotFoundException {
 		UserInfoDTO user = post.getAuthor();
-		if (user != null && !userDao.exists(user.getId())) {
-			throw getDependencyException("User", user.getId());
+		if (user != null && !userDao.exists(user.getUserId())) {
+			throw getDependencyException("User", user.getUserId());
 		}
 		CategoryDTO category = post.getCategory();
 		if (category != null && !categoryDao.exists(category.getCategoryId())) {
 			throw getDependencyException("Category", category.getCategoryId());
 		}
 		List<TagDTO> tags = post.getTags();
-		Optional<TagDTO> nonExistingTag = tags.stream().filter(tag -> !tagDao.exists(tag.getId())).findAny();
+		Optional<TagDTO> nonExistingTag = tags.stream().filter(tag -> !tagDao.exists(tag.getTagId())).findAny();
 
 		if (nonExistingTag.isPresent()) {
-			throw getDependencyException("Tag", nonExistingTag.get().getId());
+			throw getDependencyException("Tag", nonExistingTag.get().getTagId());
 		}
 	}
 

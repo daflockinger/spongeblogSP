@@ -976,7 +976,7 @@ public class PostControllerTest extends BaseControllerTest{
 	
 	private TagDTO getTag(Long id) {
 		TagDTO tag = new TagDTO();
-		tag.setId(id);
+		tag.setTagId(id);
 
 		return tag;
 	}
@@ -989,7 +989,7 @@ public class PostControllerTest extends BaseControllerTest{
 
 	private UserInfoDTO getTestUser(Long id) {
 		UserInfoDTO user = new UserInfoDTO();
-		user.setId(id);
+		user.setUserId(id);
 		return user;
 	}
 }

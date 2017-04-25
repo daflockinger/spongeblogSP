@@ -1,79 +1,73 @@
 package com.flockinger.spongeblogSP.dto;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.gson.annotations.SerializedName;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.hateoas.ResourceSupport;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.flockinger.spongeblogSP.model.enums.UserRole;
 
 import io.swagger.annotations.ApiModelProperty;
-
 /**
  * UserEditDTO
  */
-public class UserEditDTO {
-  @SerializedName("id")
-  private Long id = null;
 
-  @SerializedName("login")
+public class UserEditDTO  extends ResourceSupport {
+  @JsonProperty("userId")
+  private Long userId = null;
+
+  @JsonProperty("login")
+  @NotEmpty
   private String login = null;
 
-  @SerializedName("password")
+  @JsonProperty("password")
+  @Length(min=6)
   private String password = null;
 
-  @SerializedName("nickName")
+  @JsonProperty("nickName")
+  @NotEmpty
   private String nickName = null;
 
-  @SerializedName("email")
+  @JsonProperty("email")
+  @NotEmpty
+  @Email
   private String email = null;
 
-  @SerializedName("registered")
+  @JsonProperty("registered")
+  @NotNull
+  @Min(0)
   private Long registered = null;
 
-  /**
-   * Gets or Sets roles
-   */
-  public enum RolesEnum {
-    @SerializedName("ADMIN")
-    ADMIN("ADMIN"),
-    
-    @SerializedName("AUTHOR")
-    AUTHOR("AUTHOR"),
-    
-    @SerializedName("LOCKED")
-    LOCKED("LOCKED");
 
-    private String value;
+  @JsonProperty("roles")
+  private List<UserRole> roles = new ArrayList<UserRole>();
 
-    RolesEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-  }
-
-  @SerializedName("roles")
-  private List<RolesEnum> roles = new ArrayList<RolesEnum>();
-
-  public UserEditDTO id(Long id) {
-    this.id = id;
+  public UserEditDTO userId(Long userId) {
+    this.userId = userId;
     return this;
   }
 
    /**
    * Unique identifier.
-   * @return id
+   * @return userId
   **/
-  @ApiModelProperty(example = "null", value = "Unique identifier.")
-  public Long getId() {
-    return id;
+  @ApiModelProperty(value = "Unique identifier.")
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public UserEditDTO login(String login) {
@@ -85,7 +79,7 @@ public class UserEditDTO {
    * Login name of the User.
    * @return login
   **/
-  @ApiModelProperty(example = "null", value = "Login name of the User.")
+  @ApiModelProperty(value = "Login name of the User.")
   public String getLogin() {
     return login;
   }
@@ -103,7 +97,7 @@ public class UserEditDTO {
    * Password hash of the User.
    * @return password
   **/
-  @ApiModelProperty(example = "null", value = "Password hash of the User.")
+  @ApiModelProperty(value = "Password hash of the User.")
   public String getPassword() {
     return password;
   }
@@ -121,7 +115,7 @@ public class UserEditDTO {
    * Display nickname of the User.
    * @return nickName
   **/
-  @ApiModelProperty(example = "null", value = "Display nickname of the User.")
+  @ApiModelProperty(value = "Display nickname of the User.")
   public String getNickName() {
     return nickName;
   }
@@ -139,7 +133,7 @@ public class UserEditDTO {
    * Email of User.
    * @return email
   **/
-  @ApiModelProperty(example = "null", value = "Email of User.")
+  @ApiModelProperty(value = "Email of User.")
   public String getEmail() {
     return email;
   }
@@ -157,7 +151,7 @@ public class UserEditDTO {
    * Registration date of User in long.
    * @return registered
   **/
-  @ApiModelProperty(example = "null", value = "Registration date of User in long.")
+  @ApiModelProperty(value = "Registration date of User in long.")
   public Long getRegistered() {
     return registered;
   }
@@ -166,12 +160,12 @@ public class UserEditDTO {
     this.registered = registered;
   }
 
-  public UserEditDTO roles(List<RolesEnum> roles) {
+  public UserEditDTO roles(List<UserRole> roles) {
     this.roles = roles;
     return this;
   }
 
-  public UserEditDTO addRolesItem(RolesEnum rolesItem) {
+  public UserEditDTO addRolesItem(UserRole rolesItem) {
     this.roles.add(rolesItem);
     return this;
   }
@@ -180,12 +174,12 @@ public class UserEditDTO {
    * Roles of the User (authorizations).
    * @return roles
   **/
-  @ApiModelProperty(example = "null", value = "Roles of the User (authorizations).")
-  public List<RolesEnum> getRoles() {
+  @ApiModelProperty(value = "Roles of the User (authorizations).")
+  public List<UserRole> getRoles() {
     return roles;
   }
 
-  public void setRoles(List<RolesEnum> roles) {
+  public void setRoles(List<UserRole> roles) {
     this.roles = roles;
   }
 
@@ -199,7 +193,7 @@ public class UserEditDTO {
       return false;
     }
     UserEditDTO userEditDTO = (UserEditDTO) o;
-    return Objects.equals(this.id, userEditDTO.id) &&
+    return Objects.equals(this.userId, userEditDTO.userId) &&
         Objects.equals(this.login, userEditDTO.login) &&
         Objects.equals(this.password, userEditDTO.password) &&
         Objects.equals(this.nickName, userEditDTO.nickName) &&
@@ -210,16 +204,15 @@ public class UserEditDTO {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, login, password, nickName, email, registered, roles);
+    return Objects.hash(userId, login, password, nickName, email, registered, roles);
   }
-
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserEditDTO {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    login: ").append(toIndentedString(login)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    nickName: ").append(toIndentedString(nickName)).append("\n");
@@ -240,6 +233,5 @@ public class UserEditDTO {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
 }
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import com.flockinger.spongeblogSP.dto.BlogAuthority;
 import com.flockinger.spongeblogSP.dto.BlogUserDetails;
 import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
+import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
@@ -66,6 +68,15 @@ public class UserServiceImpl implements UserService {
 			throw new EntityIsNotExistingException("User with ID " + id);
 		}
 	}
+	
+	@Override
+	public UserInfoDTO getUserInfo(Long id) throws EntityIsNotExistingException {
+		if (dao.exists(id)) {
+			return mapInfo(dao.findOne(id));
+		} else {
+			throw new EntityIsNotExistingException("User with ID " + id);
+		}
+	}
 
 	@Override
 	@Transactional(readOnly = true)
@@ -96,12 +107,20 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	@CacheEvict(value="users",allEntries=true)
-	public void updateUser(UserEditDTO user) throws EntityIsNotExistingException {
-		if (!dao.exists(user.getId())) {
+	public void updateUser(UserEditDTO user) throws EntityIsNotExistingException, DuplicateEntityException {
+		if (!dao.exists(user.getUserId())) {
 			throw new EntityIsNotExistingException("User");
 		} 
+		if(isLoginDuplicate(user)){
+			throw new DuplicateEntityException("User " + user.getLogin());
+		}
 		
 		dao.save(map(user));
+	}
+	
+	private boolean isLoginDuplicate(UserEditDTO updatedUser) {
+		User user = dao.findByLogin(updatedUser.getLogin());
+		return user != null && user.getId() != updatedUser.getUserId();
 	}
 
 	@Override
@@ -163,5 +182,9 @@ public class UserServiceImpl implements UserService {
 
 	private UserEditDTO map(User user) {
 		return mapper.map(user, UserEditDTO.class);
+	}
+
+	private UserInfoDTO mapInfo(User user) {
+		return mapper.map(user, UserInfoDTO.class);
 	}
 }

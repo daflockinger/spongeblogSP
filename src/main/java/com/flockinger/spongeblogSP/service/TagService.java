@@ -11,11 +11,11 @@ public interface TagService extends Versionable{
 	
 	List<TagDTO> getAllTags();
 	
-	TagPostsDTO getTag(Long id) throws EntityIsNotExistingException;
+	TagDTO getTag(Long id) throws EntityIsNotExistingException;
 	
 	TagDTO createTag(String name) throws DuplicateEntityException;
 	
-	void updateTag(TagDTO tag) throws EntityIsNotExistingException;
+	void updateTag(TagDTO tag) throws EntityIsNotExistingException, DuplicateEntityException;
 	
 	void deleteTag(Long id) throws EntityIsNotExistingException;
 }
