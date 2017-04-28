@@ -1,6 +1,5 @@
 package com.flockinger.spongeblogSP.service.impl;
 
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,67 +15,69 @@ import com.flockinger.spongeblogSP.service.BlogService;
 import com.flockinger.spongeblogSP.service.VersioningService;
 
 @Service
-public class BlogServiceImpl implements BlogService{
+public class BlogServiceImpl implements BlogService {
 
 	@Autowired
 	private BlogDAO dao;
-	
+
 	@Autowired
 	private ModelMapper mapper;
-	
+
 	@Autowired
-	private VersioningService<Blog,BlogDAO> versionService;
-	
+	private VersioningService<Blog, BlogDAO> versionService;
+
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public BlogDTO getBlog() throws EntityIsNotExistingException {
-		if(!isAnyBlogExistingAlready()){
+		if (!isAnyBlogExistingAlready()) {
 			throw new EntityIsNotExistingException("Blog");
 		}
-		return map(dao.findAll().iterator().next());
+		return map(fetchBlog());
 	}
 
-	private boolean isAnyBlogExistingAlready(){
+	private boolean isAnyBlogExistingAlready() {
 		return dao.findAll().iterator().hasNext();
 	}
-	
+
+	private Blog fetchBlog() {
+		return dao.findAll().iterator().next();
+	}
+
 	@Override
 	@Transactional
 	public BlogDTO createBlog(BlogDTO blog) throws DuplicateEntityException {
-		if(isAnyBlogExistingAlready()){
+		if (isAnyBlogExistingAlready()) {
 			throw new DuplicateEntityException("Blog");
 		}
-		
+
 		return map(dao.save(map(blog)));
-	}
-	
-	@Override
-	@Transactional
-	public void updateBlog(BlogDTO blog) throws EntityIsNotExistingException {
-		if(!isBlogExisting(blog.getId())){
-			throw new EntityIsNotExistingException("Blog");
-		}
-		dao.save(map(blog));
-	}
-	
-	private boolean isBlogExisting(Long id){
-		return dao.findOne(id) != null;
 	}
 
 	@Override
 	@Transactional
-	public void deleteBlog(Long id) throws EntityIsNotExistingException {
-		if(!isBlogExisting(id)){
+	public void updateBlog(BlogDTO blog) {
+		Blog toUpdateBlog = map(blog);
+		toUpdateBlog.setId(fetchBlog().getId());
+
+		dao.save(toUpdateBlog);
+	}
+
+	@Override
+	@Transactional
+	public void deleteBlog() throws EntityIsNotExistingException {
+		if (!isAnyBlogExistingAlready()) {
 			throw new EntityIsNotExistingException("Blog");
 		}
-		dao.delete(id);
+		dao.delete(fetchBlog().getId());
 	}
-	
+
 	@Override
 	public void rewind(Long id) throws NoVersionFoundException {
-		versionService.rewind(id, dao);
+		if(isAnyBlogExistingAlready()){
+			versionService.rewind(fetchBlog().getId(), dao);
+		}
 	}
-	
+
 	private Blog map(BlogDTO tagDto) {
 		return mapper.map(tagDto, Blog.class);
 	}

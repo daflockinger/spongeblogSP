@@ -1,16 +1,11 @@
 package com.flockinger.spongeblogSP.service.impl;
 
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dao.TagDAO;
 import com.flockinger.spongeblogSP.dto.TagDTO;
-import com.flockinger.spongeblogSP.dto.TagPostsDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.model.Post;
 import com.flockinger.spongeblogSP.model.Tag;
-import com.flockinger.spongeblogSP.model.enums.PostStatus;
 import com.flockinger.spongeblogSP.service.TagService;
 import com.flockinger.spongeblogSP.service.VersioningService;
 
@@ -57,31 +50,12 @@ public class TagServiceImpl implements TagService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public TagPostsDTO getTag(Long id) throws EntityIsNotExistingException {
+	public TagDTO getTag(Long id) throws EntityIsNotExistingException {
 		if (!dao.exists(id)) {
 			throw new EntityIsNotExistingException("Tag");
 		}
 		Tag tag = dao.findOne(id);
-		tag = sortPostsByDateDescending(filterNonPublicPosts(tag));
-		return mapToPostDto(tag);
-	}
-
-	private Tag sortPostsByDateDescending(Tag sortMe) {
-
-		if (CollectionUtils.isNotEmpty(sortMe.getPosts())) {
-			sortMe.getPosts().sort(comparing(Post::getCreated, nullsFirst(naturalOrder())).reversed());
-		}
-		return sortMe;
-	}
-
-	private Tag filterNonPublicPosts(Tag filterMe) {
-		if (CollectionUtils.isNotEmpty(filterMe.getPosts())) {
-			List<Post> onlyPublicPosts = filterMe.getPosts().stream()
-					.filter(post -> Objects.equals(post.getStatus(), PostStatus.PUBLIC))
-					.collect(Collectors.toList());
-			filterMe.setPosts(onlyPublicPosts);
-		}
-		return filterMe;
+		return map(tag);
 	}
 
 	@Override
@@ -103,12 +77,20 @@ public class TagServiceImpl implements TagService {
 
 	@Override
 	@Transactional
-	public void updateTag(TagDTO tag) throws EntityIsNotExistingException {
-		if (!dao.exists(tag.getId())) {
+	public void updateTag(TagDTO tag) throws EntityIsNotExistingException, DuplicateEntityException {
+		if (!dao.exists(tag.getTagId())) {
 			throw new EntityIsNotExistingException("Tag");
+		}
+		if(isTagExistingWithOtherId(tag)){
+			throw new DuplicateEntityException("Tag");
 		}
 
 		dao.save(map(tag));
+	}
+	
+	private boolean isTagExistingWithOtherId(TagDTO toUpdateTag) {
+		Tag tag =dao.findByName(toUpdateTag.getName());
+		return tag != null && tag.getId() != toUpdateTag.getTagId();
 	}
 
 	@Override
@@ -132,10 +114,6 @@ public class TagServiceImpl implements TagService {
 	@Override
 	public void rewind(Long id) throws NoVersionFoundException {
 		versionService.rewind(id, dao);
-	}
-
-	private TagPostsDTO mapToPostDto(Tag tag) {
-		return mapper.map(tag, TagPostsDTO.class);
 	}
 
 	private Tag map(TagDTO tagDto) {

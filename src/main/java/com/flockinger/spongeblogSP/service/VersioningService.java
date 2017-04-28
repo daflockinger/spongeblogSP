@@ -17,8 +17,12 @@ public class VersioningService<M extends BaseModel, D extends VersionDAO<M>> {
 
 	@Transactional
 	public void rewind(Long id, D dao) throws NoVersionFoundException {
-		Revision<Integer, M> latestRevision = dao.findLastChangeRevision(id);
-
+		Revision<Integer, M> latestRevision = null;
+		
+		if(dao.exists(id)){
+			latestRevision = dao.findLastChangeRevision(id);
+		}
+	
 		if (latestRevision == null) {
 			throw new NoVersionFoundException("No version found for entity with id: " + id);
 		}

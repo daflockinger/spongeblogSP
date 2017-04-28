@@ -1,6 +1,6 @@
 package com.flockinger.spongeblogSP.dto;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Min;
@@ -9,62 +9,133 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.hateoas.ResourceSupport;
 
 import com.flockinger.spongeblogSP.model.enums.UserRole;
 
-public class UserEditDTO extends BaseDTO{
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ * UserEditDTO
+ */
+
+public class UserEditDTO extends ResourceSupport {
+
+	private Long userId = null;
 
 	@NotEmpty
-	private String login;
-	
+	private String login = null;
+
+	@Length(min = 6)
+	private String password = null;
+
 	@NotEmpty
-	@Length(min=6)
-	private String password;
-	
-	private String nickName;
+	private String nickName = null;
+
+	@NotEmpty
 	@Email
-	private String email;
+	private String email = null;
 
 	@NotNull
-	private Date registered;
-	
+	@Min(0)
+	private Long registered = null;
 
-	private List<UserRole> roles;
-	
-	
-	public String getEmail() {
-		return email;
+	private List<UserRole> roles = new ArrayList<UserRole>();
+
+	/**
+	 * Unique identifier.
+	 * 
+	 * @return userId
+	 **/
+	@ApiModelProperty(value = "Unique identifier.")
+	public Long getUserId() {
+		return userId;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
+
+	/**
+	 * Login name of the User.
+	 * 
+	 * @return login
+	 **/
+	@ApiModelProperty(value = "Login name of the User.")
 	public String getLogin() {
 		return login;
 	}
+
 	public void setLogin(String login) {
 		this.login = login;
 	}
+
+	/**
+	 * Password hash of the User.
+	 * 
+	 * @return password
+	 **/
+	@ApiModelProperty(value = "Password hash of the User.")
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	/**
+	 * Display nickname of the User.
+	 * 
+	 * @return nickName
+	 **/
+	@ApiModelProperty(value = "Display nickname of the User.")
 	public String getNickName() {
 		return nickName;
 	}
+
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
 	}
-	public Date getRegistered() {
+
+	/**
+	 * Email of User.
+	 * 
+	 * @return email
+	 **/
+	@ApiModelProperty(value = "Email of User.")
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * Registration date of User in long.
+	 * 
+	 * @return registered
+	 **/
+	@ApiModelProperty(value = "Registration date of User in long.")
+	public Long getRegistered() {
 		return registered;
 	}
-	public void setRegistered(Date registered) {
+
+	public void setRegistered(Long registered) {
 		this.registered = registered;
 	}
+
+	/**
+	 * Roles of the User (authorizations).
+	 * 
+	 * @return roles
+	 **/
+	@ApiModelProperty(value = "Roles of the User (authorizations).")
 	public List<UserRole> getRoles() {
 		return roles;
 	}
+
 	public void setRoles(List<UserRole> roles) {
 		this.roles = roles;
 	}

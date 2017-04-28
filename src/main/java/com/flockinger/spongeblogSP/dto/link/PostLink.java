@@ -1,12 +1,14 @@
 package com.flockinger.spongeblogSP.dto.link;
 
-public class PostLink {
-	private Long id;
+import org.springframework.hateoas.ResourceSupport;
+
+public class PostLink extends ResourceSupport{
+	private Long postId;
 	
-	public Long getId() {
-		return id;
+	public Long getPostId() {
+		return postId;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setId(Long postId) {
+		this.postId = postId;
 	}
 }

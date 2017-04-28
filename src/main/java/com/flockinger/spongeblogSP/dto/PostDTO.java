@@ -1,86 +1,165 @@
 package com.flockinger.spongeblogSP.dto;
 
-import java.util.Date;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.hateoas.ResourceSupport;
 
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
-public class PostDTO extends BaseDTO{
-	private String title;
-	private String content;
-	private Date created;
-	private Date modified;
-	
-	private PostStatus status;
-	
-	private UserInfoDTO author;
-	
-	private CategoryDTO category;
-	
-	private List<TagDTO> tags;
+import io.swagger.annotations.ApiModelProperty;
+/**
+ * PostDTO
+ */
+public class PostDTO  extends ResourceSupport {
+ 
+  private Long postId = null;
 
-	
-	public String getTitle() {
-		return title;
-	}
+  @NotEmpty
+  private String title = null;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  @NotNull
+  private String content = null;
 
-	public String getContent() {
-		return content;
-	}
+  @NotNull
+  @Min(0)
+  private Long created = null;
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+  @NotNull
+  @Min(0)
+  private Long modified = null;
 
-	public Date getCreated() {
-		return created;
-	}
+  @NotNull
+  private PostStatus status = null;
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+  private UserInfoDTO author = null;
 
-	public Date getModified() {
-		return modified;
-	}
+  @NotNull
+  private CategoryDTO category = null;
 
-	public void setModified(Date modified) {
-		this.modified = modified;
-	}
+  @NotNull
+  private List<TagDTO> tags = new ArrayList<TagDTO>();
 
-	public PostStatus getStatus() {
-		return status;
-	}
 
-	public void setStatus(PostStatus status) {
-		this.status = status;
-	}
+   /**
+   * Unique identifier.
+   * @return postId
+  **/
+  @ApiModelProperty(value = "Unique identifier.")
+  public Long getPostId() {
+    return postId;
+  }
 
-	public UserInfoDTO getAuthor() {
-		return author;
-	}
+  public void setPostId(Long postId) {
+    this.postId = postId;
+  }
 
-	public void setAuthor(UserInfoDTO author) {
-		this.author = author;
-	}
+   /**
+   * The title of the Blog post.
+   * @return title
+  **/
+  @ApiModelProperty(value = "The title of the Blog post.")
+  public String getTitle() {
+    return title;
+  }
 
-	public CategoryDTO getCategory() {
-		return category;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public void setCategory(CategoryDTO category) {
-		this.category = category;
-	}
+   /**
+   * Post text/html content.
+   * @return content
+  **/
+  @ApiModelProperty(value = "Post text/html content.")
+  public String getContent() {
+    return content;
+  }
 
-	public List<TagDTO> getTags() {
-		return tags;
-	}
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-	public void setTags(List<TagDTO> tags) {
-		this.tags = tags;
-	}
+   /**
+   * Creation date of Post in long.
+   * @return created
+  **/
+  @ApiModelProperty(value = "Creation date of Post in long.")
+  public Long getCreated() {
+    return created;
+  }
+
+  public void setCreated(Long created) {
+    this.created = created;
+  }
+
+   /**
+   * Modification date of Post in long.
+   * @return modified
+  **/
+  @ApiModelProperty(value = "Modification date of Post in long.")
+  public Long getModified() {
+    return modified;
+  }
+
+  public void setModified(Long modified) {
+    this.modified = modified;
+  }
+
+   /**
+   * Display status of the Post.
+   * @return status
+  **/
+  @ApiModelProperty(value = "Display status of the Post.")
+  public PostStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(PostStatus status) {
+    this.status = status;
+  }
+
+   /**
+   * Get author
+   * @return author
+  **/
+  @ApiModelProperty(value = "")
+  public UserInfoDTO getAuthor() {
+    return author;
+  }
+
+  public void setAuthor(UserInfoDTO author) {
+    this.author = author;
+  }
+
+   /**
+   * Get category
+   * @return category
+  **/
+  @ApiModelProperty(value = "")
+  public CategoryDTO getCategory() {
+    return category;
+  }
+
+  public void setCategory(CategoryDTO category) {
+    this.category = category;
+  }
+
+   /**
+   * Tags of Post.
+   * @return tags
+  **/
+  @ApiModelProperty(value = "Tags of Post.")
+  public List<TagDTO> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<TagDTO> tags) {
+    this.tags = tags;
+  }
 }

@@ -8,5 +8,5 @@ public interface BlogService extends Versionable{
 	BlogDTO getBlog() throws EntityIsNotExistingException;
 	BlogDTO createBlog(BlogDTO blog) throws DuplicateEntityException;
 	void updateBlog(BlogDTO blog) throws EntityIsNotExistingException;
-	void deleteBlog(Long id) throws EntityIsNotExistingException;
+	void deleteBlog() throws EntityIsNotExistingException;
 }

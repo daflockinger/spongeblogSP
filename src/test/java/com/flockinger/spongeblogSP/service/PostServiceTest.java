@@ -14,12 +14,9 @@ import javax.transaction.Transactional;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.orm.ObjectRetrievalFailureException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 
 import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
@@ -50,9 +47,9 @@ public class PostServiceTest extends BaseServiceTest {
 		List<PostLink> posts = service.getAllPosts(secondPageDateDescending);
 
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 6l);
-		assertTrue(posts.get(1).getId() == 5l);
-		assertTrue(posts.get(2).getId() == 4l);
+		assertTrue(posts.get(0).getPostId() == 6l);
+		assertTrue(posts.get(1).getPostId() == 5l);
+		assertTrue(posts.get(2).getPostId() == 4l);
 	}
 
 	@Test
@@ -62,11 +59,11 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getAllPostsWithStatus(PostStatus.PUBLIC, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 2l);
-		assertTrue(posts.get(2).getId() == 3l);
-		assertTrue(posts.get(3).getId() == 6l);
-		assertTrue(posts.get(4).getId() == 5l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
+		assertTrue(posts.get(2).getPostId() == 3l);
+		assertTrue(posts.get(3).getPostId() == 6l);
+		assertTrue(posts.get(4).getPostId() == 5l);
 	}
 
 	@Test
@@ -76,9 +73,9 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromCategoryId(1l, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 3l);
-		assertTrue(posts.get(2).getId() == 5l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 3l);
+		assertTrue(posts.get(2).getPostId() == 5l);
 	}
 
 	@Test
@@ -88,9 +85,33 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromCategoryIdWithStatus(2l, PostStatus.PUBLIC, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 2l);
-		assertTrue(posts.get(1).getId() == 6l);
+		assertTrue(posts.get(0).getPostId() == 2l);
+		assertTrue(posts.get(1).getPostId() == 6l);
 	}
+	
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testGetAllPostFromTagId_withValidTag_shouldReturnFiltered() {
+		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
+
+		List<PostLink> posts = service.getPostsFromTagId(1l, firstPageDateDescending);
+		assertNotNull(posts);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
+	}
+
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testGetAllPostFromTagIdAndStatus_withValidTagAndStatus_shouldReturnFiltered() {
+		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
+
+		List<PostLink> posts = service.getPostsFromTagIdWithStatus(1l, PostStatus.PUBLIC, firstPageDateDescending);
+		assertNotNull(posts);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
+	}
+	
 
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
@@ -99,11 +120,11 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromAuthorId(1l, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 1l);
-		assertTrue(posts.get(1).getId() == 2l);
-		assertTrue(posts.get(2).getId() == 3l);
-		assertTrue(posts.get(3).getId() == 6l);
-		assertTrue(posts.get(4).getId() == 5l);
+		assertTrue(posts.get(0).getPostId() == 1l);
+		assertTrue(posts.get(1).getPostId() == 2l);
+		assertTrue(posts.get(2).getPostId() == 3l);
+		assertTrue(posts.get(3).getPostId() == 6l);
+		assertTrue(posts.get(4).getPostId() == 5l);
 	}
 
 	@Test
@@ -113,7 +134,7 @@ public class PostServiceTest extends BaseServiceTest {
 
 		List<PostLink> posts = service.getPostsFromAuthorIdWithStatus(1l, PostStatus.DELETED, firstPageDateDescending);
 		assertNotNull(posts);
-		assertTrue(posts.get(0).getId() == 4l);
+		assertTrue(posts.get(0).getPostId() == 4l);
 	}
 
 	@Test
@@ -131,7 +152,7 @@ public class PostServiceTest extends BaseServiceTest {
 		UserInfoDTO user = post.getAuthor();
 		assertNotNull(user);
 		assertEquals("flo@kinger.cc", user.getEmail());
-		assertTrue(user.getId() == 1l);
+		assertTrue(user.getUserId() == 1l);
 		assertEquals("daflo", user.getNickName());
 		assertNotNull(user.getRegistered());
 
@@ -157,14 +178,14 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
+		freshPost.setCreated(freshDate.getTime());
+		freshPost.setModified(freshDate.getTime());
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
 		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
+		Long freshId = service.createPost(freshPost).getPostId();
 
 		PostDTO savedPost = service.getPost(freshId);
 
@@ -180,8 +201,8 @@ public class PostServiceTest extends BaseServiceTest {
 		assertTrue(savedPost.getCategory().getParentId() == 1l);
 		// verifying values
 		assertEquals("Some fresh new content...", savedPost.getContent());
-		assertNotNull(savedPost.getCreated().getTime());
-		assertNotNull(savedPost.getModified().getTime());
+		assertNotNull(savedPost.getCreated());
+		assertNotNull(savedPost.getModified());
 		assertEquals(PostStatus.PUBLIC, savedPost.getStatus());
 		assertEquals("Fresh out of the box", savedPost.getTitle());
 		// verifying tags
@@ -199,14 +220,14 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate);
-		savedPost.setModified(freshDate);
+		savedPost.setCreated(freshDate.getTime());
+		savedPost.setModified(freshDate.getTime());
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(3l)));
 		service.updatePost(savedPost);
 
-		PostDTO updatedPost = service.getPost(savedPost.getId());
+		PostDTO updatedPost = service.getPost(savedPost.getPostId());
 
 		assertNotNull(updatedPost);
 		// verifying author
@@ -220,8 +241,8 @@ public class PostServiceTest extends BaseServiceTest {
 		assertNull(updatedPost.getCategory().getParentId());
 		// verifying values
 		assertEquals("Some updated new content...", updatedPost.getContent());
-		assertNotNull(updatedPost.getCreated().getTime());
-		assertNotNull(updatedPost.getModified().getTime());
+		assertNotNull(updatedPost.getCreated());
+		assertNotNull(updatedPost.getModified());
 		assertEquals(PostStatus.MAINTENANCE, updatedPost.getStatus());
 		assertEquals("Updated out of the box", updatedPost.getTitle());
 		// verifying tags
@@ -247,13 +268,13 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(123l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
+		freshPost.setCreated(freshDate.getTime());
+		freshPost.setModified(freshDate.getTime());
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		service.createPost(freshPost).getId();
+		service.createPost(freshPost).getPostId();
 		System.out.println();
 	}
 
@@ -266,8 +287,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(232l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate);
-		savedPost.setModified(freshDate);
+		savedPost.setCreated(freshDate.getTime());
+		savedPost.setModified(freshDate.getTime());
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(2l)));
@@ -284,13 +305,13 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(254l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
+		freshPost.setCreated(freshDate.getTime());
+		freshPost.setModified(freshDate.getTime());
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		service.createPost(freshPost).getId();
+		service.createPost(freshPost).getPostId();
 	}
 
 	@Test(expected = DependencyNotFoundException.class)
@@ -302,8 +323,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(156l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate);
-		savedPost.setModified(freshDate);
+		savedPost.setCreated(freshDate.getTime());
+		savedPost.setModified(freshDate.getTime());
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(2l)));
@@ -320,14 +341,14 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
+		freshPost.setCreated(freshDate.getTime());
+		freshPost.setModified(freshDate.getTime());
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(154l)));
 
 		// create new Post
-		Long freshId = service.createPost(freshPost).getId();
+		Long freshId = service.createPost(freshPost).getPostId();
 
 		service.getPost(freshId);
 	}
@@ -341,8 +362,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate);
-		savedPost.setModified(freshDate);
+		savedPost.setCreated(freshDate.getTime());
+		savedPost.setModified(freshDate.getTime());
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1345l), getTag(2l)));
@@ -360,13 +381,13 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate);
-		freshPost.setModified(freshDate);
+		freshPost.setCreated(freshDate.getTime());
+		freshPost.setModified(freshDate.getTime());
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("somethings");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 
-		service.createPost(freshPost).getId();
+		service.createPost(freshPost).getPostId();
 	}
 
 	@Test(expected = DuplicateEntityException.class)
@@ -391,7 +412,7 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testRewind_withExistingPrevVersion_shouldRewind()
 			throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException, DependencyNotFoundException {
 		PostDTO freshPost = service.getPost(1l);
-		freshPost.setCreated(new Date());
+		freshPost.setCreated(new Date().getTime());
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 		service.updatePost(freshPost);
 
@@ -400,14 +421,14 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate);
-		savedPost.setModified(freshDate);
+		savedPost.setCreated(freshDate.getTime());
+		savedPost.setModified(freshDate.getTime());
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(3l)));
 		service.updatePost(savedPost);
 
-		PostDTO updatedPost = service.getPost(savedPost.getId());
+		PostDTO updatedPost = service.getPost(savedPost.getPostId());
 
 		assertNotNull(updatedPost);
 		// verifying author
@@ -421,8 +442,8 @@ public class PostServiceTest extends BaseServiceTest {
 		assertNull(updatedPost.getCategory().getParentId());
 		// verifying values
 		assertEquals("Some updated new content...", updatedPost.getContent());
-		assertNotNull(updatedPost.getCreated().getTime());
-		assertNotNull(updatedPost.getModified().getTime());
+		assertNotNull(updatedPost.getCreated());
+		assertNotNull(updatedPost.getModified());
 		assertEquals(PostStatus.MAINTENANCE, updatedPost.getStatus());
 		assertEquals("Updated out of the box", updatedPost.getTitle());
 		// verifying tags
@@ -431,9 +452,9 @@ public class PostServiceTest extends BaseServiceTest {
 		assertTrue(updatedPost.getTags().stream().anyMatch(tag -> tag.getName().equals("fancy")));
 		assertTrue(updatedPost.getTags().stream().anyMatch(tag -> tag.getName().equals("guide")));
 
-		service.rewind(savedPost.getId());
+		service.rewind(savedPost.getPostId());
 
-		PostDTO rewindPost = service.getPost(savedPost.getId());
+		PostDTO rewindPost = service.getPost(savedPost.getPostId());
 
 		assertNotNull(rewindPost);
 		// verifying author
@@ -447,8 +468,8 @@ public class PostServiceTest extends BaseServiceTest {
 		assertNull(rewindPost.getCategory().getParentId());
 		// verifying values
 		assertEquals("some content...", rewindPost.getContent());
-		assertNotNull(rewindPost.getCreated().getTime());
-		assertNotNull(rewindPost.getModified().getTime());
+		assertNotNull(rewindPost.getCreated());
+		assertNotNull(rewindPost.getModified());
 		assertEquals(PostStatus.PUBLIC, rewindPost.getStatus());
 		assertEquals("somethings", rewindPost.getTitle());
 		// verifying tags
@@ -465,20 +486,20 @@ public class PostServiceTest extends BaseServiceTest {
 
 	private TagDTO getTag(Long id) {
 		TagDTO tag = new TagDTO();
-		tag.setId(id);
+		tag.setTagId(id);
 
 		return tag;
 	}
 
 	private CategoryDTO getTestCategory(Long id) {
 		CategoryDTO cat = new CategoryDTO();
-		cat.setId(id);
+		cat.setCategoryId(id);
 		return cat;
 	}
 
 	private UserInfoDTO getTestUser(Long id) {
 		UserInfoDTO user = new UserInfoDTO();
-		user.setId(id);
+		user.setUserId(id);
 		return user;
 	}
 

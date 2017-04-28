@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.envers.AuditReader;
@@ -18,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.flockinger.spongeblogSP.dao.CategoryDAO;
 import com.flockinger.spongeblogSP.dao.PostDAO;
@@ -39,7 +39,6 @@ import com.flockinger.spongeblogSP.model.enums.PostStatus;
 import com.flockinger.spongeblogSP.service.PostService;
 
 @Service
-@Transactional
 public class PostServiceImpl implements PostService {
 
 	@Autowired
@@ -61,36 +60,56 @@ public class PostServiceImpl implements PostService {
 	private EntityManager em;
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<PostLink> getAllPosts(Pageable pageable) {
 		return map(dao.findAllIdsDistinct(pageable));
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<PostLink> getAllPostsWithStatus(PostStatus status, Pageable pageable) {
 		return map(dao.findIdDistinctByStatus(status, pageable));
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<PostLink> getPostsFromCategoryId(Long categoryId, Pageable pageable) {
 		return map(dao.findDistinctIdByCategoryId(categoryId, pageable));
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<PostLink> getPostsFromCategoryIdWithStatus(Long categoryId, PostStatus status, Pageable pageable) {
 		return map(dao.findDistinctIdByCategoryIdAndStatus(categoryId, status, pageable));
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<PostLink> getPostsFromAuthorId(Long authorId, Pageable pageable) {
 		return map(dao.findDistinctIdByAuthorId(authorId, pageable));
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<PostLink> getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable) {
 		return map(dao.findDistinctIdByAuthorIdAndStatus(authorId, status, pageable));
 	}
 
 	@Override
+	@Transactional(readOnly=true)
+	public List<PostLink> getPostsFromTagId(Long tagId, Pageable pageable) {
+		return map(dao.findByTagsId(tagId, pageable).stream().map(post -> post.getId()).collect(Collectors.toList()));
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<PostLink> getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable) {
+		return map(dao.findByTagsIdAndStatus(tagId, status, pageable).stream().map(post -> post.getId())
+				.collect(Collectors.toList()));
+	}
+
+	@Override
+	@Transactional(readOnly=true)
 	public PostDTO getPost(Long id) throws EntityIsNotExistingException {
 		if (!isPostExisting(id)) {
 			throw new EntityIsNotExistingException("Post");
@@ -100,33 +119,34 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	@Transactional
 	public PostDTO createPost(PostDTO post) throws DuplicateEntityException, DependencyNotFoundException {
 		if (isPostNameExistingAlready(post)) {
 			throw new DuplicateEntityException("Post");
 		}
 		checkDependencies(post);
-		
+
 		return map(dao.save(map(post)));
 	}
 
-	private boolean isPostNameExistingAlready(PostDTO post) {		
+	private boolean isPostNameExistingAlready(PostDTO post) {
 		return dao.findByTitle(post.getTitle()) != null;
 	}
 
-	private void checkDependencies(PostDTO post) throws DependencyNotFoundException{
+	private void checkDependencies(PostDTO post) throws DependencyNotFoundException {
 		UserInfoDTO user = post.getAuthor();
-		if(user != null && !userDao.exists(user.getId())){
-			throw getDependencyException("User",user.getId());
+		if (user != null && !userDao.exists(user.getUserId())) {
+			throw getDependencyException("User", user.getUserId());
 		}
-		CategoryDTO category= post.getCategory();
-		if(category != null && !categoryDao.exists(category.getId())){
-			throw getDependencyException("Category", category.getId());
+		CategoryDTO category = post.getCategory();
+		if (category != null && !categoryDao.exists(category.getCategoryId())) {
+			throw getDependencyException("Category", category.getCategoryId());
 		}
 		List<TagDTO> tags = post.getTags();
-		Optional<TagDTO> nonExistingTag = tags.stream().filter(tag -> !tagDao.exists(tag.getId())).findAny();
-		
-		if(nonExistingTag.isPresent()){
-			throw getDependencyException("Tag", nonExistingTag.get().getId());
+		Optional<TagDTO> nonExistingTag = tags.stream().filter(tag -> !tagDao.exists(tag.getTagId())).findAny();
+
+		if (nonExistingTag.isPresent()) {
+			throw getDependencyException("Tag", nonExistingTag.get().getTagId());
 		}
 	}
 
@@ -135,29 +155,31 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	@Transactional
 	public void updatePost(PostDTO post)
 			throws EntityIsNotExistingException, DuplicateEntityException, DependencyNotFoundException {
-		if (!isPostExisting(post.getId())) {
+		if (!isPostExisting(post.getPostId())) {
 			throw new EntityIsNotExistingException("Post");
 		}
-		if(isNewNameDuplicate(post)){
+		if (isNewNameDuplicate(post)) {
 			throw new DuplicateEntityException("Post");
 		}
 		checkDependencies(post);
-		
+
 		dao.save(map(post));
 	}
 
 	private boolean isPostExisting(Long id) {
 		return dao.exists(id);
 	}
-	
-	private boolean isNewNameDuplicate(PostDTO post){
+
+	private boolean isNewNameDuplicate(PostDTO post) {
 		Post savedPost = dao.findByTitle(post.getTitle());
-		return savedPost != null && post.getId() != savedPost.getId();
+		return savedPost != null && post.getPostId() != savedPost.getId();
 	}
 
 	@Override
+	@Transactional
 	public void deletePost(Long id) throws EntityIsNotExistingException {
 		if (!isPostExisting(id)) {
 			throw new EntityIsNotExistingException("Post");
