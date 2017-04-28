@@ -56,6 +56,7 @@ public class OpenIdFilter extends AbstractAuthenticationProcessingFilter {
 		try {
 			String idToken = accessToken.getAdditionalInformation().get("id_token").toString();
 			Jwt tokenDecoded = JwtHelper.decode(idToken);
+			@SuppressWarnings("unchecked")
 			Map<String, String> authInfo = new ObjectMapper().readValue(tokenDecoded.getClaims(), Map.class);
 
 			OpenIdUserDetails user = new OpenIdUserDetails(authInfo, accessToken);

@@ -52,10 +52,6 @@ public class UserEditDTO  extends ResourceSupport {
   @JsonProperty("roles")
   private List<UserRole> roles = new ArrayList<UserRole>();
 
-  public UserEditDTO userId(Long userId) {
-    this.userId = userId;
-    return this;
-  }
 
    /**
    * Unique identifier.
@@ -70,10 +66,6 @@ public class UserEditDTO  extends ResourceSupport {
     this.userId = userId;
   }
 
-  public UserEditDTO login(String login) {
-    this.login = login;
-    return this;
-  }
 
    /**
    * Login name of the User.
@@ -88,10 +80,6 @@ public class UserEditDTO  extends ResourceSupport {
     this.login = login;
   }
 
-  public UserEditDTO password(String password) {
-    this.password = password;
-    return this;
-  }
 
    /**
    * Password hash of the User.
@@ -104,11 +92,6 @@ public class UserEditDTO  extends ResourceSupport {
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  public UserEditDTO nickName(String nickName) {
-    this.nickName = nickName;
-    return this;
   }
 
    /**
@@ -124,11 +107,6 @@ public class UserEditDTO  extends ResourceSupport {
     this.nickName = nickName;
   }
 
-  public UserEditDTO email(String email) {
-    this.email = email;
-    return this;
-  }
-
    /**
    * Email of User.
    * @return email
@@ -140,11 +118,6 @@ public class UserEditDTO  extends ResourceSupport {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public UserEditDTO registered(Long registered) {
-    this.registered = registered;
-    return this;
   }
 
    /**
@@ -160,15 +133,6 @@ public class UserEditDTO  extends ResourceSupport {
     this.registered = registered;
   }
 
-  public UserEditDTO roles(List<UserRole> roles) {
-    this.roles = roles;
-    return this;
-  }
-
-  public UserEditDTO addRolesItem(UserRole rolesItem) {
-    this.roles.add(rolesItem);
-    return this;
-  }
 
    /**
    * Roles of the User (authorizations).

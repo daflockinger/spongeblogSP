@@ -3,7 +3,6 @@ package com.flockinger.spongeblogSP.api.impl;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,15 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.flockinger.spongeblogSP.api.TagController;
 import com.flockinger.spongeblogSP.api.util.RequestValidator;
 import com.flockinger.spongeblogSP.dto.TagDTO;
-import com.flockinger.spongeblogSP.dto.TagPostsDTO;
-import com.flockinger.spongeblogSP.dto.link.PostLink;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.service.TagService;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class TagControllerImpl implements TagController {

@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.validation.ConstraintViolationException;
-
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
@@ -15,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.flockinger.spongeblogSP.dao.CategoryDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
-import com.flockinger.spongeblogSP.dto.CategoryPostsDTO;
-import com.flockinger.spongeblogSP.dto.link.CategoryLink;
-import com.flockinger.spongeblogSP.dto.link.PostLink;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;

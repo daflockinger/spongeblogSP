@@ -20,10 +20,6 @@ public class TagDTO  extends ResourceSupport {
   @NotEmpty
   private String name = null;
 
-  public TagDTO tagId(Long tagId) {
-    this.tagId = tagId;
-    return this;
-  }
 
    /**
    * Unique identifier.
@@ -38,10 +34,6 @@ public class TagDTO  extends ResourceSupport {
     this.tagId = tagId;
   }
 
-  public TagDTO name(String name) {
-    this.name = name;
-    return this;
-  }
 
    /**
    * Tag name.

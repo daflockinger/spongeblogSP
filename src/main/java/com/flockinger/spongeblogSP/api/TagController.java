@@ -7,15 +7,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.flockinger.spongeblogSP.dto.Error;
 import com.flockinger.spongeblogSP.dto.TagDTO;
-import com.flockinger.spongeblogSP.dto.TagPostsDTO;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
-import com.flockinger.spongeblogSP.dto.Error;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 public interface TagController {
 
@@ -100,9 +102,9 @@ public interface TagController {
     ResponseEntity<?> apiV1TagsTagIdDelete(@ApiParam(value = "Unique identifier of a Tag;",required=true ) @PathVariable("tagId") Long tagId) throws EntityIsNotExistingException;
 
 
-    @ApiOperation(value = "Get Tag", notes = "Fetches Tag with defined Id.", response = TagPostsDTO.class, tags={ "Tags", })
+    @ApiOperation(value = "Get Tag", notes = "Fetches Tag with defined Id.", response = TagDTO.class, tags={ "Tags", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Tag with id.", response = TagPostsDTO.class),
+        @ApiResponse(code = 200, message = "Tag with id.", response = TagDTO.class),
         @ApiResponse(code = 400, message = "Bad request (validation failed).", response = Error.class),
         @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).", response = Void.class),
         @ApiResponse(code = 403, message = "Forbidden (no rights to access resource).", response = Void.class),

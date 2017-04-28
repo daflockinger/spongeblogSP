@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.flockinger.spongeblogSP.dao.CategoryDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
-import com.flockinger.spongeblogSP.dto.CategoryPostsDTO;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
@@ -48,12 +47,6 @@ public class CategoryServiceImpl implements CategoryService {
 			protected void configure() {
 				map().setCategoryId(source.getId());
 				map(source.getParent().getId(), destination.getParentId());
-			}
-		});
-		mapper.addMappings(new PropertyMap<Category, CategoryPostsDTO>() {
-			@Override
-			protected void configure() {
-				map().setParent(source.getParent().getId());
 			}
 		});
 	}

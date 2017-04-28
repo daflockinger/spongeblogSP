@@ -31,11 +31,6 @@ public class BlogDTO extends ResourceSupport {
 	@NotNull
 	private Map<String, String> settings = new HashMap<String, String>();
 
-	public BlogDTO name(String name) {
-		this.name = name;
-		return this;
-	}
-
 	/**
 	 * Name of the Blog.
 	 * 
@@ -48,11 +43,6 @@ public class BlogDTO extends ResourceSupport {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public BlogDTO status(BlogStatus status) {
-		this.status = status;
-		return this;
 	}
 
 	/**
@@ -69,15 +59,6 @@ public class BlogDTO extends ResourceSupport {
 		this.status = status;
 	}
 
-	public BlogDTO settings(Map<String, String> settings) {
-		this.settings = settings;
-		return this;
-	}
-
-	public BlogDTO putSettingsItem(String key, String settingsItem) {
-		this.settings.put(key, settingsItem);
-		return this;
-	}
 
 	/**
 	 * Settings map of the Blog.

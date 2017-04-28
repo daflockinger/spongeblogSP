@@ -27,10 +27,6 @@ public class CategoryDTO extends ResourceSupport {
 	@JsonProperty("rank")
 	private Integer rank = null;
 
-	public CategoryDTO categoryId(Long categoryId) {
-		this.categoryId = categoryId;
-		return this;
-	}
 
 	/**
 	 * Unique identifier.
@@ -44,11 +40,6 @@ public class CategoryDTO extends ResourceSupport {
 
 	public void setCategoryId(Long categoryId) {
 		this.categoryId = categoryId;
-	}
-
-	public CategoryDTO name(String name) {
-		this.name = name;
-		return this;
 	}
 
 	/**
@@ -65,11 +56,6 @@ public class CategoryDTO extends ResourceSupport {
 		this.name = name;
 	}
 
-	public CategoryDTO parentId(Long parentId) {
-		this.parentId = parentId;
-		return this;
-	}
-
 	/**
 	 * Id of parent Category.
 	 * 
@@ -82,11 +68,6 @@ public class CategoryDTO extends ResourceSupport {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
-	}
-
-	public CategoryDTO rank(Integer rank) {
-		this.rank = rank;
-		return this;
 	}
 
 	/**

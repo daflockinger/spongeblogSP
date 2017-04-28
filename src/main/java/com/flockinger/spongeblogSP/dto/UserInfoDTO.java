@@ -24,11 +24,7 @@ public class UserInfoDTO  extends ResourceSupport {
   @JsonProperty("registered")
   private Long registered = null;
 
-  public UserInfoDTO userId(Long userId) {
-    this.userId = userId;
-    return this;
-  }
-
+  
    /**
    * Unique identifier.
    * @return userId
@@ -40,11 +36,6 @@ public class UserInfoDTO  extends ResourceSupport {
 
   public void setUserId(Long userId) {
     this.userId = userId;
-  }
-
-  public UserInfoDTO nickName(String nickName) {
-    this.nickName = nickName;
-    return this;
   }
 
    /**
@@ -60,11 +51,6 @@ public class UserInfoDTO  extends ResourceSupport {
     this.nickName = nickName;
   }
 
-  public UserInfoDTO email(String email) {
-    this.email = email;
-    return this;
-  }
-
    /**
    * Email of User.
    * @return email
@@ -76,11 +62,6 @@ public class UserInfoDTO  extends ResourceSupport {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public UserInfoDTO registered(Long registered) {
-    this.registered = registered;
-    return this;
   }
 
    /**

@@ -8,16 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
-import com.flockinger.spongeblogSP.dto.CategoryPostsDTO;
 import com.flockinger.spongeblogSP.dto.Error;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
-import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.exception.OrphanedDependingEntitiesException;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 public interface CategoryController {
 
@@ -36,9 +37,9 @@ public interface CategoryController {
     ResponseEntity<?> apiV1CategoriesCategoryIdDelete(@ApiParam(value = "Unique identifier of a Category;",required=true ) @PathVariable("categoryId") Long categoryId) throws EntityIsNotExistingException, OrphanedDependingEntitiesException;
 
 
-    @ApiOperation(value = "Get Category", notes = "Fetches Category with defined Id.", response = CategoryPostsDTO.class, tags={ "Categories", })
+    @ApiOperation(value = "Get Category", notes = "Fetches Category with defined Id.", response = CategoryDTO.class, tags={ "Categories", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Category with id.", response = CategoryPostsDTO.class),
+        @ApiResponse(code = 200, message = "Category with id.", response = CategoryDTO.class),
         @ApiResponse(code = 400, message = "Bad request (validation failed).", response = Error.class),
         @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).", response = Void.class),
         @ApiResponse(code = 403, message = "Forbidden (no rights to access resource).", response = Void.class),
@@ -51,9 +52,9 @@ public interface CategoryController {
     ResponseEntity<?> apiV1CategoriesCategoryIdGet(@ApiParam(value = "Unique identifier of a Category;",required=true ) @PathVariable("categoryId") Long categoryId) throws EntityIsNotExistingException;
 
 
-    @ApiOperation(value = "Categorys of Parent.", notes = "Returns all Categorys of defined parent Category.", response = CategoryPostsDTO.class, responseContainer = "List", tags={ "Categories", })
+    @ApiOperation(value = "Categorys of Parent.", notes = "Returns all Categorys of defined parent Category.", response = CategoryDTO.class, responseContainer = "List", tags={ "Categories", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Categories.", response = CategoryPostsDTO.class),
+        @ApiResponse(code = 200, message = "Categories.", response = CategoryDTO.class),
         @ApiResponse(code = 400, message = "Bad request (validation failed).", response = Error.class),
         @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).", response = Void.class),
         @ApiResponse(code = 403, message = "Forbidden (no rights to access resource).", response = Void.class),

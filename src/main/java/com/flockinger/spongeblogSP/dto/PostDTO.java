@@ -56,10 +56,6 @@ public class PostDTO  extends ResourceSupport {
   @NotNull
   private List<TagDTO> tags = new ArrayList<TagDTO>();
 
-  public PostDTO postId(Long postId) {
-    this.postId = postId;
-    return this;
-  }
 
    /**
    * Unique identifier.
@@ -72,11 +68,6 @@ public class PostDTO  extends ResourceSupport {
 
   public void setPostId(Long postId) {
     this.postId = postId;
-  }
-
-  public PostDTO title(String title) {
-    this.title = title;
-    return this;
   }
 
    /**
@@ -92,11 +83,6 @@ public class PostDTO  extends ResourceSupport {
     this.title = title;
   }
 
-  public PostDTO content(String content) {
-    this.content = content;
-    return this;
-  }
-
    /**
    * Post text/html content.
    * @return content
@@ -108,11 +94,6 @@ public class PostDTO  extends ResourceSupport {
 
   public void setContent(String content) {
     this.content = content;
-  }
-
-  public PostDTO created(Long created) {
-    this.created = created;
-    return this;
   }
 
    /**
@@ -128,11 +109,6 @@ public class PostDTO  extends ResourceSupport {
     this.created = created;
   }
 
-  public PostDTO modified(Long modified) {
-    this.modified = modified;
-    return this;
-  }
-
    /**
    * Modification date of Post in long.
    * @return modified
@@ -144,11 +120,6 @@ public class PostDTO  extends ResourceSupport {
 
   public void setModified(Long modified) {
     this.modified = modified;
-  }
-
-  public PostDTO status(PostStatus status) {
-    this.status = status;
-    return this;
   }
 
    /**
@@ -164,11 +135,6 @@ public class PostDTO  extends ResourceSupport {
     this.status = status;
   }
 
-  public PostDTO author(UserInfoDTO author) {
-    this.author = author;
-    return this;
-  }
-
    /**
    * Get author
    * @return author
@@ -182,11 +148,6 @@ public class PostDTO  extends ResourceSupport {
     this.author = author;
   }
 
-  public PostDTO category(CategoryDTO category) {
-    this.category = category;
-    return this;
-  }
-
    /**
    * Get category
    * @return category
@@ -198,16 +159,6 @@ public class PostDTO  extends ResourceSupport {
 
   public void setCategory(CategoryDTO category) {
     this.category = category;
-  }
-
-  public PostDTO tags(List<TagDTO> tags) {
-    this.tags = tags;
-    return this;
-  }
-
-  public PostDTO addTagsItem(TagDTO tagsItem) {
-    this.tags.add(tagsItem);
-    return this;
   }
 
    /**
