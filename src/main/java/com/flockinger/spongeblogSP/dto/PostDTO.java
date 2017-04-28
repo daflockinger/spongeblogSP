@@ -3,7 +3,6 @@ package com.flockinger.spongeblogSP.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -11,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.ResourceSupport;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -20,39 +18,30 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class PostDTO  extends ResourceSupport {
  
-  @JsonProperty("postId")
   private Long postId = null;
 
-  @JsonProperty("title")
   @NotEmpty
   private String title = null;
 
-  @JsonProperty("content")
   @NotNull
   private String content = null;
 
-  @JsonProperty("created")
   @NotNull
   @Min(0)
   private Long created = null;
 
-  @JsonProperty("modified")
   @NotNull
   @Min(0)
   private Long modified = null;
 
-  @JsonProperty("status")
   @NotNull
   private PostStatus status = null;
 
-  @JsonProperty("author")
   private UserInfoDTO author = null;
 
-  @JsonProperty("category")
   @NotNull
   private CategoryDTO category = null;
 
-  @JsonProperty("tags")
   @NotNull
   private List<TagDTO> tags = new ArrayList<TagDTO>();
 
@@ -172,60 +161,5 @@ public class PostDTO  extends ResourceSupport {
 
   public void setTags(List<TagDTO> tags) {
     this.tags = tags;
-  }
-
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PostDTO postDTO = (PostDTO) o;
-    return Objects.equals(this.postId, postDTO.postId) &&
-        Objects.equals(this.title, postDTO.title) &&
-        Objects.equals(this.content, postDTO.content) &&
-        Objects.equals(this.created, postDTO.created) &&
-        Objects.equals(this.modified, postDTO.modified) &&
-        Objects.equals(this.status, postDTO.status) &&
-        Objects.equals(this.author, postDTO.author) &&
-        Objects.equals(this.category, postDTO.category) &&
-        Objects.equals(this.tags, postDTO.tags);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(postId, title, content, created, modified, status, author, category, tags);
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class PostDTO {\n");
-    
-    sb.append("    postId: ").append(toIndentedString(postId)).append("\n");
-    sb.append("    title: ").append(toIndentedString(title)).append("\n");
-    sb.append("    content: ").append(toIndentedString(content)).append("\n");
-    sb.append("    created: ").append(toIndentedString(created)).append("\n");
-    sb.append("    modified: ").append(toIndentedString(modified)).append("\n");
-    sb.append("    status: ").append(toIndentedString(status)).append("\n");
-    sb.append("    author: ").append(toIndentedString(author)).append("\n");
-    sb.append("    category: ").append(toIndentedString(category)).append("\n");
-    sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
   }
 }
