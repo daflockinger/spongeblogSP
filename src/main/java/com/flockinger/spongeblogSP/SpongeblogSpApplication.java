@@ -14,12 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SpongeblogSpApplication {
 	
-	@PreAuthorize("hasAuthority('ADMIN')")
-	@RequestMapping("/secured")
-	public String topSecret(){
-		return "top secret";
-	}
-	
 	@RequestMapping(value = "/")
 	public void index(HttpServletResponse response) throws IOException {
 		response.sendRedirect("/swagger-ui.html");

@@ -1,6 +1,7 @@
 insert into user (id, login, nick_name, password, registered, email) values (1,'flo','daflo','secret',NOW(),'flo@kinger.cc');
 insert into user_roles (user_id, roles) values (1, 'ADMIN');
 insert into user (id, login, nick_name, password, registered, email) values (2,'nobody','body','secret',NOW(),'no@body.cc');
+insert into user_roles (user_id, roles) values (2, 'AUTHOR');
 
 insert into blog (id, name, status) values (1,'test blog','ACTIVE');
 insert into blog_settings (blog_id, settings, settings_key) values (1,'all-black','blog theme');

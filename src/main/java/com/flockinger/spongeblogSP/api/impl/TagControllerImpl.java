@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flockinger.spongeblogSP.api.TagController;
+import com.flockinger.spongeblogSP.api.util.RequestValidator;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.TagPostsDTO;
 import com.flockinger.spongeblogSP.dto.link.PostLink;
@@ -35,6 +36,9 @@ public class TagControllerImpl implements TagController {
 
 	@Autowired
 	private TagService service;
+	
+	@Autowired
+	private RequestValidator validator;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -48,7 +52,7 @@ public class TagControllerImpl implements TagController {
 	public ResponseEntity<?> apiV1TagsPost(@ApiParam(value = "", required = true) @Valid @RequestBody TagDTO tagEdit, 
 			BindingResult bindingResult) throws DuplicateEntityException, DtoValidationFailedException {
 		
-		validateRequestBody(bindingResult);
+		validator.validateRequestBody(bindingResult);
 		TagDTO tag = service.createTag(tagEdit.getName());
 		return new ResponseEntity<TagDTO>(addSelfLink(tag), HttpStatus.CREATED);
 	}
@@ -56,8 +60,8 @@ public class TagControllerImpl implements TagController {
 	public ResponseEntity<?> apiV1TagsPut(@ApiParam(value = "", required = true) @Valid @RequestBody TagDTO tagEdit, 
 			BindingResult bindingResult) throws EntityIsNotExistingException, DtoValidationFailedException, DuplicateEntityException {
 
-		validateRequestBody(bindingResult);
-		assertIdForUpdate(tagEdit.getTagId());
+		validator.validateRequestBody(bindingResult);
+		validator.assertIdForUpdate(tagEdit.getTagId());
 		service.updateTag(tagEdit);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
@@ -90,17 +94,5 @@ public class TagControllerImpl implements TagController {
 			logger.error("Not found after Persisting. Should not happen.");
 		}
 		return tag;
-	}
-	
-	private void assertIdForUpdate(Long id) throws DtoValidationFailedException{
-		if(id == null){
-			throw new DtoValidationFailedException("Id must not be null on update!", new ArrayList<>());
-		}
-	}
-	
-	private void validateRequestBody(BindingResult bindingResult) throws DtoValidationFailedException {
-		if (bindingResult.hasErrors()) {
-			throw new DtoValidationFailedException("Invalid field entries!", bindingResult.getFieldErrors());
-		}
 	}
 }

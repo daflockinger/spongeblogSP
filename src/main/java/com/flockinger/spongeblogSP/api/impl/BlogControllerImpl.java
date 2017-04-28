@@ -14,6 +14,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
 
 import com.flockinger.spongeblogSP.api.BlogController;
+import com.flockinger.spongeblogSP.api.util.RequestValidator;
 import com.flockinger.spongeblogSP.dto.BlogDTO;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
@@ -28,6 +29,9 @@ public class BlogControllerImpl implements BlogController {
 
 	@Autowired
 	private BlogService service;
+	
+	@Autowired
+	private RequestValidator validator;
 	
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -45,7 +49,7 @@ public class BlogControllerImpl implements BlogController {
 	public ResponseEntity<?> apiV1BlogPost(@ApiParam(value = "", required = true) @Valid @RequestBody BlogDTO blogEdit,
 			BindingResult bindingResult) throws DtoValidationFailedException, DuplicateEntityException {
 		
-		validate(bindingResult);
+		validator.validateRequestBody(bindingResult);
 		BlogDTO createdBlog = service.createBlog(blogEdit);
 		return new ResponseEntity<BlogDTO>(addSelfLink(createdBlog), HttpStatus.CREATED);
 	}
@@ -53,7 +57,7 @@ public class BlogControllerImpl implements BlogController {
 	public ResponseEntity<?> apiV1BlogPut(@ApiParam(value = "", required = true) @Valid @RequestBody BlogDTO blogEdit,
 			BindingResult bindingResult) throws DtoValidationFailedException, EntityIsNotExistingException {
 		
-		validate(bindingResult);
+		validator.validateRequestBody(bindingResult);
 		service.updateBlog(blogEdit);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
@@ -64,12 +68,6 @@ public class BlogControllerImpl implements BlogController {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
-	private void validate(BindingResult bindingResult) throws DtoValidationFailedException {
-		if (bindingResult.hasErrors()) {
-			throw new DtoValidationFailedException("Invalid field entries!", bindingResult.getFieldErrors());
-		}
-	}
-	
 	
 	private BlogDTO addSelfLink(BlogDTO blog) {
 		try {

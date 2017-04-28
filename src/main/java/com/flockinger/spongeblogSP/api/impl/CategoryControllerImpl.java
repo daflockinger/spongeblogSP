@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flockinger.spongeblogSP.api.CategoryController;
+import com.flockinger.spongeblogSP.api.util.RequestValidator;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
@@ -34,6 +35,9 @@ public class CategoryControllerImpl implements CategoryController {
 
 	@Autowired
 	private CategoryService service;
+	
+	@Autowired
+	private RequestValidator validator;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -71,7 +75,7 @@ public class CategoryControllerImpl implements CategoryController {
 			@ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
 			BindingResult bindingResult) throws DtoValidationFailedException, DependencyNotFoundException {
 
-		validate(bindingResult);
+		validator.validateRequestBody(bindingResult);
 		CategoryDTO createdCategory = service.createCategory(categoryEdit);
 		return new ResponseEntity<CategoryDTO>(addSelfAndParentLink(createdCategory), HttpStatus.CREATED);
 	}
@@ -80,7 +84,8 @@ public class CategoryControllerImpl implements CategoryController {
 			@ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
 			BindingResult bindingResult) throws EntityIsNotExistingException, DtoValidationFailedException, DependencyNotFoundException {
 		
-		validate(bindingResult);
+		validator.validateRequestBody(bindingResult);
+		validator.assertIdForUpdate(categoryEdit.getCategoryId());
 		service.updateCategory(categoryEdit);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
@@ -91,12 +96,7 @@ public class CategoryControllerImpl implements CategoryController {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
-	private void validate(BindingResult bindingResult) throws DtoValidationFailedException {
-		if (bindingResult.hasErrors()) {
-			throw new DtoValidationFailedException("Invalid field entries!", bindingResult.getFieldErrors());
-		}
-	}
-
+	
 	private CategoryDTO addSelfAndParentLink(CategoryDTO category) {
 		try {
 			category.add(linkTo(methodOn(CategoryControllerImpl.class, category.getCategoryId())

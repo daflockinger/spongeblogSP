@@ -34,8 +34,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/author/{userId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsAuthorUserIdGet(@ApiParam(value = "Unique identifier of a User;",required=true ) @PathVariable("userId") Long userId,
          @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false) Integer page,
@@ -52,8 +51,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/author/{userId}/{status}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsAuthorUserIdStatusGet(@ApiParam(value = "Unique identifier of a User;",required=true ) @PathVariable("userId") Long userId,
         @ApiParam(value = "Post Status Id",required=true ) @PathVariable("status") String status,
@@ -71,8 +69,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/category/{categoryId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsCategoryCategoryIdGet(@ApiParam(value = "Unique identifier of a Category;",required=true ) @PathVariable("categoryId") Long categoryId,
          @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false) Integer page,
@@ -89,8 +86,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/category/{categoryId}/{status}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsCategoryCategoryIdStatusGet(@ApiParam(value = "Unique identifier of a Category;",required=true ) @PathVariable("categoryId") Long categoryId,
         @ApiParam(value = "Post Status Id",required=true ) @PathVariable("status") String status,
@@ -108,8 +104,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsGet( @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false) Integer page,
          @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false) Integer size) throws DtoValidationFailedException;
@@ -141,8 +136,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/{postId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.DELETE)
     ResponseEntity<?> apiV1PostsPostIdDelete(@ApiParam(value = "Unique identifier of a Post;",required=true ) @PathVariable("postId") Long postId) throws EntityIsNotExistingException;
 
@@ -157,8 +151,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/{postId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsPostIdGet(@ApiParam(value = "Unique identifier of a Post;",required=true ) @PathVariable("postId") Long postId) throws EntityIsNotExistingException;
 
@@ -189,8 +182,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/rewind/{postId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.PUT)
     ResponseEntity<?> apiV1PostsRewindPostIdPut(@ApiParam(value = "Unique identifier of a Post;",required=true ) @PathVariable("postId") Long postId) throws NoVersionFoundException;
 
@@ -205,8 +197,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/posts/status/{status}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsStatusStatusGet(@ApiParam(value = "Post Status Id",required=true ) @PathVariable("status") String status,
          @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false) Integer page,
@@ -222,8 +213,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = String.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = String.class) })
     @RequestMapping(value = "/api/v1/posts/tag/{tagId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsTagTagIdGet(@ApiParam(value = "Unique identifier of a Tag;",required=true ) @PathVariable("tagId") Long tagId,
          @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false) Integer page,
@@ -240,8 +230,7 @@ public interface PostController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = String.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = String.class) })
     @RequestMapping(value = "/api/v1/posts/tag/{tagId}/{status}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1PostsTagTagIdStatusGet(@ApiParam(value = "Unique identifier of a Tag;",required=true ) @PathVariable("tagId") Long tagId,
         @ApiParam(value = "Post Status Id",required=true ) @PathVariable("status") String status,

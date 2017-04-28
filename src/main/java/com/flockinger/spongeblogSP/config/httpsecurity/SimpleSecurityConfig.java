@@ -25,7 +25,6 @@ import com.flockinger.spongeblogSP.service.UserService;
 @Profile({"test","default"})
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
  
     private static String REALM="MY_TEST_REALM";
@@ -42,8 +41,19 @@ public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
       http.csrf().disable()
         .authorizeRequests()
-        .antMatchers("/").permitAll()
-        .antMatchers("/secured").hasAnyAuthority("ADMIN","USER")
+        .antMatchers(HttpMethod.GET, "/api/v1/users/info/**").permitAll()
+        .antMatchers(HttpMethod.GET, "/api/v1/users/*").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.GET, "/api/v1/posts/author/**").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.PUT, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.DELETE, "/api/v1/posts/*").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.PUT, "/api/v1/posts/rewind/*").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.POST, "/api/v1/**").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.PUT, "/api/v1/**").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.DELETE, "/api/v1/**").hasAuthority("ADMIN")
+        .antMatchers("/").hasAuthority("ADMIN")
+        .antMatchers("/swagger-ui.html").hasAuthority("ADMIN")
         .and().httpBasic().realmName(REALM).authenticationEntryPoint(getBasicAuthEntryPoint())
         .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

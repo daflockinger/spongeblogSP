@@ -27,8 +27,7 @@ public interface ImageController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/images",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1ImagesGet( @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false) Integer page,
          @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false) Integer size,
@@ -46,8 +45,7 @@ public interface ImageController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/images/{image-key}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.DELETE)
     ResponseEntity<?> apiV1ImagesImageKeyDelete(@ApiParam(value = "Key of the Image.",required=true ) @PathVariable("imageKey") String imageKey);
 
@@ -63,7 +61,6 @@ public interface ImageController {
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/images/{image-key}",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1ImagesImageKeyGet(@ApiParam(value = "Key of the Image.",required=true ) @PathVariable("imageKey") String imageKey);
 
@@ -79,7 +76,6 @@ public interface ImageController {
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/images/link/{image-key}",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1ImagesLinkImageKeyGet(@ApiParam(value = "Key of the Image.",required=true ) @PathVariable("imageKey") String imageKey);
 

@@ -12,16 +12,10 @@ import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 
 public interface UserService extends Versionable, UserDetailsService{
 	UserEditDTO getUser(Long id) throws EntityIsNotExistingException;
-	
 	UserInfoDTO getUserInfo(Long id) throws EntityIsNotExistingException;
-
 	List<UserEditDTO> getAllUsers();
-
 	UserEditDTO createUser(UserEditDTO user) throws DuplicateEntityException;
-
 	void updateUser(UserEditDTO user) throws EntityIsNotExistingException, DuplicateEntityException;
-
 	void deleteUser(Long id) throws EntityIsNotExistingException;
-	
 	Boolean isLoginCorrect(LoginDTO credentials);
 }

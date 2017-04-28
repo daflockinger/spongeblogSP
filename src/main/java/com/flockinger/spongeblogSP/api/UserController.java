@@ -7,19 +7,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.flockinger.spongeblogSP.dto.Error;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
-import com.flockinger.spongeblogSP.dto.Error;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 public interface UserController {
-
-
+	
     @ApiOperation(value = "All Users", notes = "Returns all Users.", response = UserEditDTO.class, responseContainer = "List", tags={ "Users", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "Users.", response = UserEditDTO.class),
@@ -30,8 +32,7 @@ public interface UserController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/users",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1UsersGet();
 
@@ -46,8 +47,7 @@ public interface UserController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/users/info/{userId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1UsersInfoUserIdGet(@ApiParam(value = "Unique identifier of a User;",required=true ) @PathVariable("userId") Long userId) throws EntityIsNotExistingException;
 
@@ -96,8 +96,7 @@ public interface UserController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/users/rewind/{userId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.PUT)
     ResponseEntity<?> apiV1UsersRewindUserIdPut(@ApiParam(value = "Unique identifier of a User;",required=true ) @PathVariable("userId") Long userId) throws NoVersionFoundException;
 
@@ -112,8 +111,7 @@ public interface UserController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/users/{userId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.DELETE)
     ResponseEntity<?> apiV1UsersUserIdDelete(@ApiParam(value = "Unique identifier of a User;",required=true ) @PathVariable("userId") Long userId) throws EntityIsNotExistingException;
 
@@ -128,8 +126,7 @@ public interface UserController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/users/{userId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1UsersUserIdGet(@ApiParam(value = "Unique identifier of a User;",required=true ) @PathVariable("userId") Long userId) throws EntityIsNotExistingException;
     

@@ -5,20 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.flockinger.spongeblogSP.model.Category;
 import com.flockinger.spongeblogSP.service.BaseServiceTest;
-import com.flockinger.spongeblogSP.service.CategoryService;
 
 
 public class CategoryDAOTest extends BaseServiceTest{

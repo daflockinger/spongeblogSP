@@ -3,6 +3,7 @@ package com.flockinger.spongeblogSP.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,7 +16,6 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 @Profile("production")
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class BlogSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired 
@@ -33,6 +33,18 @@ public class BlogSecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/google-login"))
         .and()
         .authorizeRequests()
-        .anyRequest().authenticated();
+        .antMatchers(HttpMethod.GET, "/api/v1/users/info/**").permitAll()
+        .antMatchers(HttpMethod.GET, "/api/v1/users/*").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.GET, "/api/v1/posts/author/**").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.PUT, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.DELETE, "/api/v1/posts/*").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.PUT, "/api/v1/posts/rewind/*").hasAnyAuthority("ADMIN", "AUTHOR")
+        .antMatchers(HttpMethod.POST, "/api/v1/**").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.PUT, "/api/v1/**").hasAuthority("ADMIN")
+        .antMatchers(HttpMethod.DELETE, "/api/v1/**").hasAuthority("ADMIN")
+        .antMatchers("/").hasAuthority("ADMIN")
+        .antMatchers("/swagger-ui.html").hasAuthority("ADMIN");
     }
 }

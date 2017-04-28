@@ -31,8 +31,7 @@ public interface CategoryController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/categories/{categoryId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.DELETE)
     ResponseEntity<?> apiV1CategoriesCategoryIdDelete(@ApiParam(value = "Unique identifier of a Category;",required=true ) @PathVariable("categoryId") Long categoryId) throws EntityIsNotExistingException, OrphanedDependingEntitiesException;
 
@@ -47,8 +46,7 @@ public interface CategoryController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/categories/{categoryId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1CategoriesCategoryIdGet(@ApiParam(value = "Unique identifier of a Category;",required=true ) @PathVariable("categoryId") Long categoryId) throws EntityIsNotExistingException;
 
@@ -64,7 +62,6 @@ public interface CategoryController {
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/categories/children/{parentCategoryId}",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1CategoriesChildrenParentCategoryIdGet(@ApiParam(value = "Unique identifier of the parent Category;",required=true ) @PathVariable("parentCategoryId") Long parentCategoryId) throws EntityIsNotExistingException;
 
@@ -79,8 +76,7 @@ public interface CategoryController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/categories",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1CategoriesGet();
 
@@ -127,8 +123,7 @@ public interface CategoryController {
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/categories/rewind/{categoryId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
+        produces = { "application/json" },
         method = RequestMethod.PUT)
     ResponseEntity<?> apiV1CategoriesRewindCategoryIdPut(@ApiParam(value = "Unique identifier of a Category;",required=true ) @PathVariable("categoryId") Long categoryId) throws NoVersionFoundException;
 
