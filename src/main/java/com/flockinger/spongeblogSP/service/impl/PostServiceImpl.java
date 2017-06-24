@@ -1,6 +1,5 @@
 package com.flockinger.spongeblogSP.service.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -9,12 +8,13 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +25,14 @@ import com.flockinger.spongeblogSP.dao.TagDAO;
 import com.flockinger.spongeblogSP.dao.UserDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.dto.PostDTO;
+import com.flockinger.spongeblogSP.dto.PostPreviewDTO;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
-import com.flockinger.spongeblogSP.dto.link.PostLink;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.model.Post;
-import com.flockinger.spongeblogSP.model.PostTagsAud;
 import com.flockinger.spongeblogSP.model.Tag;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 import com.flockinger.spongeblogSP.service.PostService;
@@ -58,54 +57,56 @@ public class PostServiceImpl implements PostService {
 
 	@PersistenceContext
 	private EntityManager em;
+	
+	@Value("${blog.preview-text-size}")
+	private Integer previewTextSize;
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getAllPosts(Pageable pageable) {
-		return map(dao.findAllIdsDistinct(pageable));
+	public List<PostPreviewDTO> getAllPosts(Pageable pageable) {
+		return map(dao.findAll(pageable).getContent());
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getAllPostsWithStatus(PostStatus status, Pageable pageable) {
-		return map(dao.findIdDistinctByStatus(status, pageable));
+	public List<PostPreviewDTO> getAllPostsWithStatus(PostStatus status, Pageable pageable) {
+		return map(dao.findByStatus(status, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getPostsFromCategoryId(Long categoryId, Pageable pageable) {
-		return map(dao.findDistinctIdByCategoryId(categoryId, pageable));
+	public List<PostPreviewDTO> getPostsFromCategoryId(Long categoryId, Pageable pageable) {
+		return map(dao.findByCategoryId(categoryId, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getPostsFromCategoryIdWithStatus(Long categoryId, PostStatus status, Pageable pageable) {
-		return map(dao.findDistinctIdByCategoryIdAndStatus(categoryId, status, pageable));
+	public List<PostPreviewDTO> getPostsFromCategoryIdWithStatus(Long categoryId, PostStatus status, Pageable pageable) {
+		return map(dao.findByCategoryIdAndStatus(categoryId, status, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getPostsFromAuthorId(Long authorId, Pageable pageable) {
-		return map(dao.findDistinctIdByAuthorId(authorId, pageable));
+	public List<PostPreviewDTO> getPostsFromAuthorId(Long authorId, Pageable pageable) {
+		return map(dao.findByAuthorId(authorId, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable) {
-		return map(dao.findDistinctIdByAuthorIdAndStatus(authorId, status, pageable));
+	public List<PostPreviewDTO> getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable) {
+		return map(dao.findByAuthorIdAndStatus(authorId, status, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getPostsFromTagId(Long tagId, Pageable pageable) {
-		return map(dao.findByTagsId(tagId, pageable).stream().map(post -> post.getId()).collect(Collectors.toList()));
+	public List<PostPreviewDTO> getPostsFromTagId(Long tagId, Pageable pageable) {
+		return map(dao.findByTagsId(tagId, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostLink> getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable) {
-		return map(dao.findByTagsIdAndStatus(tagId, status, pageable).stream().map(post -> post.getId())
-				.collect(Collectors.toList()));
+	public List<PostPreviewDTO> getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable) {
+		return map(dao.findByTagsIdAndStatus(tagId, status, pageable));
 	}
 
 	@Override
@@ -188,15 +189,14 @@ public class PostServiceImpl implements PostService {
 		dao.delete(id);
 	}
 
-	private List<PostLink> map(List<Long> ids) {
-		return ids.stream().map(post -> map(post)).collect(Collectors.toCollection(LinkedList::new));
+	private List<PostPreviewDTO> map(List<Post> posts) {
+		return posts.stream().map(post -> mapPreview(post)).collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	private PostLink map(Long id) {
-		PostLink link = new PostLink();
-		link.setId(id);
-
-		return link;
+	private PostPreviewDTO mapPreview(Post post) {
+		PostPreviewDTO preview = mapper.map(post, PostPreviewDTO.class);
+		preview.setPartContent(StringUtils.abbreviate(post.getContent(), previewTextSize));
+		return preview;
 	}
 
 	@Override
@@ -205,14 +205,11 @@ public class PostServiceImpl implements PostService {
 		AuditReader auditReader = AuditReaderFactory.get(em);
 		Integer prevVersion = previousVersionNumber(auditReader, id);
 		Post previousPost = auditReader.find(Post.class, id, prevVersion);
+		List<Tag> tags = em
+					.createNamedQuery("Tag.findFromPreviousPost",Tag.class)
+					.setParameter("postId", id).setParameter("revId", prevVersion).getResultList();
 
-		List<PostTagsAud> postTags = em
-				.createQuery("select p from PostTagsAud p where p.postsId = :postId and p.rev = :revId",
-						PostTagsAud.class)
-				.setParameter("postId", id).setParameter("revId", prevVersion).getResultList();
-		List<Tag> relatedTags = getRealTagsFromIds(postTags);
-		previousPost.setTags(relatedTags);
-
+		previousPost.setTags(tags);
 		dao.save(previousPost);
 	}
 
@@ -226,16 +223,6 @@ public class PostServiceImpl implements PostService {
 			throw new NoVersionFoundException("No previous version found of Post");
 		}
 		return revs.get(1);
-	}
-
-	private List<Tag> getRealTagsFromIds(List<PostTagsAud> postTags) {
-		List<Tag> realTags = new ArrayList<>();
-
-		if (CollectionUtils.isNotEmpty(postTags)) {
-			realTags = postTags.stream().map(postTag -> tagDao.findOne(postTag.getTagId()))
-					.collect(Collectors.toList());
-		}
-		return realTags;
 	}
 
 	private PostDTO map(Post post) {

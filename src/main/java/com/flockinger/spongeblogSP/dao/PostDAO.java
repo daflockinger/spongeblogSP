@@ -22,21 +22,13 @@ public interface PostDAO extends PagingAndSortingRepository<Post,Long>, VersionD
 	
 	List<Post> findByAuthorId(Long id);
 	
-	@Query("select distinct id from Post")
-	List<Long> findAllIdsDistinct (Pageable pageable);
+	List<Post> findByStatus (PostStatus status, Pageable pageable);
 	
-	@Query("select distinct id from Post p where p.status=?1")
-	List<Long> findIdDistinctByStatus (PostStatus status, Pageable pageable);
+	List<Post> findByCategoryId (Long categoryId, Pageable pageable);
 	
-	@Query("select distinct id from Post p where p.category.id=?1")
-	List<Long> findDistinctIdByCategoryId (Long categoryId, Pageable pageable);
+	List<Post> findByCategoryIdAndStatus (Long categoryId, PostStatus status, Pageable pageable);
 	
-	@Query("select distinct id from Post p where p.category.id=?1 and p.status=?2")
-	List<Long> findDistinctIdByCategoryIdAndStatus (Long categoryId, PostStatus status, Pageable pageable);
+	List<Post> findByAuthorId (Long authorId, Pageable pageable);
 	
-	@Query("select distinct id from Post p where p.author.id=?1")
-	List<Long> findDistinctIdByAuthorId (Long authorId, Pageable pageable);
-	
-	@Query("select distinct id from Post p where p.author.id=?1 and p.status=?2")
-	List<Long> findDistinctIdByAuthorIdAndStatus (Long authorId, PostStatus status, Pageable pageable);
+	List<Post> findByAuthorIdAndStatus (Long authorId, PostStatus status, Pageable pageable);
 }

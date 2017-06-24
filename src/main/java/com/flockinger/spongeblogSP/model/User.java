@@ -46,7 +46,7 @@ public class User extends BaseModel{
 	@Enumerated(EnumType.STRING)
 	private List<UserRole> roles;
 	
-	@OneToMany(mappedBy="author", targetEntity=Post.class)
+	@OneToMany(mappedBy="author")
 	private List<Post> posts;
 	
 	public String getEmail() {

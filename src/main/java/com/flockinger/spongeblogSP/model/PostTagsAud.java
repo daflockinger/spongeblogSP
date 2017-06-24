@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.hibernate.envers.Audited;
-
 @Entity
 public class PostTagsAud {
 	
@@ -19,7 +17,6 @@ public class PostTagsAud {
 	private Long tagId;
 	
 	private Byte revtype;
-	
 	
 	public Integer getRev() {
 		return rev;

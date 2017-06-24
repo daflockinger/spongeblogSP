@@ -5,22 +5,18 @@ import static com.flockinger.spongeblogSP.config.BlogConfigurationConstants.PAGI
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.hibernate.cfg.CreateKeySecondPass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,17 +26,14 @@ import com.flockinger.spongeblogSP.api.PostController;
 import com.flockinger.spongeblogSP.api.util.RequestValidator;
 import com.flockinger.spongeblogSP.dto.Paging;
 import com.flockinger.spongeblogSP.dto.PostDTO;
-import com.flockinger.spongeblogSP.dto.link.PostLink;
+import com.flockinger.spongeblogSP.dto.PostPreviewDTO;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
-import com.flockinger.spongeblogSP.model.enums.BlogStatus;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 import com.flockinger.spongeblogSP.service.PostService;
-import com.google.common.base.Enums;
-import com.google.common.base.Optional;
 
 import io.swagger.annotations.ApiParam;
 
@@ -62,9 +55,9 @@ public class PostControllerImpl implements PostController {
 			throws DtoValidationFailedException {
 
 		validator.assertPaging(page, size);
-		List<PostLink> posts = service.getPostsFromAuthorId(userId, new Paging(page, getSortingByDateDesc(), size));
+		List<PostPreviewDTO> posts = service.getPostsFromAuthorId(userId, new Paging(page, getSortingByDateDesc(), size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> apiV1PostsAuthorUserIdStatusGet(
@@ -76,10 +69,10 @@ public class PostControllerImpl implements PostController {
 
 		validator.assertPaging(page, size);
 		validator.assertStatus(PostStatus.class,status);
-		List<PostLink> posts = service.getPostsFromAuthorIdWithStatus(userId, PostStatus.valueOf(status),
+		List<PostPreviewDTO> posts = service.getPostsFromAuthorIdWithStatus(userId, PostStatus.valueOf(status),
 				new Paging(page, getSortingByDateDesc(), size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> apiV1PostsCategoryCategoryIdGet(
@@ -88,9 +81,9 @@ public class PostControllerImpl implements PostController {
 			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size) throws DtoValidationFailedException {
 		
 		validator.assertPaging(page,size);
-		List<PostLink> posts = service.getPostsFromCategoryId(categoryId, new Paging(page,getSortingByDateDesc(),size));
+		List<PostPreviewDTO> posts = service.getPostsFromCategoryId(categoryId, new Paging(page,getSortingByDateDesc(),size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> apiV1PostsCategoryCategoryIdStatusGet(
@@ -101,9 +94,9 @@ public class PostControllerImpl implements PostController {
 		
 		validator.assertPaging(page, size);
 		validator.assertStatus(PostStatus.class,status);
-		List<PostLink> posts = service.getPostsFromCategoryIdWithStatus(categoryId, PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
+		List<PostPreviewDTO> posts = service.getPostsFromCategoryIdWithStatus(categoryId, PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> apiV1PostsTagTagIdGet(
@@ -112,9 +105,9 @@ public class PostControllerImpl implements PostController {
 			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size) throws DtoValidationFailedException {
 		
 		validator.assertPaging(page, size);
-		List<PostLink> posts = service.getPostsFromTagId(tagId, new Paging(page,getSortingByDateDesc(),size));
+		List<PostPreviewDTO> posts = service.getPostsFromTagId(tagId, new Paging(page,getSortingByDateDesc(),size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> apiV1PostsTagTagIdStatusGet(
@@ -125,9 +118,9 @@ public class PostControllerImpl implements PostController {
 		
 		validator.assertPaging(page, size);
 		validator.assertStatus(PostStatus.class,status);
-		List<PostLink> posts = service.getPostsFromTagIdWithStatus(tagId, PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
+		List<PostPreviewDTO> posts = service.getPostsFromTagIdWithStatus(tagId, PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> apiV1PostsGet(
@@ -136,9 +129,9 @@ public class PostControllerImpl implements PostController {
 			throws DtoValidationFailedException {
 
 		validator.assertPaging(page, size);
-		List<PostLink> posts = service.getAllPosts(new Paging(page, getSortingByDateDesc(), size));
+		List<PostPreviewDTO> posts = service.getAllPosts(new Paging(page, getSortingByDateDesc(), size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> apiV1PostsPost(@ApiParam(value = "", required = true) @Valid @RequestBody PostDTO postEdit,
@@ -189,9 +182,9 @@ public class PostControllerImpl implements PostController {
 		
 		validator.assertPaging(page, size);
 		validator.assertStatus(PostStatus.class,status);
-		List<PostLink> posts = service.getAllPostsWithStatus(PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
+		List<PostPreviewDTO> posts = service.getAllPostsWithStatus(PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
 		posts.forEach(post -> addSelfLink(post));
-		return new ResponseEntity<List<PostLink>>(posts, HttpStatus.OK);
+		return new ResponseEntity<List<PostPreviewDTO>>(posts, HttpStatus.OK);
 	}
 	
 
@@ -204,7 +197,7 @@ public class PostControllerImpl implements PostController {
 		return post;
 	}
 
-	private PostLink addSelfLink(PostLink post) {
+	private PostPreviewDTO addSelfLink(PostPreviewDTO post) {
 		try {
 			post.add(linkTo(methodOn(PostControllerImpl.class).apiV1PostsPostIdGet(post.getPostId())).withSelfRel());
 		} catch (EntityIsNotExistingException e) {

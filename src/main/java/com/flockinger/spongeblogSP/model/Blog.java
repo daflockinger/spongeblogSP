@@ -6,6 +6,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.MapKeyColumn;
 import javax.validation.constraints.NotNull;
 
@@ -24,7 +25,7 @@ public class Blog extends BaseModel{
 	@Enumerated(EnumType.STRING)
 	private BlogStatus status;
 	
-	@ElementCollection
+	@ElementCollection(fetch=FetchType.EAGER)
 	@MapKeyColumn(columnDefinition="VARCHAR(150)",length=150)
 	private Map<String,String> settings;
 	
