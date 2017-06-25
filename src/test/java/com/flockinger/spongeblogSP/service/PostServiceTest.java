@@ -22,6 +22,7 @@ import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.dto.PostDTO;
 import com.flockinger.spongeblogSP.dto.PostPreviewDTO;
+import com.flockinger.spongeblogSP.dto.PostsPage;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
@@ -44,12 +45,15 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testGetAllPosts_withPaging_shouldReturnPageContent() {
 		Pageable secondPageDateDescending = createPage(1, 3, createSort(Direction.DESC, "created"));
 
-		List<PostPreviewDTO> posts = service.getAllPosts(secondPageDateDescending);
+		PostsPage page = service.getAllPosts(secondPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 6l);
 		assertTrue(posts.get(1).getPostId() == 5l);
 		assertTrue(posts.get(2).getPostId() == 4l);
+		assertTrue(page.getHasPrevious());
+		assertFalse(page.getHasNext());
 	}
 
 	@Test
@@ -57,7 +61,8 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testGetAllPostWithStatus_withValidStatus_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
-		List<PostPreviewDTO> posts = service.getAllPostsWithStatus(PostStatus.PUBLIC, firstPageDateDescending);
+		PostsPage page =  service.getAllPostsWithStatus(PostStatus.PUBLIC, firstPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 1l);
 		assertTrue(posts.get(1).getPostId() == 2l);
@@ -76,6 +81,8 @@ public class PostServiceTest extends BaseServiceTest {
 		assertTrue(posts.get(2).getPostId() == 3l);
 		assertTrue(posts.get(3).getPostId() == 6l);
 		assertTrue(posts.get(4).getPostId() == 5l);
+		assertFalse(page.getHasNext());
+		assertFalse(page.getHasPrevious());
 	}
 
 	@Test
@@ -83,7 +90,8 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testGetAllPostFromCategoryId_withValidCategory_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
-		List<PostPreviewDTO> posts = service.getPostsFromCategoryId(1l, firstPageDateDescending);
+		PostsPage page =  service.getPostsFromCategoryId(1l, firstPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 1l);
 		assertTrue(posts.get(1).getPostId() == 3l);
@@ -94,8 +102,9 @@ public class PostServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testGetAllPostFromCategoryIdAndStatus_withValidCategoryAndStatus_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
-
-		List<PostPreviewDTO> posts = service.getPostsFromCategoryIdWithStatus(2l, PostStatus.PUBLIC, firstPageDateDescending);
+		
+		PostsPage page =  service.getPostsFromCategoryIdWithStatus(2l, PostStatus.PUBLIC, firstPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 2l);
 		assertTrue(posts.get(1).getPostId() == 6l);
@@ -107,7 +116,8 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testGetAllPostFromTagId_withValidTag_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
-		List<PostPreviewDTO> posts = service.getPostsFromTagId(1l, firstPageDateDescending);
+		PostsPage page =  service.getPostsFromTagId(1l, firstPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 1l);
 		assertTrue(posts.get(1).getPostId() == 2l);
@@ -118,7 +128,8 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testGetAllPostFromTagIdAndStatus_withValidTagAndStatus_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
-		List<PostPreviewDTO> posts = service.getPostsFromTagIdWithStatus(1l, PostStatus.PUBLIC, firstPageDateDescending);
+		PostsPage page =  service.getPostsFromTagIdWithStatus(1l, PostStatus.PUBLIC, firstPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 1l);
 		assertTrue(posts.get(1).getPostId() == 2l);
@@ -130,7 +141,8 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testGetAllPostFromAuthor_withValidAuthor_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
-		List<PostPreviewDTO> posts = service.getPostsFromAuthorId(1l, firstPageDateDescending);
+		PostsPage page =  service.getPostsFromAuthorId(1l, firstPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 1l);
 		assertTrue(posts.get(1).getPostId() == 2l);
@@ -144,7 +156,8 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testGetAllPostFromAuthorAndStatus_withValidAuthorAndStatus_shouldReturnFiltered() {
 		Pageable firstPageDateDescending = createPage(0, 6, createSort(Direction.DESC, "created"));
 
-		List<PostPreviewDTO> posts = service.getPostsFromAuthorIdWithStatus(1l, PostStatus.DELETED, firstPageDateDescending);
+		PostsPage page =  service.getPostsFromAuthorIdWithStatus(1l, PostStatus.DELETED, firstPageDateDescending);
+		List<PostPreviewDTO> posts = page.getPreviewPosts();
 		assertNotNull(posts);
 		assertTrue(posts.get(0).getPostId() == 4l);
 	}

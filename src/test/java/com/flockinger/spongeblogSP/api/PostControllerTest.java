@@ -46,12 +46,12 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts")
 	               .contentType(jsonContentType))
 					.andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(5)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("2")))
-	                .andExpect(jsonPath("$[2].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[3].links[0].href", containsString("6")))
-	                .andExpect(jsonPath("$[4].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(5)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")))
+	                .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[3].links[0].href", containsString("6")))
+	                .andExpect(jsonPath("$.previewPosts[4].links[0].href", containsString("5")));
 	}
 	
 	@Test
@@ -60,7 +60,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts")
 	               .contentType(jsonContentType))
 					.andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	@Test
@@ -69,9 +69,9 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts?size=2&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(2)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("6")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(2)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("6")));
 	}
 	
 	@Test
@@ -80,10 +80,10 @@ public class PostControllerTest extends BaseControllerTest{
 				mockMvc.perform(get("/api/v1/posts?size=3&page=0")
 			               .contentType(jsonContentType))
 			                .andExpect(status().isOk())
-			                .andExpect(jsonPath("$", hasSize(3)))
-			                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-			                .andExpect(jsonPath("$[1].links[0].href", containsString("2")))
-			                .andExpect(jsonPath("$[2].links[0].href", containsString("3")));
+			                .andExpect(jsonPath("$.previewPosts", hasSize(3)))
+			                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+			                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")))
+			                .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("3")));
 	}
 	
 	@Test
@@ -92,7 +92,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts?size=2&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	@Test
@@ -128,9 +128,9 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/author/1?size=2&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(2)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("6")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(2)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("6")));
 	}
 	
 	@Test
@@ -139,12 +139,12 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/author/1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(5)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("2")))
-	                .andExpect(jsonPath("$[2].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[3].links[0].href", containsString("6")))
-	                .andExpect(jsonPath("$[4].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(5)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")))
+	                .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[3].links[0].href", containsString("6")))
+	                .andExpect(jsonPath("$.previewPosts[4].links[0].href", containsString("5")));
 	}
 	
 	@Test
@@ -152,7 +152,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/author/7657651")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	
@@ -162,9 +162,9 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/author/1/PUBLIC?size=2&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(2)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("6")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(2)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("6")));
 	}
 	
 	@Test
@@ -173,12 +173,12 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/author/1/PUBLIC")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(5)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("2")))
-	                .andExpect(jsonPath("$[2].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[3].links[0].href", containsString("6")))
-	                .andExpect(jsonPath("$[4].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(5)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")))
+	                .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[3].links[0].href", containsString("6")))
+	                .andExpect(jsonPath("$.previewPosts[4].links[0].href", containsString("5")));
 	}
 	
 	@Test
@@ -187,7 +187,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/author/7657651/PUBLIC")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	@Test
@@ -707,8 +707,8 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/category/1?size=2&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(1)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(1)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("5")));
 	}
 	
 	@Test
@@ -717,10 +717,10 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/category/1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(3)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[2].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(3)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("5")));
 	}
 	
 	@Test
@@ -728,7 +728,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/category/7657651")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	
@@ -738,8 +738,8 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/category/1/PUBLIC?size=2&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(1)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(1)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("5")));
 	}
 	
 	@Test
@@ -748,10 +748,10 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/category/1/PUBLIC")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(3)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[2].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(3)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("5")));
 	}
 	
 	@Test
@@ -760,7 +760,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/category/7657651/PUBLIC")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	@Test
@@ -788,8 +788,8 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/tag/1?size=1&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(1)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("2")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(1)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("2")));
 	}
 	
 	@Test
@@ -798,9 +798,9 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/tag/1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(2)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("2")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(2)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")));
 	}
 	
 	@Test
@@ -808,7 +808,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/tag/7657651")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	
@@ -818,8 +818,8 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/tag/1/PUBLIC?size=1&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(1)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("2")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(1)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("2")));
 	}
 	
 	@Test
@@ -828,9 +828,9 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/tag/1/PUBLIC")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(2)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("2")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(2)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")));
 	}
 	
 	@Test
@@ -839,7 +839,7 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/tag/7657651/PUBLIC")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(0)));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(0)));
 	}
 	
 	@Test
@@ -867,9 +867,9 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/status/PUBLIC?size=2&page=1")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(2)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("6")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(2)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("6")));
 	}
 	
 	@Test
@@ -878,12 +878,12 @@ public class PostControllerTest extends BaseControllerTest{
 		mockMvc.perform(get("/api/v1/posts/status/PUBLIC")
 	               .contentType(jsonContentType))
 	                .andExpect(status().isOk())
-	                .andExpect(jsonPath("$", hasSize(5)))
-	                .andExpect(jsonPath("$[0].links[0].href", containsString("1")))
-	                .andExpect(jsonPath("$[1].links[0].href", containsString("2")))
-	                .andExpect(jsonPath("$[2].links[0].href", containsString("3")))
-	                .andExpect(jsonPath("$[3].links[0].href", containsString("6")))
-	                .andExpect(jsonPath("$[4].links[0].href", containsString("5")));
+	                .andExpect(jsonPath("$.previewPosts", hasSize(5)))
+	                .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+	                .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")))
+	                .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("3")))
+	                .andExpect(jsonPath("$.previewPosts[3].links[0].href", containsString("6")))
+	                .andExpect(jsonPath("$.previewPosts[4].links[0].href", containsString("5")));
 	}
 	
 	@Test

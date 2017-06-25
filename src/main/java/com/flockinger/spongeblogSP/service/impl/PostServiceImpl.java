@@ -15,6 +15,7 @@ import org.hibernate.envers.query.AuditEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import com.flockinger.spongeblogSP.dao.UserDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.dto.PostDTO;
 import com.flockinger.spongeblogSP.dto.PostPreviewDTO;
+import com.flockinger.spongeblogSP.dto.PostsPage;
 import com.flockinger.spongeblogSP.dto.TagDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
@@ -63,49 +65,49 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getAllPosts(Pageable pageable) {
-		return map(dao.findAll(pageable).getContent());
+	public PostsPage getAllPosts(Pageable pageable) {
+		return map(dao.findAll(pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getAllPostsWithStatus(PostStatus status, Pageable pageable) {
+	public PostsPage getAllPostsWithStatus(PostStatus status, Pageable pageable) {
 		return map(dao.findByStatus(status, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getPostsFromCategoryId(Long categoryId, Pageable pageable) {
+	public PostsPage getPostsFromCategoryId(Long categoryId, Pageable pageable) {
 		return map(dao.findByCategoryId(categoryId, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getPostsFromCategoryIdWithStatus(Long categoryId, PostStatus status, Pageable pageable) {
+	public PostsPage getPostsFromCategoryIdWithStatus(Long categoryId, PostStatus status, Pageable pageable) {
 		return map(dao.findByCategoryIdAndStatus(categoryId, status, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getPostsFromAuthorId(Long authorId, Pageable pageable) {
+	public PostsPage getPostsFromAuthorId(Long authorId, Pageable pageable) {
 		return map(dao.findByAuthorId(authorId, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable) {
+	public PostsPage getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable) {
 		return map(dao.findByAuthorIdAndStatus(authorId, status, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getPostsFromTagId(Long tagId, Pageable pageable) {
+	public PostsPage getPostsFromTagId(Long tagId, Pageable pageable) {
 		return map(dao.findByTagsId(tagId, pageable));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<PostPreviewDTO> getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable) {
+	public PostsPage getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable) {
 		return map(dao.findByTagsIdAndStatus(tagId, status, pageable));
 	}
 
@@ -225,6 +227,13 @@ public class PostServiceImpl implements PostService {
 		return revs.get(1);
 	}
 
+	private PostsPage map(Page<Post> page) {
+		PostsPage postPage = mapper.map(page, PostsPage.class);
+		postPage.setPreviewPosts(map(page.getContent()));
+		postPage.setHasNext(page.hasNext());
+		postPage.setHasPrevious(page.hasPrevious());
+		return postPage;
+	}
 	private PostDTO map(Post post) {
 		return mapper.map(post, PostDTO.class);
 	}
