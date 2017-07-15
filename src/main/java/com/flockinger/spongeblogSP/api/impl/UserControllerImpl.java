@@ -3,7 +3,6 @@ package com.flockinger.spongeblogSP.api.impl;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.flockinger.spongeblogSP.api.UserController;
 import com.flockinger.spongeblogSP.api.util.RequestValidator;
+import com.flockinger.spongeblogSP.dto.BlogUserDetails;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
@@ -98,6 +99,10 @@ public class UserControllerImpl implements UserController {
 		return new ResponseEntity<UserEditDTO>(addSelfLink(user), HttpStatus.OK);
 	}
 
+    public ResponseEntity<UserDetails> apiV1UsersNameUserNameGet(@ApiParam(value = "Login name of the user.",required=true ) @PathVariable("userName") String userName) {
+        return new ResponseEntity<UserDetails>(service.loadUserByUsername(userName),HttpStatus.OK);
+    }
+	
 	private UserEditDTO addSelfLink(UserEditDTO user) {
 		try {
 			user.add(linkTo(methodOn(UserControllerImpl.class).apiV1UsersUserIdGet(user.getUserId())).withSelfRel());

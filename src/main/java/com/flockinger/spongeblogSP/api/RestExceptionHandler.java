@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,7 +26,7 @@ import com.flockinger.spongeblogSP.exception.OrphanedDependingEntitiesException;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
  
     
-    @ExceptionHandler(value = {EntityIsNotExistingException.class})
+    @ExceptionHandler(value = {EntityIsNotExistingException.class,UsernameNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
         
     	return handleExceptionInternal(ex, createErrorModel(ex), 

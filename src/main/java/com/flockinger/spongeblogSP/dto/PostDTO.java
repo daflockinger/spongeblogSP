@@ -2,6 +2,7 @@ package com.flockinger.spongeblogSP.dto;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.Min;
@@ -27,12 +28,10 @@ public class PostDTO  extends ResourceSupport {
   private String content = null;
 
   @NotNull
-  @Min(0)
-  private Long created = null;
+  private Date created = null;
 
   @NotNull
-  @Min(0)
-  private Long modified = null;
+  private Date modified = null;
 
   @NotNull
   private PostStatus status = null;
@@ -90,11 +89,11 @@ public class PostDTO  extends ResourceSupport {
    * @return created
   **/
   @ApiModelProperty(value = "Creation date of Post in long.")
-  public Long getCreated() {
+  public Date getCreated() {
     return created;
   }
 
-  public void setCreated(Long created) {
+  public void setCreated(Date created) {
     this.created = created;
   }
 
@@ -103,11 +102,11 @@ public class PostDTO  extends ResourceSupport {
    * @return modified
   **/
   @ApiModelProperty(value = "Modification date of Post in long.")
-  public Long getModified() {
+  public Date getModified() {
     return modified;
   }
 
-  public void setModified(Long modified) {
+  public void setModified(Date modified) {
     this.modified = modified;
   }
 

@@ -22,6 +22,7 @@ import java.util.Date;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
@@ -241,8 +242,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -287,8 +288,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(871l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -308,8 +309,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(8762l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -330,8 +331,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(76551l)));
@@ -351,8 +352,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -373,8 +374,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent(null);
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -395,7 +396,7 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
 		freshPost.setCreated(null);
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -408,48 +409,6 @@ public class PostControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	public void testApiV1PostsPost_withNegativeCreated_shouldReturnBadRequest() throws Exception {
-		Date freshDate = new Date();
-
-		PostDTO freshPost = new PostDTO();
-		freshPost.setAuthor(getTestUser(1l));
-		freshPost.setCategory(getTestCategory(2l));
-		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(-3454l);
-		freshPost.setModified(freshDate.getTime());
-		freshPost.setStatus(PostStatus.PUBLIC);
-		freshPost.setTitle("Fresh out of the box");
-		freshPost.setTags(ImmutableList.of(getTag(1l)));
-		
-		mockMvc.perform(post("/api/v1/posts")
-				   .content(json(freshPost))
-	               .contentType(jsonContentType))
-				   .andExpect(status().isBadRequest())
-				   .andExpect(jsonPath("$.fields.created",containsString("must be greater")));
-	}
-	
-	@Test
-	public void testApiV1PostsPost_withNegativeModified_shouldReturnBadRequest() throws Exception {
-		Date freshDate = new Date();
-
-		PostDTO freshPost = new PostDTO();
-		freshPost.setAuthor(getTestUser(1l));
-		freshPost.setCategory(getTestCategory(2l));
-		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(-123l);
-		freshPost.setStatus(PostStatus.PUBLIC);
-		freshPost.setTitle("Fresh out of the box");
-		freshPost.setTags(ImmutableList.of(getTag(1l)));
-		
-		mockMvc.perform(post("/api/v1/posts")
-				   .content(json(freshPost))
-	               .contentType(jsonContentType))
-				   .andExpect(status().isBadRequest())
-				   .andExpect(jsonPath("$.fields.modified",containsString("must be greater")));
-	}
-	
-	@Test
 	public void testApiV1PostsPost_withNullStatus_shouldReturnBadRequest() throws Exception {
 		Date freshDate = new Date();
 
@@ -457,8 +416,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(null);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -478,8 +437,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(null);
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -498,23 +457,25 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(null);
 		freshPost.setContent(null);
-		freshPost.setCreated(-7656l);
+		freshPost.setCreated(new Date(-7656l));
 		freshPost.setModified(null);
 		freshPost.setStatus(null);
 		freshPost.setTitle("");
 		freshPost.setTags(null);
 		
-		mockMvc.perform(post("/api/v1/posts")
+		MvcResult result = mockMvc.perform(post("/api/v1/posts")
 				   .content(json(freshPost))
 	               .contentType(jsonContentType))
 				   .andExpect(status().isBadRequest())
 				   .andExpect(jsonPath("$.fields.category",containsString("may not be null")))
 				   .andExpect(jsonPath("$.fields.content",containsString("may not be null")))
-				   .andExpect(jsonPath("$.fields.created",containsString("must be greater")))
 				   .andExpect(jsonPath("$.fields.modified",containsString("may not be null")))
 				   .andExpect(jsonPath("$.fields.status",containsString("may not be null")))
 				   .andExpect(jsonPath("$.fields.title",containsString("may not be empty")))
-				   .andExpect(jsonPath("$.fields.tags",containsString("may not be null")));
+				   .andExpect(jsonPath("$.fields.tags",containsString("may not be null")))
+				   .andReturn();
+		
+		System.out.println();
 	}
 	
 	
@@ -527,8 +488,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -573,8 +534,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(871l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -594,8 +555,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(8762l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -616,8 +577,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(76551l)));
@@ -638,8 +599,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(76551l)));
@@ -660,8 +621,8 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(76551l)));
@@ -678,7 +639,7 @@ public class PostControllerTest extends BaseControllerTest{
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(null);
 		freshPost.setContent(null);
-		freshPost.setCreated(-7656l);
+		freshPost.setCreated(new Date(-7656l));
 		freshPost.setModified(null);
 		freshPost.setStatus(null);
 		freshPost.setTitle("");
@@ -690,7 +651,6 @@ public class PostControllerTest extends BaseControllerTest{
 				   .andExpect(status().isBadRequest())
 				   .andExpect(jsonPath("$.fields.category",containsString("may not be null")))
 				   .andExpect(jsonPath("$.fields.content",containsString("may not be null")))
-				   .andExpect(jsonPath("$.fields.created",containsString("must be greater")))
 				   .andExpect(jsonPath("$.fields.modified",containsString("may not be null")))
 				   .andExpect(jsonPath("$.fields.status",containsString("may not be null")))
 				   .andExpect(jsonPath("$.fields.title",containsString("may not be empty")))
@@ -898,7 +858,7 @@ public class PostControllerTest extends BaseControllerTest{
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testApiV1PostsRewindPostIdPut_withExistingPrevVersion_shouldRewind() throws Exception {
 		PostDTO freshPost = service.getPost(1l);
-		freshPost.setCreated(new Date().getTime());
+		freshPost.setCreated(new Date());
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 		service.updatePost(freshPost);
 
@@ -907,8 +867,8 @@ public class PostControllerTest extends BaseControllerTest{
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate.getTime());
-		savedPost.setModified(freshDate.getTime());
+		savedPost.setCreated(freshDate);
+		savedPost.setModified(freshDate);
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(3l)));

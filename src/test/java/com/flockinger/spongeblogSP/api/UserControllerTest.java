@@ -69,6 +69,21 @@ public class UserControllerTest extends BaseControllerTest {
 				   .andExpect(status().isNotFound());
 	}
 	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testApiV1UsersNameUserNameGet_withValidId_shouldReturnUser() throws Exception {
+		mockMvc.perform(get("/api/v1/users/name/flo")
+	               .contentType(jsonContentType))
+					.andExpect(status().isOk())
+	                .andExpect(jsonPath("$.authorities[0].authority", is("ADMIN")));
+	}
+	
+	@Test
+	public void testApiV1UsersNameUserNameGet_withNonExistingId_shouldReturnNotFound() throws Exception {
+		mockMvc.perform(get("/api/v1/users/name/somehacker")
+	               .contentType(jsonContentType))
+				   .andExpect(status().isNotFound());
+	}
 	
 	@Test
 	public void testApiV1UsersUserIdGet_withInvalidId_shouldReturnBadRequest() throws Exception {
@@ -124,7 +139,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testApiV1UsersPost_withValidUser_shouldInsert() throws Exception {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("sepp");
@@ -150,7 +165,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testApiV1UsersPost_withAlreadyExistingName_shouldReturnConflict() throws Exception {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("flo");
@@ -169,7 +184,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("");
 		newUser.setNickName("seppi");
-		newUser.setRegistered(new Date().getTime());
+		newUser.setRegistered(new Date());
 		newUser.setPassword("supersecret123");
 		newUser.setEmail("sep@bla.cc");
 		
@@ -184,7 +199,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin(null);
 		newUser.setNickName("seppi");
-		newUser.setRegistered(new Date().getTime());
+		newUser.setRegistered(new Date());
 		newUser.setPassword("supersecret123");
 		newUser.setEmail("sep@bla.cc");
 		
@@ -198,7 +213,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("blablu");
 		newUser.setNickName("");
-		newUser.setRegistered(new Date().getTime());
+		newUser.setRegistered(new Date());
 		newUser.setPassword("supersecret123");
 		newUser.setEmail("sep@bla.cc");
 		
@@ -227,7 +242,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("blablu");
 		newUser.setNickName("seppi");
-		newUser.setRegistered(new Date().getTime());
+		newUser.setRegistered(new Date());
 		newUser.setPassword("");
 		newUser.setEmail("sep@bla.cc");
 		
@@ -241,7 +256,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("blablu");
 		newUser.setNickName("seppi");
-		newUser.setRegistered(new Date().getTime());
+		newUser.setRegistered(new Date());
 		newUser.setPassword("supersecret123");
 		newUser.setEmail("");
 		
@@ -255,7 +270,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("blablu");
 		newUser.setNickName("seppi");
-		newUser.setRegistered(new Date().getTime());
+		newUser.setRegistered(new Date());
 		newUser.setPassword("12345");
 		newUser.setEmail("sep@bla.cc");
 		
@@ -269,7 +284,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("blablu");
 		newUser.setNickName("seppi");
-		newUser.setRegistered(-345l);
+		newUser.setRegistered(new Date(-345l));
 		newUser.setPassword("12345");
 		newUser.setEmail("sep@bla.cc");
 		
@@ -283,7 +298,7 @@ public class UserControllerTest extends BaseControllerTest {
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("blablu");
 		newUser.setNickName("seppi");
-		newUser.setRegistered(new Date().getTime());
+		newUser.setRegistered(new Date());
 		newUser.setPassword("12345");
 		newUser.setEmail("www.bl.cc");
 		
@@ -296,7 +311,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testApiV1UsersPut_withValidUser_shouldUpdate() throws Exception {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO existingUser = service.getUser(1l);
 		existingUser.setNickName("seppi");
@@ -371,12 +386,12 @@ public class UserControllerTest extends BaseControllerTest {
 	
 
 		UserEditDTO freshUser = service.getUser(1l);
-		freshUser.setRegistered(new Date().getTime());
+		freshUser.setRegistered(new Date());
 		service.updateUser(freshUser);
 		
 		UserEditDTO existingUser = service.getUser(1l);
 		existingUser.setNickName("seppi");
-		existingUser.setRegistered(new Date().getTime());
+		existingUser.setRegistered(new Date());
 		existingUser.setPassword("supersecret123");
 		existingUser.setEmail("sep@bla.cc");
 

@@ -75,7 +75,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withValidData_shouldWork()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("sepp");
@@ -101,7 +101,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testUpdateUser_withValidData_shouldWork()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO existingUser = service.getUser(1l);
 		existingUser.setNickName("seppi");
@@ -120,6 +120,30 @@ public class UserServiceTest extends BaseServiceTest {
 		assertEquals("sep@bla.cc", updatedUser.getEmail());
 
 	}
+	
+	@Test
+	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
+	public void testUpdateUser_withEmptyPassword_shouldNotOverwriteButKeepOldOne()
+			throws EntityIsNotExistingException, DuplicateEntityException {
+		Date now = new Date();
+
+		UserEditDTO existingUser = service.getUser(1l);
+		existingUser.setNickName("seppi");
+		existingUser.setRegistered(now);
+		existingUser.setPassword("");
+		existingUser.setEmail("sep@bla.cc");
+
+		service.updateUser(existingUser);
+
+		UserEditDTO updatedUser = service.getUser(1l);
+
+		assertNotNull(updatedUser);
+		assertEquals("seppi", updatedUser.getNickName());
+		assertNotNull(updatedUser.getRegistered());
+		assertEquals("secret", updatedUser.getPassword());
+		assertEquals("sep@bla.cc", updatedUser.getEmail());
+
+	}
 
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
@@ -134,27 +158,13 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withAlreadyExistingUsername_shouldThrowDuplicateException()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin("flo");
 		newUser.setNickName("seppi");
 		newUser.setRegistered(now);
 		newUser.setPassword("supersecret123");
-
-		service.createUser(newUser);
-	}
-
-	@Test(expected = ConstraintViolationException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testCreateUser_withNoPassword_shouldThrowException()
-			throws EntityIsNotExistingException, DuplicateEntityException {
-		Long now = new Date().getTime();
-
-		UserEditDTO newUser = new UserEditDTO();
-		newUser.setLogin("kkkkflo");
-		newUser.setNickName("seppi");
-		newUser.setRegistered(now);
 
 		service.createUser(newUser);
 	}
@@ -175,7 +185,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withNoLogin_shouldThrowException()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setNickName("seppi");
@@ -189,7 +199,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testCreateUser_withTooLongLogin_shouldThrowException()
 			throws EntityIsNotExistingException, DuplicateEntityException {
-		Long now = new Date().getTime();
+		Date now = new Date();
 
 		UserEditDTO newUser = new UserEditDTO();
 		newUser.setLogin(generateTooLongLoginName());
@@ -218,14 +228,6 @@ public class UserServiceTest extends BaseServiceTest {
 
 		service.updateUser(existingUser);
 	}
-
-	//FIXME for now allowed to delete user that has post but keep them
-	/*@Test(expected = DataIntegrityViolationException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testDeleteUser_withExistingIdButBoundToPosts_shouldThrowIntegrityException()
-			throws EntityIsNotExistingException {
-		service.deleteUser(1l);
-	}*/
 
 	@Test(expected = EntityIsNotExistingException.class)
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
@@ -274,12 +276,12 @@ public class UserServiceTest extends BaseServiceTest {
 	public void testRewind_withExistingPrevVersion_shouldRewind()
 			throws com.flockinger.spongeblogSP.exception.NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
 		UserEditDTO freshUser = service.getUser(1l);
-		freshUser.setRegistered(new Date().getTime());
+		freshUser.setRegistered(new Date());
 		service.updateUser(freshUser);
 		
 		UserEditDTO existingUser = service.getUser(1l);
 		existingUser.setNickName("seppi");
-		existingUser.setRegistered(new Date().getTime());
+		existingUser.setRegistered(new Date());
 		existingUser.setPassword("supersecret123");
 		existingUser.setEmail("sep@bla.cc");
 

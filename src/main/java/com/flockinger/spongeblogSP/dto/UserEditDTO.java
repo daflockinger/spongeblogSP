@@ -1,6 +1,7 @@
 package com.flockinger.spongeblogSP.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.Min;
@@ -11,6 +12,8 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.flockinger.spongeblogSP.model.enums.UserRole;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -37,8 +40,7 @@ public class UserEditDTO extends ResourceSupport {
 	private String email = null;
 
 	@NotNull
-	@Min(0)
-	private Long registered = null;
+	private Date registered = null;
 
 	private List<UserRole> roles = new ArrayList<UserRole>();
 
@@ -118,11 +120,11 @@ public class UserEditDTO extends ResourceSupport {
 	 * @return registered
 	 **/
 	@ApiModelProperty(value = "Registration date of User in long.")
-	public Long getRegistered() {
+	public Date getRegistered() {
 		return registered;
 	}
 
-	public void setRegistered(Long registered) {
+	public void setRegistered(Date registered) {
 		this.registered = registered;
 	}
 

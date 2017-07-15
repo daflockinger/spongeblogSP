@@ -203,8 +203,8 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -245,8 +245,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate.getTime());
-		savedPost.setModified(freshDate.getTime());
+		savedPost.setCreated(freshDate);
+		savedPost.setModified(freshDate);
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(3l)));
@@ -293,8 +293,8 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(123l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -312,8 +312,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(232l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate.getTime());
-		savedPost.setModified(freshDate.getTime());
+		savedPost.setCreated(freshDate);
+		savedPost.setModified(freshDate);
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(2l)));
@@ -330,8 +330,8 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(254l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -348,8 +348,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(156l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate.getTime());
-		savedPost.setModified(freshDate.getTime());
+		savedPost.setCreated(freshDate);
+		savedPost.setModified(freshDate);
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(2l)));
@@ -366,8 +366,8 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("Fresh out of the box");
 		freshPost.setTags(ImmutableList.of(getTag(154l)));
@@ -387,8 +387,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate.getTime());
-		savedPost.setModified(freshDate.getTime());
+		savedPost.setCreated(freshDate);
+		savedPost.setModified(freshDate);
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1345l), getTag(2l)));
@@ -406,8 +406,8 @@ public class PostServiceTest extends BaseServiceTest {
 		freshPost.setAuthor(getTestUser(1l));
 		freshPost.setCategory(getTestCategory(2l));
 		freshPost.setContent("Some fresh new content...");
-		freshPost.setCreated(freshDate.getTime());
-		freshPost.setModified(freshDate.getTime());
+		freshPost.setCreated(freshDate);
+		freshPost.setModified(freshDate);
 		freshPost.setStatus(PostStatus.PUBLIC);
 		freshPost.setTitle("somethings");
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
@@ -437,7 +437,7 @@ public class PostServiceTest extends BaseServiceTest {
 	public void testRewind_withExistingPrevVersion_shouldRewind()
 			throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException, DependencyNotFoundException {
 		PostDTO freshPost = service.getPost(1l);
-		freshPost.setCreated(new Date().getTime());
+		freshPost.setCreated(new Date());
 		freshPost.setTags(ImmutableList.of(getTag(1l)));
 		service.updatePost(freshPost);
 
@@ -446,8 +446,8 @@ public class PostServiceTest extends BaseServiceTest {
 		savedPost.setAuthor(getTestUser(2l));
 		savedPost.setCategory(getTestCategory(1l));
 		savedPost.setContent("Some updated new content...");
-		savedPost.setCreated(freshDate.getTime());
-		savedPost.setModified(freshDate.getTime());
+		savedPost.setCreated(freshDate);
+		savedPost.setModified(freshDate);
 		savedPost.setStatus(PostStatus.MAINTENANCE);
 		savedPost.setTitle("Updated out of the box");
 		savedPost.setTags(ImmutableList.of(getTag(1l), getTag(3l)));

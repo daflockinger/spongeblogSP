@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -177,8 +178,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private User map(UserEditDTO userDTO) {
-		return mapper.map(userDTO, User.class);
+		User user = mapper.map(userDTO, User.class);
+		
+		if(StringUtils.isEmpty(user.getPassword())) {
+			user = setOriginalPassword(user);
+		}
+		return user;
 	}
+	
+	private User setOriginalPassword(User user) {
+		Optional<User> originalUser = Optional.ofNullable(dao.findOne(user.getId()));
+		
+		if(originalUser.isPresent()) {
+			user.setPassword(originalUser.get().getPassword());
+		}
+		return user;
+	} 
 
 	private UserEditDTO map(User user) {
 		return mapper.map(user, UserEditDTO.class);
