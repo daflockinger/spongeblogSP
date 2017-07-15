@@ -143,7 +143,6 @@ public interface UserController {
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
     @RequestMapping(value = "/api/v1/users/name/{userName}",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<UserDetails> apiV1UsersNameUserNameGet(@ApiParam(value = "Login name of the user.",required=true ) @PathVariable("userName") String userName);
 }
