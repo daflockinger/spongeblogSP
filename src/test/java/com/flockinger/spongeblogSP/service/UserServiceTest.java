@@ -314,11 +314,11 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testLoadUserByUsername_withExistingUsername_shouldReturnCorrect(){
-		UserDetails details = service.loadUserByUsername("flo");
+		UserDetails details = service.loadUserByUsername("flo@kinger.cc");
 		
 		assertNotNull(details);
 		assertEquals("secret",details.getPassword());
-		assertEquals("flo",details.getUsername());
+		assertEquals("flo@kinger.cc",details.getUsername());
 		assertTrue(details.isAccountNonExpired());
 		assertTrue(details.isAccountNonLocked());
 		assertTrue(details.isCredentialsNonExpired());
@@ -331,7 +331,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testLoadUserByUsername_withExistingUsernameButNoRoles_shouldReturnCorrect(){
-		UserDetails details = service.loadUserByUsername("nobody");
+		UserDetails details = service.loadUserByUsername("no@body.cc");
 		assertNotNull(details);
 	}
 	

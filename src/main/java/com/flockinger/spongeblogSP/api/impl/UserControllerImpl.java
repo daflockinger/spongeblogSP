@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flockinger.spongeblogSP.api.UserController;
@@ -99,8 +100,8 @@ public class UserControllerImpl implements UserController {
 		return new ResponseEntity<UserEditDTO>(addSelfLink(user), HttpStatus.OK);
 	}
 
-    public ResponseEntity<UserDetails> apiV1UsersNameUserNameGet(@ApiParam(value = "Login name of the user.",required=true ) @PathVariable("userName") String userName) {
-        return new ResponseEntity<UserDetails>(service.loadUserByUsername(userName),HttpStatus.OK);
+    public ResponseEntity<UserDetails> apiV1UsersNameUserNameGet(@ApiParam(value = "Email of the user.",required=true ) @RequestParam(value="address",required=true) String email) {
+        return new ResponseEntity<UserDetails>(service.loadUserByUsername(email),HttpStatus.OK);
     }
 	
 	private UserEditDTO addSelfLink(UserEditDTO user) {

@@ -142,11 +142,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	@Cacheable(value="users")
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = dao.findByLogin(username);
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		User user = dao.findByEmail(email);
 		
 		if (user == null) {
-			throw new UsernameNotFoundException("User not found with username: " + username);
+			throw new UsernameNotFoundException("User not found with email: " + email);
 		}
 		BlogUserDetails userDetails = mapUserDetails(user);
 		userDetails.setEnabled(user.getRegistered() != null);
@@ -174,7 +174,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	private BlogUserDetails mapUserDetails(User user){
-		return mapper.map(user, BlogUserDetails.class);
+		BlogUserDetails userDetails = mapper.map(user, BlogUserDetails.class);
+		userDetails.setUsername(user.getEmail());
+		return userDetails;
 	}
 
 	private User map(UserEditDTO userDTO) {

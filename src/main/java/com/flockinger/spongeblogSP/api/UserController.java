@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.flockinger.spongeblogSP.dto.BlogUserDetails;
 import com.flockinger.spongeblogSP.dto.Error;
@@ -132,7 +133,7 @@ public interface UserController {
         method = RequestMethod.GET)
     ResponseEntity<?> apiV1UsersUserIdGet(@ApiParam(value = "Unique identifier of a User;",required=true ) @PathVariable("userId") Long userId) throws EntityIsNotExistingException;
     
-    @ApiOperation(value = "Get User by login name", notes = "Fetches User by login name.", response = BlogUserDetails.class, tags={ "Users", })
+    @ApiOperation(value = "Get User by email", notes = "Fetches User by email.", response = BlogUserDetails.class, tags={ "Users", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = ".", response = BlogUserDetails.class),
         @ApiResponse(code = 400, message = "Bad request (validation failed).", response = Error.class),
@@ -141,8 +142,8 @@ public interface UserController {
         @ApiResponse(code = 404, message = "Entity not found.", response = Error.class),
         @ApiResponse(code = 409, message = "Request results in a conflict.", response = Error.class),
         @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class) })
-    @RequestMapping(value = "/api/v1/users/name/{userName}",
+    @RequestMapping(value = "/api/v1/users/email",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<UserDetails> apiV1UsersNameUserNameGet(@ApiParam(value = "Login name of the user.",required=true ) @PathVariable("userName") String userName);
+    ResponseEntity<UserDetails> apiV1UsersNameUserNameGet(@ApiParam(value = "Email of the user.",required=true ) @RequestParam(value="address",required=true) String email);
 }

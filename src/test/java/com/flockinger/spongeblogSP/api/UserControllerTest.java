@@ -17,6 +17,7 @@ import java.util.Date;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.flockinger.spongeblogSP.dao.UserDAO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
@@ -72,7 +73,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
 	public void testApiV1UsersNameUserNameGet_withValidId_shouldReturnUser() throws Exception {
-		mockMvc.perform(get("/api/v1/users/name/flo")
+		mockMvc.perform(get("/api/v1/users/email?address=flo@kinger.cc")
 	               .contentType(jsonContentType))
 					.andExpect(status().isOk())
 	                .andExpect(jsonPath("$.authorities[0].authority", is("ADMIN")));
@@ -80,7 +81,7 @@ public class UserControllerTest extends BaseControllerTest {
 	
 	@Test
 	public void testApiV1UsersNameUserNameGet_withNonExistingId_shouldReturnNotFound() throws Exception {
-		mockMvc.perform(get("/api/v1/users/name/somehacker")
+		mockMvc.perform(get("/api/v1/users/email?address=somehacker@hackme.com")
 	               .contentType(jsonContentType))
 				   .andExpect(status().isNotFound());
 	}
