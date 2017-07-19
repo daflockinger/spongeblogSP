@@ -24,111 +24,116 @@ import com.flockinger.spongeblogSP.service.VersioningService;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-	@Autowired
-	private CategoryDAO dao;
+  @Autowired
+  private CategoryDAO dao;
 
-	private ModelMapper mapper;
+  private ModelMapper mapper;
 
-	@Autowired
-	private VersioningService<Category, CategoryDAO> versionService;
+  @Autowired
+  private VersioningService<Category, CategoryDAO> versionService;
 
-	@Autowired
-	public CategoryServiceImpl(ModelMapper mapper) {
-		this.mapper = mapper;
-		mapper.addMappings(new PropertyMap<CategoryDTO, Category>() {
-			@Override
-			protected void configure() {
-				map().setId(source.getCategoryId());
-				map(source.getParentId(), destination.getParent().getId());
-			}
-		});
-		mapper.addMappings(new PropertyMap<Category, CategoryDTO>() {
-			@Override
-			protected void configure() {
-				map().setCategoryId(source.getId());
-				map(source.getParent().getId(), destination.getParentId());
-			}
-		});
-	}
+  @Autowired
+  public CategoryServiceImpl(ModelMapper mapper) {
+    this.mapper = mapper;
+    mapper.addMappings(new PropertyMap<CategoryDTO, Category>() {
+      @Override
+      protected void configure() {
+        map().setId(source.getCategoryId());
+        map(source.getParentId(), destination.getParent().getId());
+      }
+    });
+    mapper.addMappings(new PropertyMap<Category, CategoryDTO>() {
+      @Override
+      protected void configure() {
+        map().setCategoryId(source.getId());
+        map(source.getParent().getId(), destination.getParentId());
+      }
+    });
+  }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<CategoryDTO> getAllCategories() {
-		List<CategoryDTO> tagDTOs = new ArrayList<>();
-		Iterable<Category> tags = dao.findAll();
+  @Override
+  @Transactional(readOnly = true)
+  public List<CategoryDTO> getAllCategories() {
+    List<CategoryDTO> tagDTOs = new ArrayList<>();
+    Iterable<Category> tags = dao.findAll();
 
-		tags.iterator().forEachRemaining(tag -> tagDTOs.add(map(tag)));
+    tags.iterator().forEachRemaining(tag -> tagDTOs.add(map(tag)));
 
-		return tagDTOs;
-	}
+    return tagDTOs;
+  }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<CategoryDTO> getCategoriesFromParent(Long parentId) throws EntityIsNotExistingException {
-		List<Category> categories = dao.findByParentId(parentId);
+  @Override
+  @Transactional(readOnly = true)
+  public List<CategoryDTO> getCategoriesFromParent(Long parentId)
+      throws EntityIsNotExistingException {
+    List<Category> categories = dao.findByParentId(parentId);
 
-		return categories.stream().map(category -> map(category)).collect(Collectors.toList());
-	}
+    return categories.stream().map(category -> map(category)).collect(Collectors.toList());
+  }
 
-	@Override
-	@Transactional(readOnly = true)
-	public CategoryDTO getCategory(Long id) throws EntityIsNotExistingException {
-		if (!dao.exists(id)) {
-			throw new EntityIsNotExistingException("Category");
-		}
-		return map(dao.findOne(id));
-	}
+  @Override
+  @Transactional(readOnly = true)
+  public CategoryDTO getCategory(Long id) throws EntityIsNotExistingException {
+    if (!dao.exists(id)) {
+      throw new EntityIsNotExistingException("Category");
+    }
+    return map(dao.findOne(id));
+  }
 
-	@Override
-	@Transactional
-	public CategoryDTO createCategory(CategoryDTO category) throws DependencyNotFoundException {
-		if (isParentCategoryExisting(category)) {
-			throw new DependencyNotFoundException("Parent of Category not found with id" + category.getParentId());
-		}
-		return map(dao.save(map(category)));
-	}
+  @Override
+  @Transactional
+  public CategoryDTO createCategory(CategoryDTO category) throws DependencyNotFoundException {
+    if (isParentCategoryExisting(category)) {
+      throw new DependencyNotFoundException(
+          "Parent of Category not found with id" + category.getParentId());
+    }
+    return map(dao.save(map(category)));
+  }
 
-	private boolean isParentCategoryExisting(CategoryDTO category) {
-		return category.getParentId() != null && !dao.exists(category.getParentId());
-	}
+  private boolean isParentCategoryExisting(CategoryDTO category) {
+    return category.getParentId() != null && !dao.exists(category.getParentId());
+  }
 
-	@Override
-	@Transactional
-	public void updateCategory(CategoryDTO category) throws EntityIsNotExistingException, DependencyNotFoundException {
-		if (!dao.exists(category.getCategoryId())) {
-			throw new EntityIsNotExistingException("Category");
-		}
-		if (isParentCategoryExisting(category)) {
-			throw new DependencyNotFoundException("Parent of Category not found with id" + category.getParentId());
-		}
+  @Override
+  @Transactional
+  public void updateCategory(CategoryDTO category)
+      throws EntityIsNotExistingException, DependencyNotFoundException {
+    if (!dao.exists(category.getCategoryId())) {
+      throw new EntityIsNotExistingException("Category");
+    }
+    if (isParentCategoryExisting(category)) {
+      throw new DependencyNotFoundException(
+          "Parent of Category not found with id" + category.getParentId());
+    }
 
-		dao.update(map(category));
-	}
+    dao.update(map(category));
+  }
 
-	@Override
-	@Transactional
-	public void deleteCategory(Long id) throws EntityIsNotExistingException, OrphanedDependingEntitiesException {
-		if (!dao.exists(id)) {
-			throw new EntityIsNotExistingException("Category");
-		}
-		if (CollectionUtils.isNotEmpty(dao.findOne(id).getPosts())) {
-			throw new OrphanedDependingEntitiesException(
-					"Posts still connected to category." + "Please change category of posts before deletion!");
-		}
+  @Override
+  @Transactional
+  public void deleteCategory(Long id)
+      throws EntityIsNotExistingException, OrphanedDependingEntitiesException {
+    if (!dao.exists(id)) {
+      throw new EntityIsNotExistingException("Category");
+    }
+    if (CollectionUtils.isNotEmpty(dao.findOne(id).getPosts())) {
+      throw new OrphanedDependingEntitiesException("Posts still connected to category."
+          + "Please change category of posts before deletion!");
+    }
 
-		dao.delete(id);
-	}
+    dao.delete(id);
+  }
 
-	@Override
-	public void rewind(Long id) throws NoVersionFoundException {
-		versionService.rewind(id, dao);
-	}
+  @Override
+  public void rewind(Long id) throws NoVersionFoundException {
+    versionService.rewind(id, dao);
+  }
 
-	private Category map(CategoryDTO tagDto) {
-		return mapper.map(tagDto, Category.class);
-	}
+  private Category map(CategoryDTO tagDto) {
+    return mapper.map(tagDto, Category.class);
+  }
 
-	private CategoryDTO map(Category tag) {
-		return mapper.map(tag, CategoryDTO.class);
-	}
+  private CategoryDTO map(Category tag) {
+    return mapper.map(tag, CategoryDTO.class);
+  }
 }

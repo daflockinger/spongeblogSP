@@ -1,13 +1,13 @@
 package com.flockinger.spongeblogSP.exception;
 
-public class DependencyNotFoundException extends Exception{
+public class DependencyNotFoundException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 376285314228555058L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 376285314228555058L;
 
-	public DependencyNotFoundException(String message){
-		super(message);
-	}
+  public DependencyNotFoundException(String message) {
+    super(message);
+  }
 }

@@ -6,24 +6,24 @@ import com.google.gson.annotations.SerializedName;
  * Status of the Blog.
  */
 public enum BlogStatus {
-	
-	@SerializedName("ACTIVE")
-	ACTIVE("ACTIVE"),
 
-	@SerializedName("DISABLED")
-	DISABLED("DISABLED"),
+  @SerializedName("ACTIVE")
+  ACTIVE("ACTIVE"),
 
-	@SerializedName("MAINTENANCE")
-	MAINTENANCE("MAINTENANCE");
+  @SerializedName("DISABLED")
+  DISABLED("DISABLED"),
 
-	private String value;
+  @SerializedName("MAINTENANCE")
+  MAINTENANCE("MAINTENANCE");
 
-	BlogStatus(String value) {
-		this.value = value;
-	}
+  private String value;
 
-	@Override
-	public String toString() {
-		return String.valueOf(value);
-	}
+  BlogStatus(String value) {
+    this.value = value;
+  }
+
+  @Override
+  public String toString() {
+    return String.valueOf(value);
+  }
 }

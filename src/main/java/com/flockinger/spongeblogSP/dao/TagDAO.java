@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.flockinger.spongeblogSP.model.Tag;
 
 @Repository
-public interface TagDAO extends PagingAndSortingRepository<Tag,Long>, VersionDAO<Tag>{
-	Tag findByName(String name);
+public interface TagDAO extends PagingAndSortingRepository<Tag, Long>, VersionDAO<Tag> {
+  Tag findByName(String name);
 }

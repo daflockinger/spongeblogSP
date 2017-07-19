@@ -12,7 +12,6 @@ import javax.validation.ConstraintViolationException;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.flockinger.spongeblogSP.dao.TagDAO;
 import com.flockinger.spongeblogSP.dto.TagDTO;
@@ -22,130 +21,136 @@ import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 
 public class TagServiceTest extends BaseServiceTest {
 
-	@Autowired
-	private TagService service;
-	
-	@Autowired 
-	private TagDAO dao;
+  @Autowired
+  private TagService service;
 
-	@Test
-	@FlywayTest(invokeCleanDB = true)
-	public void testGetAllTags__withEmptyDB_shouldReturnEmpty() {
-		List<TagDTO> tags = service.getAllTags();
+  @Autowired
+  private TagDAO dao;
 
-		assertNotNull(tags);
-		assertTrue(tags.size() == 0);
-	}
+  @Test
+  @FlywayTest(invokeCleanDB = true)
+  public void testGetAllTags__withEmptyDB_shouldReturnEmpty() {
+    List<TagDTO> tags = service.getAllTags();
 
-	@Test
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testGetAllTags_shouldReturnAll() {
-		List<TagDTO> tags = service.getAllTags();
+    assertNotNull(tags);
+    assertTrue(tags.size() == 0);
+  }
 
-		assertNotNull(tags);
-		assertTrue(tags.size() == 3);
-		assertTrue(tags.stream().anyMatch(tag -> tag.getName().equals("fancy")));
-		assertTrue(tags.stream().anyMatch(tag -> tag.getName().equals("guide")));
-		assertTrue(tags.stream().anyMatch(tag -> tag.getName().equals("cold")));
-	}
+  @Test
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testGetAllTags_shouldReturnAll() {
+    List<TagDTO> tags = service.getAllTags();
 
-	@Test(expected = EntityIsNotExistingException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testGetTag_withNotValidId_shouldReturnCorrectTag() throws EntityIsNotExistingException {
-		service.getTag(176576l);
-	}
+    assertNotNull(tags);
+    assertTrue(tags.size() == 3);
+    assertTrue(tags.stream().anyMatch(tag -> tag.getName().equals("fancy")));
+    assertTrue(tags.stream().anyMatch(tag -> tag.getName().equals("guide")));
+    assertTrue(tags.stream().anyMatch(tag -> tag.getName().equals("cold")));
+  }
 
-	@Test
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testCreateTag_withValidName_shouldWork() throws DuplicateEntityException, EntityIsNotExistingException {
-		String tagName = "ordinary";
-		Long newTagId = service.createTag(tagName).getTagId();
+  @Test(expected = EntityIsNotExistingException.class)
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testGetTag_withNotValidId_shouldReturnCorrectTag()
+      throws EntityIsNotExistingException {
+    service.getTag(176576l);
+  }
 
-		TagDTO newTag = service.getTag(newTagId);
+  @Test
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testCreateTag_withValidName_shouldWork()
+      throws DuplicateEntityException, EntityIsNotExistingException {
+    String tagName = "ordinary";
+    Long newTagId = service.createTag(tagName).getTagId();
 
-		assertNotNull(newTag);
-		assertEquals("ordinary", newTag.getName());
-	}
+    TagDTO newTag = service.getTag(newTagId);
 
-	@Test
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testUpdateTag_withValidName_shouldWork() throws DuplicateEntityException, EntityIsNotExistingException {
+    assertNotNull(newTag);
+    assertEquals("ordinary", newTag.getName());
+  }
 
-		TagDTO savedTag = new TagDTO();
-		savedTag.setTagId(1l);
-		savedTag.setName("new better name");
-		service.updateTag(savedTag);
+  @Test
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testUpdateTag_withValidName_shouldWork()
+      throws DuplicateEntityException, EntityIsNotExistingException {
 
-		TagDTO updatedTag = service.getTag(1l);
+    TagDTO savedTag = new TagDTO();
+    savedTag.setTagId(1l);
+    savedTag.setName("new better name");
+    service.updateTag(savedTag);
 
-		assertNotNull(updatedTag);
-		assertEquals("new better name", updatedTag.getName());
-	}
+    TagDTO updatedTag = service.getTag(1l);
 
-	@Test
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testDeleteTag_withValidName_shouldWork() throws DuplicateEntityException, EntityIsNotExistingException {
-		service.deleteTag(1l);
+    assertNotNull(updatedTag);
+    assertEquals("new better name", updatedTag.getName());
+  }
 
-		assertFalse(dao.exists(1l));
-	}
+  @Test
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testDeleteTag_withValidName_shouldWork()
+      throws DuplicateEntityException, EntityIsNotExistingException {
+    service.deleteTag(1l);
 
-	@Test(expected = DuplicateEntityException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testCreateTag_withAlreadyExistingName_shouldThrowException() throws DuplicateEntityException {
-		service.createTag("fancy");
-	}
+    assertFalse(dao.exists(1l));
+  }
 
-	@Test(expected = ConstraintViolationException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testCreateTag_withTooLongName_shouldThrowException()
-			throws ConstraintViolationException, DuplicateEntityException {
-		StringBuilder tooLoonTag = new StringBuilder();
-		for(int i=0;i<151;i++){
-			tooLoonTag.append("a");
-		}
-		
-		service.createTag(tooLoonTag.toString());
-	}
+  @Test(expected = DuplicateEntityException.class)
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testCreateTag_withAlreadyExistingName_shouldThrowException()
+      throws DuplicateEntityException {
+    service.createTag("fancy");
+  }
 
-	@Test(expected = DuplicateEntityException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testUpdateTag_withAlreadyExistingName_shouldThrowException()
-			throws DuplicateEntityException, EntityIsNotExistingException {
-		TagDTO savedTag = new TagDTO();
-		savedTag.setTagId(2l);
-		savedTag.setName("guide");
-		service.updateTag(savedTag);
-	}
+  @Test(expected = ConstraintViolationException.class)
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testCreateTag_withTooLongName_shouldThrowException()
+      throws ConstraintViolationException, DuplicateEntityException {
+    StringBuilder tooLoonTag = new StringBuilder();
+    for (int i = 0; i < 151; i++) {
+      tooLoonTag.append("a");
+    }
 
-	@Test(expected = EntityIsNotExistingException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testDeleteTag_withNotValidId_shouldDeleteTag() throws EntityIsNotExistingException {
-		service.deleteTag(23434234l);
-	}
-	
-	@Test
-	@FlywayTest(invokeCleanDB=true)
-	public void testRewind_withExistingPrevVersion_shouldRewind()
-			throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
-		Long id = service.createTag("guide").getTagId();
-		
-		TagDTO tagToUpdate = new TagDTO();
-		tagToUpdate.setTagId(id);
-		tagToUpdate.setName("fancy guide");
-		service.updateTag(tagToUpdate);
-		TagDTO updatedTag = service.getTag(id);
-		assertEquals("fancy guide",updatedTag.getName());
-		
-		
-		service.rewind(id);
-		TagDTO rewindTag = service.getTag(id);
-		assertEquals("guide",rewindTag.getName());
-	}
+    service.createTag(tooLoonTag.toString());
+  }
 
-	@Test(expected=NoVersionFoundException.class)
-	@FlywayTest(locationsForMigrate = { "/db/testfill/" })
-	public void testRewind_withNoPreviousVersion_shouldThrowException() throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
-		service.rewind(1l);
-	}
+  @Test(expected = DuplicateEntityException.class)
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testUpdateTag_withAlreadyExistingName_shouldThrowException()
+      throws DuplicateEntityException, EntityIsNotExistingException {
+    TagDTO savedTag = new TagDTO();
+    savedTag.setTagId(2l);
+    savedTag.setName("guide");
+    service.updateTag(savedTag);
+  }
+
+  @Test(expected = EntityIsNotExistingException.class)
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testDeleteTag_withNotValidId_shouldDeleteTag() throws EntityIsNotExistingException {
+    service.deleteTag(23434234l);
+  }
+
+  @Test
+  @FlywayTest(invokeCleanDB = true)
+  public void testRewind_withExistingPrevVersion_shouldRewind()
+      throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+    Long id = service.createTag("guide").getTagId();
+
+    TagDTO tagToUpdate = new TagDTO();
+    tagToUpdate.setTagId(id);
+    tagToUpdate.setName("fancy guide");
+    service.updateTag(tagToUpdate);
+    TagDTO updatedTag = service.getTag(id);
+    assertEquals("fancy guide", updatedTag.getName());
+
+
+    service.rewind(id);
+    TagDTO rewindTag = service.getTag(id);
+    assertEquals("guide", rewindTag.getName());
+  }
+
+  @Test(expected = NoVersionFoundException.class)
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testRewind_withNoPreviousVersion_shouldThrowException()
+      throws NoVersionFoundException, DuplicateEntityException, EntityIsNotExistingException {
+    service.rewind(1l);
+  }
 }

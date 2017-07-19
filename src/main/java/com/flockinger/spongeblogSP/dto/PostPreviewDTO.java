@@ -1,6 +1,5 @@
 package com.flockinger.spongeblogSP.dto;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,9 +14,9 @@ import com.flockinger.spongeblogSP.model.enums.PostStatus;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * PostDTO
+ * PostPreviewDTO
  */
-public class PostDTO extends ResourceSupport {
+public class PostPreviewDTO extends ResourceSupport {
 
   private Long postId = null;
 
@@ -25,7 +24,7 @@ public class PostDTO extends ResourceSupport {
   private String title = null;
 
   @NotNull
-  private String content = null;
+  private String partContent = null;
 
   @NotNull
   private Date created = null;
@@ -74,17 +73,17 @@ public class PostDTO extends ResourceSupport {
   }
 
   /**
-   * Post text/html content.
+   * First small part of the html/text content.
    * 
    * @return content
    **/
-  @ApiModelProperty(value = "Post text/html content.")
-  public String getContent() {
-    return content;
+  @ApiModelProperty(value = "First small part of the html/text content.")
+  public String getPartContent() {
+    return partContent;
   }
 
-  public void setContent(String content) {
-    this.content = content;
+  public void setPartContent(String partContent) {
+    this.partContent = partContent;
   }
 
   /**

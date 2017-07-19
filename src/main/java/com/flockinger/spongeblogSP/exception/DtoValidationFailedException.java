@@ -4,21 +4,21 @@ import java.util.List;
 
 import org.springframework.validation.FieldError;
 
-public class DtoValidationFailedException extends Exception{
+public class DtoValidationFailedException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 9110322794181495490L;
-	
-	private List<FieldError> errors;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 9110322794181495490L;
 
-	public DtoValidationFailedException(String message, List<FieldError> errors){
-		super(message);
-		this.errors = errors;
-	}
+  private List<FieldError> errors;
 
-	public List<FieldError> getErrors() {
-		return errors;
-	}
+  public DtoValidationFailedException(String message, List<FieldError> errors) {
+    super(message);
+    this.errors = errors;
+  }
+
+  public List<FieldError> getErrors() {
+    return errors;
+  }
 }
