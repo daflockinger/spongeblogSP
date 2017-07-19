@@ -3,7 +3,8 @@
 # ===============================
 
 # Set here configurations for the database connection
-
+server:
+  port: ${APP_PORT:8081}
 # Connection url for the database "netgloo_blog"
 spring:
   datasource:
@@ -61,6 +62,13 @@ blog:
     default-items-per-page: 5
   preview-text-size: 50
 
+## simple service-to-service security
+security-admin:
+  clientid: ${SEC_CLIENT_ID:spongeblog-admin}
+  secretkey: ${SEC_CLIENT_ID:p0F0J5y1Yk5bSPvJqfa8YThfKNnunQUC}
+security-author:
+  clientid: ${SEC_CLIENT_ID:spongeblog-user}
+  secretkey: ${SEC_CLIENT_ID:DqvRMa9RUtkLi9W6CQaZyuPY3kk1AzVK}
       
 #### Test Profile
 ---
@@ -85,12 +93,5 @@ blog:
     default-page: 0
     default-items-per-page: 5
   preview-text-size: 50
-
-## openId config for Google
-google:
-  clientId: 545703912504-27e0405fti21t64ie9gfb1mhppptr5e0.apps.googleusercontent.com
-  clientSecret: Oqu_K7VH9-VwBTJcnDsc5O1M
-  accessTokenUri: https://www.googleapis.com/oauth2/v3/token
-  userAuthorizationUri: https://accounts.google.com/o/oauth2/auth
-  redirectUri: http://localhost:8080/google-login
+  
     

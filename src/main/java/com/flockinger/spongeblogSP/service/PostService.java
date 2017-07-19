@@ -10,30 +10,31 @@ import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
-public interface PostService extends Versionable{
-	PostsPage getAllPosts(Pageable pageable);
-	
-	PostsPage getAllPostsWithStatus(PostStatus status, Pageable pageable);
-	
-	PostsPage getPostsFromCategoryId(Long categoryId, Pageable pageable);
-	
-	PostsPage getPostsFromCategoryIdWithStatus(Long categoryId, PostStatus status, Pageable pageable);
-	
-	PostsPage getPostsFromAuthorId(Long authorId, Pageable pageable);
+public interface PostService extends Versionable {
+  PostsPage getAllPosts(Pageable pageable);
 
-	PostsPage getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable);
-	
-	PostsPage getPostsFromTagId(Long tagId, Pageable pageable);
-	
-	PostsPage getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable);
+  PostsPage getAllPostsWithStatus(PostStatus status, Pageable pageable);
 
-	PostDTO getPost(Long id) throws EntityIsNotExistingException;
+  PostsPage getPostsFromCategoryId(Long categoryId, Pageable pageable);
 
-	PostDTO createPost(PostDTO post) throws DuplicateEntityException, DependencyNotFoundException;
-	
-	void updatePost(PostDTO post) throws EntityIsNotExistingException, DuplicateEntityException, DependencyNotFoundException;
-	
-	void deletePost(Long id) throws EntityIsNotExistingException;
-	
-	void rewind(Long id) throws NoVersionFoundException;
+  PostsPage getPostsFromCategoryIdWithStatus(Long categoryId, PostStatus status, Pageable pageable);
+
+  PostsPage getPostsFromAuthorId(Long authorId, Pageable pageable);
+
+  PostsPage getPostsFromAuthorIdWithStatus(Long authorId, PostStatus status, Pageable pageable);
+
+  PostsPage getPostsFromTagId(Long tagId, Pageable pageable);
+
+  PostsPage getPostsFromTagIdWithStatus(Long tagId, PostStatus status, Pageable pageable);
+
+  PostDTO getPost(Long id) throws EntityIsNotExistingException;
+
+  PostDTO createPost(PostDTO post) throws DuplicateEntityException, DependencyNotFoundException;
+
+  void updatePost(PostDTO post)
+      throws EntityIsNotExistingException, DuplicateEntityException, DependencyNotFoundException;
+
+  void deletePost(Long id) throws EntityIsNotExistingException;
+
+  void rewind(Long id) throws NoVersionFoundException;
 }

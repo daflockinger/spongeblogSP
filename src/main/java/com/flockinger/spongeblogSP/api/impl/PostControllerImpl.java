@@ -39,173 +39,215 @@ import io.swagger.annotations.ApiParam;
 @RestController
 public class PostControllerImpl implements PostController {
 
-	@Autowired
-	private PostService service;
-	
-	@Autowired
-	private RequestValidator validator;
+  @Autowired
+  private PostService service;
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  @Autowired
+  private RequestValidator validator;
 
-	public ResponseEntity<?> apiV1PostsAuthorUserIdGet(
-			@ApiParam(value = "Unique identifier of a User;", required = true) @PathVariable("userId") Long userId,
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
-			throws DtoValidationFailedException {
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-		validator.assertPaging(page, size);
-		PostsPage posts = service.getPostsFromAuthorId(userId, new Paging(page, getSortingByDateDesc(), size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsAuthorUserIdGet(
+      @ApiParam(value = "Unique identifier of a User;",
+          required = true) @PathVariable("userId") Long userId,
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
 
-	public ResponseEntity<?> apiV1PostsAuthorUserIdStatusGet(
-			@ApiParam(value = "Unique identifier of a User;", required = true) @PathVariable("userId") Long userId,
-			@ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
-			throws DtoValidationFailedException {
+    validator.assertPaging(page, size);
+    PostsPage posts =
+        service.getPostsFromAuthorId(userId, new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
 
-		validator.assertPaging(page, size);
-		validator.assertStatus(PostStatus.class,status);
-		PostsPage posts = service.getPostsFromAuthorIdWithStatus(userId, PostStatus.valueOf(status),
-				new Paging(page, getSortingByDateDesc(), size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsAuthorUserIdStatusGet(
+      @ApiParam(value = "Unique identifier of a User;",
+          required = true) @PathVariable("userId") Long userId,
+      @ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
 
-	public ResponseEntity<?> apiV1PostsCategoryCategoryIdGet(
-			@ApiParam(value = "Unique identifier of a Category;", required = true) @PathVariable("categoryId") Long categoryId,
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size) throws DtoValidationFailedException {
-		
-		validator.assertPaging(page,size);
-		PostsPage posts = service.getPostsFromCategoryId(categoryId, new Paging(page,getSortingByDateDesc(),size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
+    validator.assertPaging(page, size);
+    validator.assertStatus(PostStatus.class, status);
+    PostsPage posts = service.getPostsFromAuthorIdWithStatus(userId, PostStatus.valueOf(status),
+        new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
 
-	public ResponseEntity<?> apiV1PostsCategoryCategoryIdStatusGet(
-			@ApiParam(value = "Unique identifier of a Category;", required = true) @PathVariable("categoryId") Long categoryId,
-			@ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size) throws DtoValidationFailedException {
-		
-		validator.assertPaging(page, size);
-		validator.assertStatus(PostStatus.class,status);
-		PostsPage posts = service.getPostsFromCategoryIdWithStatus(categoryId, PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsCategoryCategoryIdGet(
+      @ApiParam(value = "Unique identifier of a Category;",
+          required = true) @PathVariable("categoryId") Long categoryId,
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
 
-	public ResponseEntity<?> apiV1PostsTagTagIdGet(
-			@ApiParam(value = "Unique identifier of a Tag;", required = true) @PathVariable("tagId") Long tagId,
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size) throws DtoValidationFailedException {
-		
-		validator.assertPaging(page, size);
-		PostsPage posts = service.getPostsFromTagId(tagId, new Paging(page,getSortingByDateDesc(),size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
+    validator.assertPaging(page, size);
+    PostsPage posts =
+        service.getPostsFromCategoryId(categoryId, new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
 
-	public ResponseEntity<?> apiV1PostsTagTagIdStatusGet(
-			@ApiParam(value = "Unique identifier of a Tag;", required = true) @PathVariable("tagId") Long tagId,
-			@ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size) throws DtoValidationFailedException {
-		
-		validator.assertPaging(page, size);
-		validator.assertStatus(PostStatus.class,status);
-		PostsPage posts = service.getPostsFromTagIdWithStatus(tagId, PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsCategoryCategoryIdStatusGet(
+      @ApiParam(value = "Unique identifier of a Category;",
+          required = true) @PathVariable("categoryId") Long categoryId,
+      @ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
 
-	public ResponseEntity<?> apiV1PostsGet(
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
-			throws DtoValidationFailedException {
+    validator.assertPaging(page, size);
+    validator.assertStatus(PostStatus.class, status);
+    PostsPage posts = service.getPostsFromCategoryIdWithStatus(categoryId,
+        PostStatus.valueOf(status), new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
 
-		validator.assertPaging(page, size);
-		PostsPage posts = service.getAllPosts(new Paging(page, getSortingByDateDesc(), size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsTagTagIdGet(
+      @ApiParam(value = "Unique identifier of a Tag;",
+          required = true) @PathVariable("tagId") Long tagId,
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
 
-	public ResponseEntity<?> apiV1PostsPost(@ApiParam(value = "", required = true) @Valid @RequestBody PostDTO postEdit,
-			BindingResult bindingResult)
-			throws DtoValidationFailedException, DuplicateEntityException, DependencyNotFoundException {
+    validator.assertPaging(page, size);
+    PostsPage posts =
+        service.getPostsFromTagId(tagId, new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
 
-		validator.validateRequestBody(bindingResult);
-		PostDTO createdPost = service.createPost(postEdit);
-		return new ResponseEntity<PostDTO>(addSelfLinkToPost(createdPost), HttpStatus.CREATED);
-	}
+  public ResponseEntity<?> apiV1PostsTagTagIdStatusGet(
+      @ApiParam(value = "Unique identifier of a Tag;",
+          required = true) @PathVariable("tagId") Long tagId,
+      @ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
 
-	public ResponseEntity<?> apiV1PostsPostIdDelete(
-			@ApiParam(value = "Unique identifier of a Post;", required = true) @PathVariable("postId") Long postId)
-			throws EntityIsNotExistingException {
+    validator.assertPaging(page, size);
+    validator.assertStatus(PostStatus.class, status);
+    PostsPage posts = service.getPostsFromTagIdWithStatus(tagId, PostStatus.valueOf(status),
+        new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
 
-		service.deletePost(postId);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsGet(
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
 
-	public ResponseEntity<?> apiV1PostsPostIdGet(
-			@ApiParam(value = "Unique identifier of a Post;", required = true) @PathVariable("postId") Long postId)
-			throws EntityIsNotExistingException {
+    validator.assertPaging(page, size);
+    PostsPage posts = service.getAllPosts(new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
 
-		PostDTO post = addSelfLinkToPost(service.getPost(postId));
-		return new ResponseEntity<PostDTO>(post, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsPost(
+      @ApiParam(value = "", required = true) @Valid @RequestBody PostDTO postEdit,
+      BindingResult bindingResult)
+      throws DtoValidationFailedException, DuplicateEntityException, DependencyNotFoundException {
 
-	public ResponseEntity<?> apiV1PostsPut(@ApiParam(value = "", required = true) @Valid @RequestBody PostDTO postEdit,
-			BindingResult bindingResult) throws DtoValidationFailedException, EntityIsNotExistingException, DuplicateEntityException, DependencyNotFoundException {
-		
-		validator.validateRequestBody(bindingResult);
-		validator.assertIdForUpdate(postEdit.getPostId());
-		service.updatePost(postEdit);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
+    validator.validateRequestBody(bindingResult);
+    PostDTO createdPost = service.createPost(postEdit);
+    return new ResponseEntity<PostDTO>(addSelfLinkToPost(createdPost), HttpStatus.CREATED);
+  }
 
-	public ResponseEntity<?> apiV1PostsRewindPostIdPut(
-			@ApiParam(value = "Unique identifier of a Post;", required = true) @PathVariable("postId") Long postId) throws NoVersionFoundException {
-		
-		service.rewind(postId);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1PostsPostIdDelete(
+      @ApiParam(value = "Unique identifier of a Post;",
+          required = true) @PathVariable("postId") Long postId)
+      throws EntityIsNotExistingException {
 
-	public ResponseEntity<?> apiV1PostsStatusStatusGet(
-			@ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
-			@ApiParam(value = "Page number from that on entities are returned.") @RequestParam(value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
-			@ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false, defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size) throws DtoValidationFailedException {
-		
-		validator.assertPaging(page, size);
-		validator.assertStatus(PostStatus.class,status);
-		PostsPage posts = service.getAllPostsWithStatus(PostStatus.valueOf(status), new Paging(page,getSortingByDateDesc(),size));
-		posts.getPreviewPosts().forEach(post -> addSelfLink(post));
-		return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-	}
-	
+    service.deletePost(postId);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
 
-	private PostDTO addSelfLinkToPost(PostDTO post) {
-		try {
-			post.add(linkTo(methodOn(PostControllerImpl.class).apiV1PostsPostIdGet(post.getPostId())).withSelfRel());
-		} catch (EntityIsNotExistingException e) {
-			logger.error("Not found after Persisting. Should not happen.");
-		}
-		return post;
-	}
+  public ResponseEntity<?> apiV1PostsPostIdGet(
+      @ApiParam(value = "Unique identifier of a Post;",
+          required = true) @PathVariable("postId") Long postId)
+      throws EntityIsNotExistingException {
 
-	private PostPreviewDTO addSelfLink(PostPreviewDTO post) {
-		try {
-			post.add(linkTo(methodOn(PostControllerImpl.class).apiV1PostsPostIdGet(post.getPostId())).withSelfRel());
-		} catch (EntityIsNotExistingException e) {
-			logger.error("Not found after Persisting. Should not happen.");
-		}
-		return post;
-	}
+    PostDTO post = addSelfLinkToPost(service.getPost(postId));
+    return new ResponseEntity<PostDTO>(post, HttpStatus.OK);
+  }
 
-	private Sort getSortingByDateDesc() {
-		return new Sort(Direction.DESC, "created");
-	}
+  public ResponseEntity<?> apiV1PostsPut(
+      @ApiParam(value = "", required = true) @Valid @RequestBody PostDTO postEdit,
+      BindingResult bindingResult) throws DtoValidationFailedException,
+      EntityIsNotExistingException, DuplicateEntityException, DependencyNotFoundException {
+
+    validator.validateRequestBody(bindingResult);
+    validator.assertIdForUpdate(postEdit.getPostId());
+    service.updatePost(postEdit);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+
+  public ResponseEntity<?> apiV1PostsRewindPostIdPut(
+      @ApiParam(value = "Unique identifier of a Post;",
+          required = true) @PathVariable("postId") Long postId)
+      throws NoVersionFoundException {
+
+    service.rewind(postId);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+
+  public ResponseEntity<?> apiV1PostsStatusStatusGet(
+      @ApiParam(value = "Post Status Id", required = true) @PathVariable("status") String status,
+      @ApiParam(value = "Page number from that on entities are returned.") @RequestParam(
+          value = "page", required = false, defaultValue = PAGING_DEFAULT_PAGE_KEY) Integer page,
+      @ApiParam(value = "Entities per page.") @RequestParam(value = "size", required = false,
+          defaultValue = PAGING_DEFAULT_ITEMS_PER_PAGE_KEY) Integer size)
+      throws DtoValidationFailedException {
+
+    validator.assertPaging(page, size);
+    validator.assertStatus(PostStatus.class, status);
+    PostsPage posts = service.getAllPostsWithStatus(PostStatus.valueOf(status),
+        new Paging(page, getSortingByDateDesc(), size));
+    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
+    return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
+  }
+
+
+  private PostDTO addSelfLinkToPost(PostDTO post) {
+    try {
+      post.add(linkTo(methodOn(PostControllerImpl.class).apiV1PostsPostIdGet(post.getPostId()))
+          .withSelfRel());
+    } catch (EntityIsNotExistingException e) {
+      logger.error("Not found after Persisting. Should not happen.");
+    }
+    return post;
+  }
+
+  private PostPreviewDTO addSelfLink(PostPreviewDTO post) {
+    try {
+      post.add(linkTo(methodOn(PostControllerImpl.class).apiV1PostsPostIdGet(post.getPostId()))
+          .withSelfRel());
+    } catch (EntityIsNotExistingException e) {
+      logger.error("Not found after Persisting. Should not happen.");
+    }
+    return post;
+  }
+
+  private Sort getSortingByDateDesc() {
+    return new Sort(Direction.DESC, "created");
+  }
 }

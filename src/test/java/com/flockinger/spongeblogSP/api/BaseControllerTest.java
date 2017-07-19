@@ -27,42 +27,39 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @WebAppConfiguration
-@ActiveProfiles(profiles={"default","test"})
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class }) 
-@FlywayTest(invokeCleanDB=false)
+@ActiveProfiles(profiles = {"default", "test"})
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
+    FlywayTestExecutionListener.class})
+@FlywayTest(invokeCleanDB = false)
 public abstract class BaseControllerTest {
 
-	protected MediaType jsonContentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
-	
-	protected MockMvc mockMvc;
-	
-	@SuppressWarnings("rawtypes")
-	private HttpMessageConverter jsonConverter;
+  protected MediaType jsonContentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
+      MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
-	@Autowired
-	private WebApplicationContext webApplicationContext;
+  protected MockMvc mockMvc;
 
-	@Before
-	public void setup() throws Exception {
-		this.mockMvc = webAppContextSetup(webApplicationContext).build();
-	}
-	
-	@Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
+  @SuppressWarnings("rawtypes")
+  private HttpMessageConverter jsonConverter;
 
-        this.jsonConverter = Arrays.asList(converters).stream()
-            .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-            .findAny()
-            .orElse(null);
-    }
-	
-	@SuppressWarnings("unchecked")
-	protected <T extends Object> String json(T entity) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        jsonConverter.write(
-        		entity, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
-    }
+  @Autowired
+  private WebApplicationContext webApplicationContext;
+
+  @Before
+  public void setup() throws Exception {
+    this.mockMvc = webAppContextSetup(webApplicationContext).build();
+  }
+
+  @Autowired
+  void setConverters(HttpMessageConverter<?>[] converters) {
+
+    this.jsonConverter = Arrays.asList(converters).stream()
+        .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().orElse(null);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected <T extends Object> String json(T entity) throws IOException {
+    MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+    jsonConverter.write(entity, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+    return mockHttpOutputMessage.getBodyAsString();
+  }
 }

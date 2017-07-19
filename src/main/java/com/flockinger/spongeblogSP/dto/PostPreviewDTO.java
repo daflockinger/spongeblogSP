@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -17,148 +16,157 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * PostPreviewDTO
  */
-public class PostPreviewDTO extends ResourceSupport{
-	 
-	  private Long postId = null;
+public class PostPreviewDTO extends ResourceSupport {
 
-	  @NotEmpty
-	  private String title = null;
+  private Long postId = null;
 
-	  @NotNull
-	  private String partContent = null;
+  @NotEmpty
+  private String title = null;
 
-	  @NotNull
-	  private Date created = null;
+  @NotNull
+  private String partContent = null;
 
-	  @NotNull
-	  private Date modified = null;
+  @NotNull
+  private Date created = null;
 
-	  @NotNull
-	  private PostStatus status = null;
+  @NotNull
+  private Date modified = null;
 
-	  private UserInfoDTO author = null;
+  @NotNull
+  private PostStatus status = null;
 
-	  @NotNull
-	  private CategoryDTO category = null;
+  private UserInfoDTO author = null;
 
-	  @NotNull
-	  private List<TagDTO> tags = new ArrayList<TagDTO>();
+  @NotNull
+  private CategoryDTO category = null;
+
+  @NotNull
+  private List<TagDTO> tags = new ArrayList<TagDTO>();
 
 
-	   /**
-	   * Unique identifier.
-	   * @return postId
-	  **/
-	  @ApiModelProperty(value = "Unique identifier.")
-	  public Long getPostId() {
-	    return postId;
-	  }
+  /**
+   * Unique identifier.
+   * 
+   * @return postId
+   **/
+  @ApiModelProperty(value = "Unique identifier.")
+  public Long getPostId() {
+    return postId;
+  }
 
-	  public void setPostId(Long postId) {
-	    this.postId = postId;
-	  }
+  public void setPostId(Long postId) {
+    this.postId = postId;
+  }
 
-	   /**
-	   * The title of the Blog post.
-	   * @return title
-	  **/
-	  @ApiModelProperty(value = "The title of the Blog post.")
-	  public String getTitle() {
-	    return title;
-	  }
+  /**
+   * The title of the Blog post.
+   * 
+   * @return title
+   **/
+  @ApiModelProperty(value = "The title of the Blog post.")
+  public String getTitle() {
+    return title;
+  }
 
-	  public void setTitle(String title) {
-	    this.title = title;
-	  }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	   /**
-	   * First small part of the html/text content.
-	   * @return content
-	  **/
-	  @ApiModelProperty(value = "First small part of the html/text content.")
-	  public String getPartContent() {
-	    return partContent;
-	  }
+  /**
+   * First small part of the html/text content.
+   * 
+   * @return content
+   **/
+  @ApiModelProperty(value = "First small part of the html/text content.")
+  public String getPartContent() {
+    return partContent;
+  }
 
-	  public void setPartContent(String partContent) {
-	    this.partContent = partContent;
-	  }
+  public void setPartContent(String partContent) {
+    this.partContent = partContent;
+  }
 
-	   /**
-	   * Creation date of Post in long.
-	   * @return created
-	  **/
-	  @ApiModelProperty(value = "Creation date of Post in long.")
-	  public Date getCreated() {
-	    return created;
-	  }
+  /**
+   * Creation date of Post in long.
+   * 
+   * @return created
+   **/
+  @ApiModelProperty(value = "Creation date of Post in long.")
+  public Date getCreated() {
+    return created;
+  }
 
-	  public void setCreated(Date created) {
-	    this.created = created;
-	  }
+  public void setCreated(Date created) {
+    this.created = created;
+  }
 
-	   /**
-	   * Modification date of Post in long.
-	   * @return modified
-	  **/
-	  @ApiModelProperty(value = "Modification date of Post in long.")
-	  public Date getModified() {
-	    return modified;
-	  }
+  /**
+   * Modification date of Post in long.
+   * 
+   * @return modified
+   **/
+  @ApiModelProperty(value = "Modification date of Post in long.")
+  public Date getModified() {
+    return modified;
+  }
 
-	  public void setModified(Date modified) {
-	    this.modified = modified;
-	  }
+  public void setModified(Date modified) {
+    this.modified = modified;
+  }
 
-	   /**
-	   * Display status of the Post.
-	   * @return status
-	  **/
-	  @ApiModelProperty(value = "Display status of the Post.")
-	  public PostStatus getStatus() {
-	    return status;
-	  }
+  /**
+   * Display status of the Post.
+   * 
+   * @return status
+   **/
+  @ApiModelProperty(value = "Display status of the Post.")
+  public PostStatus getStatus() {
+    return status;
+  }
 
-	  public void setStatus(PostStatus status) {
-	    this.status = status;
-	  }
+  public void setStatus(PostStatus status) {
+    this.status = status;
+  }
 
-	   /**
-	   * Get author
-	   * @return author
-	  **/
-	  @ApiModelProperty(value = "")
-	  public UserInfoDTO getAuthor() {
-	    return author;
-	  }
+  /**
+   * Get author
+   * 
+   * @return author
+   **/
+  @ApiModelProperty(value = "")
+  public UserInfoDTO getAuthor() {
+    return author;
+  }
 
-	  public void setAuthor(UserInfoDTO author) {
-	    this.author = author;
-	  }
+  public void setAuthor(UserInfoDTO author) {
+    this.author = author;
+  }
 
-	   /**
-	   * Get category
-	   * @return category
-	  **/
-	  @ApiModelProperty(value = "")
-	  public CategoryDTO getCategory() {
-	    return category;
-	  }
+  /**
+   * Get category
+   * 
+   * @return category
+   **/
+  @ApiModelProperty(value = "")
+  public CategoryDTO getCategory() {
+    return category;
+  }
 
-	  public void setCategory(CategoryDTO category) {
-	    this.category = category;
-	  }
+  public void setCategory(CategoryDTO category) {
+    this.category = category;
+  }
 
-	   /**
-	   * Tags of Post.
-	   * @return tags
-	  **/
-	  @ApiModelProperty(value = "Tags of Post.")
-	  public List<TagDTO> getTags() {
-	    return tags;
-	  }
+  /**
+   * Tags of Post.
+   * 
+   * @return tags
+   **/
+  @ApiModelProperty(value = "Tags of Post.")
+  public List<TagDTO> getTags() {
+    return tags;
+  }
 
-	  public void setTags(List<TagDTO> tags) {
-	    this.tags = tags;
-	  }
+  public void setTags(List<TagDTO> tags) {
+    this.tags = tags;
+  }
 }

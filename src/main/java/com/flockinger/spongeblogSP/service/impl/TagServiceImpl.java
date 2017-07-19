@@ -25,102 +25,101 @@ import com.flockinger.spongeblogSP.service.VersioningService;
 @Service
 public class TagServiceImpl implements TagService {
 
-	@Autowired
-	private TagDAO dao;
-	
-	@Autowired
-	private PostDAO postDao;
+  @Autowired
+  private TagDAO dao;
 
-	@Autowired
-	private ModelMapper mapper;
-	
-	@Autowired
-	private VersioningService<Tag,TagDAO> versionService;
+  @Autowired
+  private PostDAO postDao;
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<TagDTO> getAllTags() {
-		List<TagDTO> tagDTOs = new ArrayList<>();
-		Iterable<Tag> tags = dao.findAll();
+  @Autowired
+  private ModelMapper mapper;
 
-		tags.iterator().forEachRemaining(tag -> tagDTOs.add(map(tag)));
+  @Autowired
+  private VersioningService<Tag, TagDAO> versionService;
 
-		return tagDTOs;
-	}
+  @Override
+  @Transactional(readOnly = true)
+  public List<TagDTO> getAllTags() {
+    List<TagDTO> tagDTOs = new ArrayList<>();
+    Iterable<Tag> tags = dao.findAll();
 
-	@Override
-	@Transactional(readOnly = true)
-	public TagDTO getTag(Long id) throws EntityIsNotExistingException {
-		if (!dao.exists(id)) {
-			throw new EntityIsNotExistingException("Tag");
-		}
-		Tag tag = dao.findOne(id);
-		return map(tag);
-	}
+    tags.iterator().forEachRemaining(tag -> tagDTOs.add(map(tag)));
 
-	@Override
-	@Transactional
-	public TagDTO createTag(String name) throws DuplicateEntityException {
-		if (isTagExistingAlready(name)) {
-			throw new DuplicateEntityException("Tag");
-		}
+    return tagDTOs;
+  }
 
-		Tag tag = new Tag();
-		tag.setName(name);
+  @Override
+  @Transactional(readOnly = true)
+  public TagDTO getTag(Long id) throws EntityIsNotExistingException {
+    if (!dao.exists(id)) {
+      throw new EntityIsNotExistingException("Tag");
+    }
+    Tag tag = dao.findOne(id);
+    return map(tag);
+  }
 
-		return map(dao.save(tag));
-	}
+  @Override
+  @Transactional
+  public TagDTO createTag(String name) throws DuplicateEntityException {
+    if (isTagExistingAlready(name)) {
+      throw new DuplicateEntityException("Tag");
+    }
 
-	private boolean isTagExistingAlready(String name) {
-		return isNotEmpty(name) && dao.findByName(name) != null;
-	}
+    Tag tag = new Tag();
+    tag.setName(name);
 
-	@Override
-	@Transactional
-	public void updateTag(TagDTO tag) throws EntityIsNotExistingException, DuplicateEntityException {
-		if (!dao.exists(tag.getTagId())) {
-			throw new EntityIsNotExistingException("Tag");
-		}
-		if(isTagExistingWithOtherId(tag)){
-			throw new DuplicateEntityException("Tag");
-		}
+    return map(dao.save(tag));
+  }
 
-		dao.save(map(tag));
-	}
-	
-	private boolean isTagExistingWithOtherId(TagDTO toUpdateTag) {
-		Tag tag =dao.findByName(toUpdateTag.getName());
-		return tag != null && tag.getId() != toUpdateTag.getTagId();
-	}
+  private boolean isTagExistingAlready(String name) {
+    return isNotEmpty(name) && dao.findByName(name) != null;
+  }
 
-	@Override
-	@Transactional
-	public void deleteTag(Long id) throws EntityIsNotExistingException {
-		if (!dao.exists(id)) {
-			throw new EntityIsNotExistingException("Tag");
-		}
-		List<Post> postsWithTag = postDao.findByTagsId(id);
-		postsWithTag.forEach(post -> {
-			post.setTags(
-					post.getTags().stream().filter(tag -> tag.getId() != id).collect(Collectors.toList())
-					);
-			});
-		
-		postDao.save(postsWithTag);
-		
-		dao.delete(id);
-	}
-	
-	@Override
-	public void rewind(Long id) throws NoVersionFoundException {
-		versionService.rewind(id, dao);
-	}
+  @Override
+  @Transactional
+  public void updateTag(TagDTO tag) throws EntityIsNotExistingException, DuplicateEntityException {
+    if (!dao.exists(tag.getTagId())) {
+      throw new EntityIsNotExistingException("Tag");
+    }
+    if (isTagExistingWithOtherId(tag)) {
+      throw new DuplicateEntityException("Tag");
+    }
 
-	private Tag map(TagDTO tagDto) {
-		return mapper.map(tagDto, Tag.class);
-	}
+    dao.save(map(tag));
+  }
 
-	private TagDTO map(Tag tag) {
-		return mapper.map(tag, TagDTO.class);
-	}
+  private boolean isTagExistingWithOtherId(TagDTO toUpdateTag) {
+    Tag tag = dao.findByName(toUpdateTag.getName());
+    return tag != null && tag.getId() != toUpdateTag.getTagId();
+  }
+
+  @Override
+  @Transactional
+  public void deleteTag(Long id) throws EntityIsNotExistingException {
+    if (!dao.exists(id)) {
+      throw new EntityIsNotExistingException("Tag");
+    }
+    List<Post> postsWithTag = postDao.findByTagsId(id);
+    postsWithTag.forEach(post -> {
+      post.setTags(
+          post.getTags().stream().filter(tag -> tag.getId() != id).collect(Collectors.toList()));
+    });
+
+    postDao.save(postsWithTag);
+
+    dao.delete(id);
+  }
+
+  @Override
+  public void rewind(Long id) throws NoVersionFoundException {
+    versionService.rewind(id, dao);
+  }
+
+  private Tag map(TagDTO tagDto) {
+    return mapper.map(tagDto, Tag.class);
+  }
+
+  private TagDTO map(Tag tag) {
+    return mapper.map(tag, TagDTO.class);
+  }
 }

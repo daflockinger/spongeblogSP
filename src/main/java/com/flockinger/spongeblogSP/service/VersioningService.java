@@ -15,28 +15,29 @@ import com.flockinger.spongeblogSP.model.BaseModel;
 @Component
 public class VersioningService<M extends BaseModel, D extends VersionDAO<M>> {
 
-	@Transactional
-	public void rewind(Long id, D dao) throws NoVersionFoundException {
-		Revision<Integer, M> latestRevision = null;
-		
-		if(dao.exists(id)){
-			latestRevision = dao.findLastChangeRevision(id);
-		}
-	
-		if (latestRevision == null) {
-			throw new NoVersionFoundException("No version found for entity with id: " + id);
-		}
-		List<Revision<Integer, M>> revisions = dao.findRevisions(id).getContent();
-		Optional<Revision<Integer, M>> previousRevision = fetchPreviousRevision(revisions,
-				latestRevision.getRevisionNumber());
+  @Transactional
+  public void rewind(Long id, D dao) throws NoVersionFoundException {
+    Revision<Integer, M> latestRevision = null;
 
-		if (previousRevision.isPresent()) {
-			dao.save(previousRevision.get().getEntity());
-		}
-	}
+    if (dao.exists(id)) {
+      latestRevision = dao.findLastChangeRevision(id);
+    }
 
-	private Optional<Revision<Integer, M>> fetchPreviousRevision(List<Revision<Integer, M>> revisions,
-			int latestRevNumber) {
-		return revisions.stream().filter(revision -> revision.getRevisionNumber() == (latestRevNumber - 1)).findAny();
-	}
+    if (latestRevision == null) {
+      throw new NoVersionFoundException("No version found for entity with id: " + id);
+    }
+    List<Revision<Integer, M>> revisions = dao.findRevisions(id).getContent();
+    Optional<Revision<Integer, M>> previousRevision =
+        fetchPreviousRevision(revisions, latestRevision.getRevisionNumber());
+
+    if (previousRevision.isPresent()) {
+      dao.save(previousRevision.get().getEntity());
+    }
+  }
+
+  private Optional<Revision<Integer, M>> fetchPreviousRevision(List<Revision<Integer, M>> revisions,
+      int latestRevNumber) {
+    return revisions.stream()
+        .filter(revision -> revision.getRevisionNumber() == (latestRevNumber - 1)).findAny();
+  }
 }

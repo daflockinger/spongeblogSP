@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.flockinger.spongeblogSP.model.Category;
 
 @Repository
-public interface CategoryDAO extends VersionDAO<Category>, PagingAndSortingRepository<Category,Long>, CategoryDAOCustom{
-	Category findByName(String name);
-	List<Category> findByParentId(Long parentId);
+public interface CategoryDAO
+    extends VersionDAO<Category>, PagingAndSortingRepository<Category, Long>, CategoryDAOCustom {
+  Category findByName(String name);
+
+  List<Category> findByParentId(Long parentId);
 }

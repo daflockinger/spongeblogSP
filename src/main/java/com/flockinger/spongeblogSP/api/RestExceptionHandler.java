@@ -24,46 +24,50 @@ import com.flockinger.spongeblogSP.exception.OrphanedDependingEntitiesException;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
- 
-    
-    @ExceptionHandler(value = {EntityIsNotExistingException.class,UsernameNotFoundException.class})
-    protected ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
-        
-    	return handleExceptionInternal(ex, createErrorModel(ex), 
-          new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-    }
-    
-    @ExceptionHandler(value = {DtoValidationFailedException.class})
-    protected ResponseEntity<Object> handleBadRequest(DtoValidationFailedException ex, WebRequest request) {
-        
-    	return handleExceptionInternal(ex, createErrorValidatedModel(ex), 
-          new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-    }
-    
-    
-    @ExceptionHandler(value = {DuplicateEntityException.class, OrphanedDependingEntitiesException.class, DependencyNotFoundException.class
-    		, NoVersionFoundException.class})
-    protected ResponseEntity<Object> handleConflict(Exception ex, WebRequest request) {
-        
-    	return handleExceptionInternal(ex, createErrorModel(ex), 
-          new HttpHeaders(), HttpStatus.CONFLICT, request);
-    }
-        
-    private Error createErrorValidatedModel(DtoValidationFailedException validationException){
-    	Error error = createErrorModel(validationException);
-    	
-    	List<FieldError> fieldErrors = validationException.getErrors();
-    	Map<String, String> fieldMap = fieldErrors.stream().collect(Collectors.toMap(FieldError::getField, value -> 
-    	{return value.getDefaultMessage() + "[" + value.getRejectedValue() + "]";}));
-    	
-    	error.setFields(fieldMap);
-    	return error;
-    }
-    
-    private Error createErrorModel(Exception exception){
-    	Error error = new Error();
-    	error.setMessage(exception.getMessage());
-    	
-    	return error;
-    }
+
+
+  @ExceptionHandler(value = {EntityIsNotExistingException.class, UsernameNotFoundException.class})
+  protected ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
+
+    return handleExceptionInternal(ex, createErrorModel(ex), new HttpHeaders(),
+        HttpStatus.NOT_FOUND, request);
+  }
+
+  @ExceptionHandler(value = {DtoValidationFailedException.class})
+  protected ResponseEntity<Object> handleBadRequest(DtoValidationFailedException ex,
+      WebRequest request) {
+
+    return handleExceptionInternal(ex, createErrorValidatedModel(ex), new HttpHeaders(),
+        HttpStatus.BAD_REQUEST, request);
+  }
+
+
+  @ExceptionHandler(
+      value = {DuplicateEntityException.class, OrphanedDependingEntitiesException.class,
+          DependencyNotFoundException.class, NoVersionFoundException.class})
+  protected ResponseEntity<Object> handleConflict(Exception ex, WebRequest request) {
+
+    return handleExceptionInternal(ex, createErrorModel(ex), new HttpHeaders(), HttpStatus.CONFLICT,
+        request);
+  }
+
+  private Error createErrorValidatedModel(DtoValidationFailedException validationException) {
+    Error error = createErrorModel(validationException);
+
+    List<FieldError> fieldErrors = validationException.getErrors();
+    Map<String, String> fieldMap =
+        fieldErrors.stream().collect(Collectors.toMap(FieldError::getField, value -> {
+          return value.getDefaultMessage() + "[" + value.getRejectedValue() + "]";
+        }));
+
+    error.setFields(fieldMap);
+    return error;
+  }
+
+  private Error createErrorModel(Exception exception) {
+    Error error = new Error();
+    error.setMessage(exception.getMessage());
+
+    return error;
+  }
 }

@@ -16,54 +16,56 @@ import org.hibernate.envers.Audited;
 @Audited
 public class Category extends BaseModel {
 
-	@NotNull
-	private String name;
+  @NotNull
+  private String name;
 
-	@ManyToOne(optional = true, fetch = FetchType.EAGER)
-	@JoinColumn(name = "parent_id", nullable = true, updatable = true, insertable = true)
-	private Category parent;
+  @ManyToOne(optional = true, fetch = FetchType.EAGER)
+  @JoinColumn(name = "parent_id", nullable = true, updatable = true, insertable = true)
+  private Category parent;
 
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = { CascadeType.REMOVE })
-	private List<Category> subCategories;
+  @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true,
+      cascade = {CascadeType.REMOVE})
+  private List<Category> subCategories;
 
-	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
-	private List<Post> posts;
+  @OneToMany(mappedBy = "category", fetch = FetchType.LAZY,
+      cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+  private List<Post> posts;
 
-	private Integer rank;
+  private Integer rank;
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public Category getParent() {
-		return parent;
-	}
+  public Category getParent() {
+    return parent;
+  }
 
-	public void setParent(Category parent) {
-		this.parent = parent;
-	}
+  public void setParent(Category parent) {
+    this.parent = parent;
+  }
 
-	public List<Category> getSubCategories() {
-		return subCategories;
-	}
+  public List<Category> getSubCategories() {
+    return subCategories;
+  }
 
-	public void setSubCategories(List<Category> subCategories) {
-		this.subCategories = subCategories;
-	}
+  public void setSubCategories(List<Category> subCategories) {
+    this.subCategories = subCategories;
+  }
 
-	public List<Post> getPosts() {
-		return posts;
-	}
+  public List<Post> getPosts() {
+    return posts;
+  }
 
-	public Integer getRank() {
-		return rank;
-	}
+  public Integer getRank() {
+    return rank;
+  }
 
-	public void setRank(Integer rank) {
-		this.rank = rank;
-	}
+  public void setRank(Integer rank) {
+    this.rank = rank;
+  }
 }

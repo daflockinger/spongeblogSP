@@ -22,7 +22,6 @@ import com.flockinger.spongeblogSP.api.util.RequestValidator;
 import com.flockinger.spongeblogSP.dto.CategoryDTO;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
-import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
 import com.flockinger.spongeblogSP.exception.EntityIsNotExistingException;
 import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.exception.OrphanedDependingEntitiesException;
@@ -33,83 +32,91 @@ import io.swagger.annotations.ApiParam;
 @RestController
 public class CategoryControllerImpl implements CategoryController {
 
-	@Autowired
-	private CategoryService service;
-	
-	@Autowired
-	private RequestValidator validator;
+  @Autowired
+  private CategoryService service;
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  @Autowired
+  private RequestValidator validator;
 
-	public ResponseEntity<?> apiV1CategoriesCategoryIdDelete(
-			@ApiParam(value = "Unique identifier of a Category;", required = true) @PathVariable("categoryId") Long categoryId)
-			throws EntityIsNotExistingException, OrphanedDependingEntitiesException {
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-		service.deleteCategory(categoryId);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1CategoriesCategoryIdDelete(
+      @ApiParam(value = "Unique identifier of a Category;",
+          required = true) @PathVariable("categoryId") Long categoryId)
+      throws EntityIsNotExistingException, OrphanedDependingEntitiesException {
 
-	public ResponseEntity<CategoryDTO> apiV1CategoriesCategoryIdGet(
-			@ApiParam(value = "Unique identifier of a Category;", required = true) @PathVariable("categoryId") Long categoryId)
-			throws EntityIsNotExistingException {
-		return new ResponseEntity<CategoryDTO>(addSelfAndParentLink(service.getCategory(categoryId)), HttpStatus.OK);
-	}
+    service.deleteCategory(categoryId);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
 
-	public ResponseEntity<?> apiV1CategoriesChildrenParentCategoryIdGet(
-			@ApiParam(value = "Unique identifier of the parent Category;", required = true) @PathVariable("parentCategoryId") Long parentCategoryId)
-			throws EntityIsNotExistingException {
+  public ResponseEntity<CategoryDTO> apiV1CategoriesCategoryIdGet(
+      @ApiParam(value = "Unique identifier of a Category;",
+          required = true) @PathVariable("categoryId") Long categoryId)
+      throws EntityIsNotExistingException {
+    return new ResponseEntity<CategoryDTO>(addSelfAndParentLink(service.getCategory(categoryId)),
+        HttpStatus.OK);
+  }
 
-		List<CategoryDTO> children = service.getCategoriesFromParent(parentCategoryId);
-		children.forEach(cat -> addSelfAndParentLink(cat));
-		return new ResponseEntity<List<CategoryDTO>>(children, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1CategoriesChildrenParentCategoryIdGet(
+      @ApiParam(value = "Unique identifier of the parent Category;",
+          required = true) @PathVariable("parentCategoryId") Long parentCategoryId)
+      throws EntityIsNotExistingException {
 
-	public ResponseEntity<?> apiV1CategoriesGet() {
+    List<CategoryDTO> children = service.getCategoriesFromParent(parentCategoryId);
+    children.forEach(cat -> addSelfAndParentLink(cat));
+    return new ResponseEntity<List<CategoryDTO>>(children, HttpStatus.OK);
+  }
 
-		List<CategoryDTO> categories = service.getAllCategories();
-		categories.forEach(cat -> addSelfAndParentLink(cat));
-		return new ResponseEntity<List<CategoryDTO>>(categories, HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1CategoriesGet() {
 
-	public ResponseEntity<?> apiV1CategoriesPost(
-			@ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
-			BindingResult bindingResult) throws DtoValidationFailedException, DependencyNotFoundException {
+    List<CategoryDTO> categories = service.getAllCategories();
+    categories.forEach(cat -> addSelfAndParentLink(cat));
+    return new ResponseEntity<List<CategoryDTO>>(categories, HttpStatus.OK);
+  }
 
-		validator.validateRequestBody(bindingResult);
-		CategoryDTO createdCategory = service.createCategory(categoryEdit);
-		return new ResponseEntity<CategoryDTO>(addSelfAndParentLink(createdCategory), HttpStatus.CREATED);
-	}
+  public ResponseEntity<?> apiV1CategoriesPost(
+      @ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
+      BindingResult bindingResult)
+      throws DtoValidationFailedException, DependencyNotFoundException {
 
-	public ResponseEntity<?> apiV1CategoriesPut(
-			@ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
-			BindingResult bindingResult) throws EntityIsNotExistingException, DtoValidationFailedException, DependencyNotFoundException {
-		
-		validator.validateRequestBody(bindingResult);
-		validator.assertIdForUpdate(categoryEdit.getCategoryId());
-		service.updateCategory(categoryEdit);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
+    validator.validateRequestBody(bindingResult);
+    CategoryDTO createdCategory = service.createCategory(categoryEdit);
+    return new ResponseEntity<CategoryDTO>(addSelfAndParentLink(createdCategory),
+        HttpStatus.CREATED);
+  }
 
-	public ResponseEntity<?> apiV1CategoriesRewindCategoryIdPut(
-			@ApiParam(value = "Unique identifier of a Category;", required = true) @PathVariable("categoryId") Long categoryId) throws NoVersionFoundException {
-		service.rewind(categoryId);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
+  public ResponseEntity<?> apiV1CategoriesPut(
+      @ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
+      BindingResult bindingResult) throws EntityIsNotExistingException,
+      DtoValidationFailedException, DependencyNotFoundException {
 
-	
-	private CategoryDTO addSelfAndParentLink(CategoryDTO category) {
-		try {
-			category.add(linkTo(methodOn(CategoryControllerImpl.class, category.getCategoryId())
-					.apiV1CategoriesCategoryIdGet(category.getCategoryId())).withSelfRel());
+    validator.validateRequestBody(bindingResult);
+    validator.assertIdForUpdate(categoryEdit.getCategoryId());
+    service.updateCategory(categoryEdit);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
 
-			if (category.getParentId() != null) {
-				category.add(linkTo(
-						methodOn(CategoryControllerImpl.class).apiV1CategoriesCategoryIdGet(category.getParentId()))
-								.withRel("parent"));
-			}
-		} catch (EntityIsNotExistingException e) {
-			logger.error("Not found after Persisting. Should not happen.");
-		}
-		return category;
-	}
+  public ResponseEntity<?> apiV1CategoriesRewindCategoryIdPut(
+      @ApiParam(value = "Unique identifier of a Category;",
+          required = true) @PathVariable("categoryId") Long categoryId)
+      throws NoVersionFoundException {
+    service.rewind(categoryId);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+
+
+  private CategoryDTO addSelfAndParentLink(CategoryDTO category) {
+    try {
+      category.add(linkTo(methodOn(CategoryControllerImpl.class, category.getCategoryId())
+          .apiV1CategoriesCategoryIdGet(category.getCategoryId())).withSelfRel());
+
+      if (category.getParentId() != null) {
+        category.add(linkTo(methodOn(CategoryControllerImpl.class)
+            .apiV1CategoriesCategoryIdGet(category.getParentId())).withRel("parent"));
+      }
+    } catch (EntityIsNotExistingException e) {
+      logger.error("Not found after Persisting. Should not happen.");
+    }
+    return category;
+  }
 }
