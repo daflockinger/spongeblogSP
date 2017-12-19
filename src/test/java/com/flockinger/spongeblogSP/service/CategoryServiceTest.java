@@ -2,6 +2,7 @@ package com.flockinger.spongeblogSP.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -36,8 +37,8 @@ public class CategoryServiceTest extends BaseServiceTest {
   public void testGetAllCategorys__withEmptyDB_shouldReturnEmpty() {
     List<CategoryDTO> categorys = service.getAllCategories();
 
-    assertNotNull(categorys);
-    assertTrue(categorys.size() == 0);
+    assertNotNull("validate returned categories not null", categorys);
+    assertEquals("validate correct category count", 0, categorys.size());
   }
 
   @Test
@@ -45,10 +46,14 @@ public class CategoryServiceTest extends BaseServiceTest {
   public void testGetAllCategorys_shouldReturnAll() {
     List<CategoryDTO> categorys = service.getAllCategories();
 
-    assertNotNull(categorys);
-    assertTrue(categorys.size() == 2);
-    assertTrue(categorys.stream().anyMatch(category -> category.getName().equals("main category")));
-    assertTrue(categorys.stream().anyMatch(category -> category.getName().equals("sub category")));
+    assertNotNull("validate returned categories not null", categorys);
+    assertEquals("validate correct category count", 3, categorys.size());
+    assertTrue("validate category with name exists",
+        categorys.stream().anyMatch(category -> category.getName().equals("main category")));
+    assertTrue("validate category with name exists",
+        categorys.stream().anyMatch(category -> category.getName().equals("sub category")));
+    assertTrue("validate category with specific page id exists", categorys.stream()
+        .anyMatch(category -> category.getPageId() != null && category.getPageId() == 8));
   }
 
   @Test
@@ -57,8 +62,12 @@ public class CategoryServiceTest extends BaseServiceTest {
       throws EntityIsNotExistingException {
     CategoryDTO categoryPost = service.getCategory(1l);
 
-    assertNotNull(categoryPost);
-    assertEquals("main category", categoryPost.getName());
+    assertNotNull("validate returned category post is not null", categoryPost);
+    assertEquals("validate correct saved category name", "main category", categoryPost.getName());
+    assertEquals("validate correct saved category children count", 2,
+        categoryPost.getChildren().size());
+    assertTrue("validate correct saved categories first sub category name", 
+        categoryPost.getChildren().stream().anyMatch(c -> c.getName().equals("sub category")));
   }
 
   @Test
@@ -67,12 +76,12 @@ public class CategoryServiceTest extends BaseServiceTest {
       throws EntityIsNotExistingException {
     CategoryDTO categoryPost = service.getCategory(2l);
 
-    assertNotNull(categoryPost);
-    assertEquals("sub category", categoryPost.getName());
-
-    assertNotNull(categoryPost.getParentId());
-    assertTrue(categoryPost.getParentId() == 1l);
-    assertTrue(categoryPost.getRank() == 1);
+    assertNotNull("validate category not null", categoryPost);
+    assertEquals("validate correct categories sub category name", "sub category",
+        categoryPost.getName());
+    assertEquals("validate correct categories parent ID", 1l,
+        categoryPost.getParentId().longValue());
+    assertEquals("validate correct category rank", 1l, categoryPost.getRank().longValue());
   }
 
   @Test(expected = EntityIsNotExistingException.class)
@@ -87,9 +96,10 @@ public class CategoryServiceTest extends BaseServiceTest {
   public void testGetCategoriesFromParent_withValidParent_shouldReturnCorrect()
       throws EntityIsNotExistingException {
     List<CategoryDTO> categories = service.getCategoriesFromParent(null);
-    assertNotNull(categories);
-    assertTrue(categories.size() == 1);
-    assertTrue(categories.stream().anyMatch(cat -> cat.getName().equals("main category")));
+    assertNotNull("validate category from null parent not null", categories);
+    assertTrue("validate correct category from null parent size", categories.size() == 1);
+    assertTrue("validate correct category fron null parent name",
+        categories.stream().anyMatch(cat -> cat.getName().equals("main category")));
   }
 
   @Test
@@ -97,8 +107,8 @@ public class CategoryServiceTest extends BaseServiceTest {
   public void testGetCategoriesFromParent_withInValidParent_shouldReturnEmpty()
       throws EntityIsNotExistingException {
     List<CategoryDTO> categories = service.getCategoriesFromParent(646546546l);
-    assertNotNull(categories);
-    assertTrue(categories.size() == 0);
+    assertNotNull("validate not found categories from parent not null", categories);
+    assertTrue("validate not found categories from parent is empty", categories.size() == 0);
   }
 
   @Test
@@ -109,14 +119,17 @@ public class CategoryServiceTest extends BaseServiceTest {
     category.setName("improved category");
     category.setRank(2);
     category.setParentId(2l);
+    category.setPageId(23l);
 
     Long newCategoryId = service.createCategory(category).getCategoryId();
 
     CategoryDTO newCategory = map(dao.findOne(newCategoryId));
-    assertNotNull(newCategory);
-    assertEquals("improved category", newCategory.getName());
-    assertTrue(newCategory.getRank() == 2);
-    assertTrue(newCategory.getParentId() == 2l);
+    assertNotNull("validate new returned category is not null", newCategory);
+    assertEquals("validate new created category name", "improved category", newCategory.getName());
+    assertEquals("validate new created category rank", 2, newCategory.getRank().intValue());
+    assertEquals("validate new created category parent id", 2l,
+        newCategory.getParentId().longValue());
+    assertEquals("validate new created category pageID", 23l, newCategory.getPageId().longValue());
   }
 
   @Test
@@ -131,9 +144,11 @@ public class CategoryServiceTest extends BaseServiceTest {
     Long newCategoryId = service.createCategory(category).getCategoryId();
 
     CategoryDTO newCategory = map(dao.findOne(newCategoryId));
-    assertNotNull(newCategory);
-    assertEquals("improved category", newCategory.getName());
-    assertTrue(newCategory.getRank() == 2);
+    assertNotNull("validate created null parent category is not null", newCategory);
+    assertEquals("validate created null parent category correct name", "improved category",
+        newCategory.getName());
+    assertEquals("validate created null parent category correct rank", 2,
+        newCategory.getRank().intValue());
   }
 
   @Test(expected = DependencyNotFoundException.class)
@@ -157,13 +172,18 @@ public class CategoryServiceTest extends BaseServiceTest {
     newCategory.setRank(3);
     newCategory.setName("new better name");
     newCategory.setParentId(1l);
+    newCategory.setPageId(23l);
     service.updateCategory(newCategory);
 
     CategoryDTO updatedCategory = map(dao.findOne(1l));
-    assertNotNull(updatedCategory);
-    assertEquals("new better name", updatedCategory.getName());
-    assertTrue(updatedCategory.getRank() == 3);
-    assertTrue(updatedCategory.getParentId() == 1l);
+    assertNotNull("validate updated category not null", updatedCategory);
+    assertEquals("validate correct updated category name", "new better name",
+        updatedCategory.getName());
+    assertEquals("validate correct updated category name", 3, updatedCategory.getRank().intValue());
+    assertEquals("validate correct updated category name", 1l,
+        updatedCategory.getParentId().longValue());
+    assertEquals("validate correct updated category name", 23l,
+        updatedCategory.getPageId().longValue());
   }
 
   @Test
@@ -191,7 +211,7 @@ public class CategoryServiceTest extends BaseServiceTest {
 
     service.deleteCategory(newCategoryId);
 
-    assertTrue(service.getAllCategories().size() == 2);
+    assertEquals("validate category size after deletion", 3, service.getAllCategories().size());
   }
 
 
@@ -228,15 +248,19 @@ public class CategoryServiceTest extends BaseServiceTest {
     service.updateCategory(category);
 
     CategoryDTO updatedCategory = map(dao.findOne(2l));
-    assertEquals("fancy active category", updatedCategory.getName());
-    assertTrue(updatedCategory.getParentId() == null);
-    assertTrue(updatedCategory.getRank() == 1234);
+    assertEquals("validate category name before rewind", "fancy active category",
+        updatedCategory.getName());
+    assertNull("validate category parentId before rewind", updatedCategory.getParentId());
+    assertEquals("validate category rank before rewind", 1234,
+        updatedCategory.getRank().intValue());
 
     service.rewind(2l);
     CategoryDTO rewindedCategory = map(dao.findOne(2l));
-    assertEquals("sub category", rewindedCategory.getName());
-    assertTrue(rewindedCategory.getParentId() == 1l);
-    assertTrue(rewindedCategory.getRank() == 2);
+    assertEquals("validate category name before rewind", "sub category",
+        rewindedCategory.getName());
+    assertEquals("validate category parentId before rewind", 1l,
+        rewindedCategory.getParentId().longValue());
+    assertEquals("validate category rank before rewind", 2, rewindedCategory.getRank().intValue());
   }
 
   @Test(expected = NoVersionFoundException.class)

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.flockinger.spongeblogSP.dto.Error;
 import com.flockinger.spongeblogSP.dto.PostDTO;
+import com.flockinger.spongeblogSP.dto.PostsPage;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
@@ -25,8 +26,8 @@ import io.swagger.annotations.ApiResponses;
 public interface PostController {
 
   @ApiOperation(value = "Posts from User", notes = "Returns all posts from defined User.",
-      response = String.class, responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+      response = PostsPage.class, responseContainer = "List", tags = {"Posts",})
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = Error.class),
       @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).",
@@ -49,9 +50,9 @@ public interface PostController {
 
 
   @ApiOperation(value = "Posts from User and Status",
-      notes = "Returns all posts from defined User and Status.", response = String.class,
+      notes = "Returns all posts from defined User and Status.", response = PostsPage.class,
       responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = Error.class),
       @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).",
@@ -75,8 +76,8 @@ public interface PostController {
 
 
   @ApiOperation(value = "Posts from Category", notes = "Returns all posts from defined Category.",
-      response = String.class, responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+      response = PostsPage.class, responseContainer = "List", tags = {"Posts",})
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = Error.class),
       @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).",
@@ -99,9 +100,9 @@ public interface PostController {
 
 
   @ApiOperation(value = "Posts from Category and Status",
-      notes = "Returns all posts from defined Category and Status.", response = String.class,
+      notes = "Returns all posts from defined Category and Status.", response = PostsPage.class,
       responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = Error.class),
       @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).",
@@ -125,8 +126,8 @@ public interface PostController {
 
 
   @ApiOperation(value = "All posts", notes = "Returns all posts (paginated).",
-      response = String.class, responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+      response = PostsPage.class, responseContainer = "List", tags = {"Posts",})
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = Error.class),
       @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).",
@@ -247,8 +248,8 @@ public interface PostController {
 
 
   @ApiOperation(value = "Posts with status", notes = "Returns all posts with defined status.",
-      response = String.class, responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+      response = PostsPage.class, responseContainer = "List", tags = {"Posts",})
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = Error.class),
       @ApiResponse(code = 401, message = "Unauthorized (need to log in / get token).",
@@ -269,8 +270,8 @@ public interface PostController {
       throws DtoValidationFailedException;
 
   @ApiOperation(value = "Posts from Tag", notes = "Returns all posts from defined Tag.",
-      response = String.class, responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+      response = PostsPage.class, responseContainer = "List", tags = {"Posts",})
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = String.class),
       @ApiResponse(code = 401, message = "Untagized (need to log in / get token).",
@@ -293,9 +294,9 @@ public interface PostController {
 
 
   @ApiOperation(value = "Posts from Tag and Status",
-      notes = "Returns all posts from defined Tag and Status.", response = String.class,
+      notes = "Returns all posts from defined Tag and Status.", response = PostsPage.class,
       responseContainer = "List", tags = {"Posts",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = String.class),
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Post links.", response = PostsPage.class),
       @ApiResponse(code = 400, message = "Bad request (validation failed).",
           response = String.class),
       @ApiResponse(code = 401, message = "Untagized (need to log in / get token).",

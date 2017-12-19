@@ -61,14 +61,22 @@ blog:
     default-page: 0
     default-items-per-page: 5
   preview-text-size: 50
+  security:
+    allowed-origin: ${ALLOWED_ORIGIN:http://localhost:4200}
 
-## simple service-to-service security
-security-admin:
-  clientid: ${SEC_CLIENT_ID:spongeblog-admin}
-  secretkey: ${SEC_CLIENT_ID:p0F0J5y1Yk5bSPvJqfa8YThfKNnunQUC}
-security-author:
-  clientid: ${SEC_CLIENT_ID:spongeblog-user}
-  secretkey: ${SEC_CLIENT_ID:DqvRMa9RUtkLi9W6CQaZyuPY3kk1AzVK}
+  
+google:
+  client:
+    clientId: not-my-real-client-id-this-time
+    clientSecret: not-my-real-secret-this-time
+    accessTokenUri: https://www.googleapis.com/oauth2/v3/token
+    userAuthorizationUri: https://accounts.google.com/o/oauth2/auth
+  finalTargetUrl: http://localhost:4200/admin/login
+  verificationUrl: https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=
+
+security:
+  basic:
+    enabled: true
       
 #### Test Profile
 ---

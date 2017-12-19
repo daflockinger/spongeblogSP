@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,11 +130,16 @@ public class CategoryServiceImpl implements CategoryService {
     versionService.rewind(id, dao);
   }
 
-  private Category map(CategoryDTO tagDto) {
-    return mapper.map(tagDto, Category.class);
+  private Category map(CategoryDTO categoryDto) {
+    return mapper.map(categoryDto, Category.class);
   }
 
-  private CategoryDTO map(Category tag) {
-    return mapper.map(tag, CategoryDTO.class);
+  private CategoryDTO map(Category category) {
+    CategoryDTO categoryDto = mapper.map(category, CategoryDTO.class);
+    categoryDto.setChildren(ListUtils.emptyIfNull(category.getSubCategories())
+          .stream()
+          .map(child -> mapper.map(child, CategoryDTO.class))
+          .collect(Collectors.toList()));
+    return categoryDto;
   }
 }

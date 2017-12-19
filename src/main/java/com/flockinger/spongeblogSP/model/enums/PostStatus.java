@@ -16,7 +16,13 @@ public enum PostStatus {
   MAINTENANCE("MAINTENANCE"),
 
   @SerializedName("DELETED")
-  DELETED("DELETED");
+  DELETED("DELETED"),
+  
+  @SerializedName("PAGE_PUBLIC")
+  PAGE_PUBLIC("PAGE_PUBLIC"),
+  
+  @SerializedName("PAGE_INACTIVE")
+  PAGE_INACTIVE("PAGE_INACTIVE");
 
   private String value;
 

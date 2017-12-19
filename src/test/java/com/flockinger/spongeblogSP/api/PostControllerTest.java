@@ -46,11 +46,11 @@ public class PostControllerTest extends BaseControllerTest {
   public void testApiV1PostsGet_withNoPaginationSettings_shouldReturnDefaults() throws Exception {
     mockMvc.perform(get("/api/v1/posts").contentType(jsonContentType)).andExpect(status().isOk())
         .andExpect(jsonPath("$.previewPosts", hasSize(5)))
-        .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
-        .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")))
-        .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("3")))
-        .andExpect(jsonPath("$.previewPosts[3].links[0].href", containsString("6")))
-        .andExpect(jsonPath("$.previewPosts[4].links[0].href", containsString("5")));
+        .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("8")))
+        .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("7")))
+        .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("1")))
+        .andExpect(jsonPath("$.previewPosts[3].links[0].href", containsString("2")))
+        .andExpect(jsonPath("$.previewPosts[4].links[0].href", containsString("3")));
   }
 
   @Test
@@ -66,8 +66,8 @@ public class PostControllerTest extends BaseControllerTest {
   public void testApiV1PostsGet_withPage2And2PostsPerPage_shouldReturnCorrect() throws Exception {
     mockMvc.perform(get("/api/v1/posts?size=2&page=1").contentType(jsonContentType))
         .andExpect(status().isOk()).andExpect(jsonPath("$.previewPosts", hasSize(2)))
-        .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("3")))
-        .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("6")));
+        .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
+        .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")));
   }
 
   @Test
@@ -75,9 +75,9 @@ public class PostControllerTest extends BaseControllerTest {
   public void testApiV1PostsGet_withPage1And3PostPerPage_shouldReturnCorrect() throws Exception {
     mockMvc.perform(get("/api/v1/posts?size=3&page=0").contentType(jsonContentType))
         .andExpect(status().isOk()).andExpect(jsonPath("$.previewPosts", hasSize(3)))
-        .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("1")))
-        .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("2")))
-        .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("3")));
+        .andExpect(jsonPath("$.previewPosts[0].links[0].href", containsString("8")))
+        .andExpect(jsonPath("$.previewPosts[1].links[0].href", containsString("7")))
+        .andExpect(jsonPath("$.previewPosts[2].links[0].href", containsString("1")));
   }
 
   @Test
@@ -230,7 +230,7 @@ public class PostControllerTest extends BaseControllerTest {
         .andExpect(status().isCreated());
 
 
-    PostDTO savedPost = service.getPost(7l);
+    PostDTO savedPost = service.getPost(9l);
 
     assertNotNull(savedPost);
     // verifying author

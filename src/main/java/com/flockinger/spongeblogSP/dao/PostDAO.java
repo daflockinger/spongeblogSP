@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -31,4 +32,10 @@ public interface PostDAO extends PagingAndSortingRepository<Post, Long>, Version
   Page<Post> findByAuthorId(Long authorId, Pageable pageable);
 
   Page<Post> findByAuthorIdAndStatus(Long authorId, PostStatus status, Pageable pageable);
+  
+  @Query("select p from Post as p where p.status='PAGE_PUBLIC' and p.category IS NOT NULL")
+  List<Post> findPageWithCategory();
+  
+  @Query("select p from Post as p where p.status='PAGE_PUBLIC' and p.category IS NULL")
+  List<Post> findPageWithoutCategory();
 }

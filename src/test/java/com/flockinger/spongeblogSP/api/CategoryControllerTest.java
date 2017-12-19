@@ -36,7 +36,7 @@ public class CategoryControllerTest extends BaseControllerTest {
   @FlywayTest(locationsForMigrate = {"/db/testfill/"})
   public void testApiV1CategoriesGet_withFilledDB_shouldReturnAll() throws Exception {
     mockMvc.perform(get("/api/v1/categories").contentType(jsonContentType))
-        .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(2)))
+        .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(3)))
 
         .andExpect(jsonPath("$[0].name", is("main category")))
         .andExpect(jsonPath("$[0].links[0].href", containsString("categories/1")))
@@ -77,8 +77,8 @@ public class CategoryControllerTest extends BaseControllerTest {
   public void testApiV1CategoriesChildrenParentCategoryIdGet_withExistingParent_shouldReturnChildren()
       throws Exception {
     mockMvc.perform(get("/api/v1/categories/children/1").contentType(jsonContentType))
-        .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].name", is("sub category")));
+        .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(2)))
+        .andExpect(jsonPath("$[0].name", is("funky category")));
   }
 
   @Test

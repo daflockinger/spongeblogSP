@@ -1,55 +1,79 @@
 package com.flockinger.spongeblogSP.config;
 
+import java.util.Arrays;
+
+import javax.servlet.Filter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
+import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
+import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
+import com.flockinger.spongeblogSP.security.HeaderTokenAuthFilter;
+import com.flockinger.spongeblogSP.security.OpenIdFilter;
 
 
 
 /**
- * Implementation of simple HTTP Auth used for service to service communication
+ * Implementation of Open ID Connect Auth used for UI to service communication
  *
  */
 @Profile({"test", "default"})
 @Configuration
 @EnableWebSecurity
-public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter { 
+  
+  @Value("${google.client.clientId}")
+  private String clientId;
 
-  private static String REALM = "SPONGE_REALM";
+  @Value("${google.client.clientSecret}")
+  private String clientSecret;
 
-  @Value("${security-admin.clientid}")
-  private String adminClientId;
-  @Value("${security-admin.secretkey}")
-  private String adminSecretkey;
+  @Value("${google.client.accessTokenUri}")
+  private String accessTokenUri;
 
-  @Value("${security-author.clientid}")
-  private String authorClientId;
-  @Value("${security-author.secretkey}")
-  private String authorSecretkey;
+  @Value("${google.client.userAuthorizationUri}")
+  private String userAuthorizationUri;
+
+  @Value("${google.finalTargetUrl}")
+  private String finalTargetUrl;
 
   @Autowired
-  public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-    auth.inMemoryAuthentication().withUser(adminClientId).password(adminSecretkey)
-        .authorities("ADMIN", "AUTHOR").and().withUser(authorClientId).password(authorSecretkey)
-        .authorities("AUTHOR");
-  }
+  OAuth2ClientContext oauth2ClientContext;
+
+  @Autowired
+  AuthenticationManager authenticationManager;
+
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, "/api/v1/users/info/**")
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+    .addFilterAfter(new OAuth2ClientContextFilter(),
+        AbstractPreAuthenticatedProcessingFilter.class)
+        .addFilterAfter(ssoFilter(), OAuth2ClientContextFilter.class)
+        .addFilterAfter(new HeaderTokenAuthFilter("__", authenticationManager), OpenIdFilter.class)
+        .httpBasic()
+        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")).and()
+        .authorizeRequests()
+        .antMatchers(HttpMethod.GET, "/api/v1/users/info/**")
         .permitAll().antMatchers(HttpMethod.GET, "/api/v1/users/*").hasAuthority("ADMIN")
         .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ADMIN")
-        .antMatchers(HttpMethod.GET, "/api/v1/posts/author/**").hasAnyAuthority("ADMIN", "AUTHOR")
+        //.antMatchers(HttpMethod.GET, "/api/v1/posts/author/**").hasAnyAuthority("ADMIN", "AUTHOR")
         .antMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
         .antMatchers(HttpMethod.PUT, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
         .antMatchers(HttpMethod.DELETE, "/api/v1/posts/*").hasAnyAuthority("ADMIN", "AUTHOR")
@@ -57,15 +81,30 @@ public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, "/api/v1/**").hasAuthority("ADMIN")
         .antMatchers(HttpMethod.PUT, "/api/v1/**").hasAuthority("ADMIN")
         .antMatchers(HttpMethod.DELETE, "/api/v1/**").hasAuthority("ADMIN").antMatchers("/")
-        .hasAuthority("ADMIN").antMatchers("/swagger-ui.html").hasAuthority("ADMIN").and()
-        .httpBasic().realmName(REALM).authenticationEntryPoint(getBasicAuthEntryPoint()).and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        .hasAuthority("ADMIN").antMatchers("/swagger-ui.html").hasAuthority("ADMIN")
+        .and()
+        .logout().logoutUrl("/admin/logout").logoutSuccessUrl("/").permitAll().and().cors()
+        .and().csrf().disable();
+        //.and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());   
+  }
+  
+  private Filter ssoFilter() {
+    OpenIdFilter filter = new OpenIdFilter("/login", authenticationManager, finalTargetUrl);
+    OAuth2RestTemplate template = new OAuth2RestTemplate(google(), oauth2ClientContext);
+    filter.setRestTemplate(template);
+    return filter;
   }
 
   @Bean
-  public AuthenticationEntryPoint getBasicAuthEntryPoint() {
-    BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
-    entryPoint.setRealmName(REALM);
-    return entryPoint;
+  public OAuth2ProtectedResourceDetails google() {
+    AuthorizationCodeResourceDetails details = new AuthorizationCodeResourceDetails();
+    details.setClientId(clientId);
+    details.setClientSecret(clientSecret);
+    details.setAccessTokenUri(accessTokenUri);
+    details.setUserAuthorizationUri(userAuthorizationUri);
+    details.setScope(Arrays.asList("openid", "email"));
+    //details.setPreEstablishedRedirectUri(redirectUri);
+    details.setUseCurrentUri(true);
+    return details;
   }
 }

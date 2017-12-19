@@ -1,3 +1,4 @@
+
 swagger: '2.0'
 info:
   description: Spongeblog blogging API
@@ -519,7 +520,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -660,7 +661,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -720,7 +721,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -775,7 +776,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -835,7 +836,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -932,7 +933,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -987,7 +988,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -1053,7 +1054,7 @@ paths:
         '200':
           description: Post links.
           schema:
-            type: string
+            $ref: '#/definitions/PostsPage'
         '400':
           description: Bad request (validation failed).
           schema:
@@ -1139,6 +1140,216 @@ paths:
       responses:
         '200':
           description: Post deleted.
+          schema:
+            type: object
+        '204':
+          description: No Content
+        '400':
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized (need to log in / get token).
+        '403':
+          description: Forbidden (no rights to access resource).
+        '404':
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error.
+  /api/v1/pages:
+    get:
+      tags:
+        - Pages
+      summary: All pages.
+      description: Returns all pages having no category assigned.
+      operationId: apiV1PagesGetUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: without-category
+          in: query
+          description: Filter pages without a category.
+          required: false
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Page links.
+          schema:
+            $ref: '#/definitions/PostsPage'
+        '400':
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized (need to log in / get token).
+        '403':
+          description: Forbidden (no rights to access resource).
+        '404':
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error.
+    post:
+      tags:
+        - Pages
+      summary: Create Page
+      description: Creates new Page entry.
+      operationId: apiV1PostsPageUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: pageEdit
+          description: pageEdit
+          required: true
+          schema:
+            $ref: '#/definitions/PostDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PostDTO'
+        '201':
+          description: Created Page.
+          schema:
+            $ref: '#/definitions/PostDTO'
+        '400':
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized (need to log in / get token).
+        '403':
+          description: Forbidden (no rights to access resource).
+        '404':
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error.
+    put:
+      tags:
+        - Pages
+      summary: Update Page
+      description: Updated a Page entry.
+      operationId: apiV1PagesPutUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: pageEdit
+          description: pageEdit
+          required: true
+          schema:
+            $ref: '#/definitions/PostDTO'
+      responses:
+        '200':
+          description: Page updated.
+          schema:
+            type: object
+        '201':
+          description: Created
+        '400':
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized (need to log in / get token).
+        '403':
+          description: Forbidden (no rights to access resource).
+        '404':
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error.
+  '/api/v1/pages/{pageId}':
+    get:
+      tags:
+        - Pages
+      summary: Get Page
+      description: Fetches Page with defined Id.
+      operationId: apiV1PostsPageIdGetUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: pageId
+          in: path
+          description: Unique identifier of a Page;
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Page with id.
+          schema:
+            $ref: '#/definitions/PostDTO'
+        '400':
+          description: Bad request (validation failed).
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized (need to log in / get token).
+        '403':
+          description: Forbidden (no rights to access resource).
+        '404':
+          description: Entity not found.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Request results in a conflict.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error.
+    delete:
+      tags:
+        - Pages
+      summary: Delete Page
+      description: Deletes a Page with defined Id.
+      operationId: apiV1PostsPageIdDeleteUsingDELETE
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: pageId
+          in: path
+          description: Unique identifier of a Page;
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Page deleted.
           schema:
             type: object
         '204':
@@ -1739,6 +1950,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Link'
+      pageId:
+        type: integer
+        format: int64
+        description: ID of the assigned page if it's a page-category (optional field).
       name:
         type: string
         description: Category display name.
@@ -1746,6 +1961,10 @@ definitions:
         type: integer
         format: int64
         description: Id of parent Category.
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryDTO'
       rank:
         type: integer
         format: int32
@@ -1847,6 +2066,69 @@ definitions:
           - PRIVATE
           - MAINTENANCE
           - DELETED
+          - PAGE_PUBLIC
+          - PAGE_INACTIVE
+      tags:
+        type: array
+        description: Tags of Post.
+        items:
+          $ref: '#/definitions/TagDTO'
+      title:
+        type: string
+        description: The title of the Blog post.
+  PostsPage:
+    type: object
+    properties:
+      previewPosts:
+        type: array
+        description: Preview posts
+        items: 
+          $ref: '#/definitions/PostPreviewDTO'
+      hasNext:
+        type: boolean
+        description: Is a next page existing.
+      hasPrevious:
+        type: boolean
+        description: Is a previous page existing.
+      totalPages:
+        type: integer
+        description: Total count of pages.
+  PostPreviewDTO:
+    type: object
+    properties:
+      author:
+        $ref: '#/definitions/UserInfoDTO'
+      category:
+        $ref: '#/definitions/CategoryDTO'
+      partContent:
+        type: string
+        description: The first couple characters of the post content.
+      created:
+        type: string
+        format: date-time
+        description: Creation date of Post in long.
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+      modified:
+        type: string
+        format: date-time
+        description: Modification date of Post in long.
+      postId:
+        type: integer
+        format: int64
+        description: Unique identifier.
+      status:
+        type: string
+        description: Display status of the Post.
+        enum:
+          - PUBLIC
+          - PRIVATE
+          - MAINTENANCE
+          - DELETED
+          - PAGE_PUBLIC
+          - PAGE_INACTIVE
       tags:
         type: array
         description: Tags of Post.

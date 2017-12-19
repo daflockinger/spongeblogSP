@@ -1,5 +1,7 @@
 package com.flockinger.spongeblogSP.dto;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -12,13 +14,30 @@ public class CategoryDTO extends ResourceSupport {
 
   private Long categoryId = null;
 
+  private Long pageId = null;
+  
   @NotEmpty
   private String name = null;
+
+  private List<CategoryDTO> children;
 
   private Long parentId = null;
 
   private Integer rank = null;
 
+  
+  /**
+   * ID of the assigned page if it's a page-category (optional field).
+   * @return pageId
+  **/
+  @ApiModelProperty(value = "ID of the assigned page if it's a page-category (optional field).")
+  public Long getPageId() {
+    return pageId;
+  }
+
+  public void setPageId(Long pageId) {
+    this.pageId = pageId;
+  }
 
   /**
    * Unique identifier.
@@ -32,6 +51,24 @@ public class CategoryDTO extends ResourceSupport {
 
   public void setCategoryId(Long categoryId) {
     this.categoryId = categoryId;
+  }
+
+  /**
+   * Children of category
+   * 
+   * @return children
+   */
+  public List<CategoryDTO> getChildren() {
+    return children;
+  }
+
+  /**
+   * Children of category
+   * 
+   * @param children
+   */
+  public void setChildren(List<CategoryDTO> children) {
+    this.children = children;
   }
 
   /**

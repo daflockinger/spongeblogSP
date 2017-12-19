@@ -18,6 +18,8 @@ public class Category extends BaseModel {
 
   @NotNull
   private String name;
+  
+  private Long pageId;
 
   @ManyToOne(optional = true, fetch = FetchType.EAGER)
   @JoinColumn(name = "parent_id", nullable = true, updatable = true, insertable = true)
@@ -32,6 +34,14 @@ public class Category extends BaseModel {
   private List<Post> posts;
 
   private Integer rank;
+  
+  public Long getPageId() {
+    return pageId;
+  }
+
+  public void setPageId(Long pageId) {
+    this.pageId = pageId;
+  }
 
   public String getName() {
     return name;

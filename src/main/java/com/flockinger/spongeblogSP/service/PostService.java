@@ -11,6 +11,7 @@ import com.flockinger.spongeblogSP.exception.NoVersionFoundException;
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
 public interface PostService extends Versionable {
+
   PostsPage getAllPosts(Pageable pageable);
 
   PostsPage getAllPostsWithStatus(PostStatus status, Pageable pageable);

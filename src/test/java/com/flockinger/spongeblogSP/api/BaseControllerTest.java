@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener;
+import org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -29,7 +31,8 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 @ActiveProfiles(profiles = {"default", "test"})
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
-    FlywayTestExecutionListener.class})
+    FlywayTestExecutionListener.class, MockitoTestExecutionListener.class,
+    ResetMocksTestExecutionListener.class})
 @FlywayTest(invokeCleanDB = false)
 public abstract class BaseControllerTest {
 
