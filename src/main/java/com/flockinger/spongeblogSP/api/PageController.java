@@ -36,8 +36,7 @@ public interface PageController {
               response = Error.class),
           @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class)})
 
-  @RequestMapping(value = "/api/v1/pages", produces = {"application/json"},
-      consumes = {"application/json"}, method = RequestMethod.GET)
+  @RequestMapping(value = "/api/v1/pages", produces = {"application/json"}, method = RequestMethod.GET)
   ResponseEntity<PostsPage> apiV1PagesGetUsingGET(
       @ApiParam(value = "Filter pages without a category.", defaultValue = "false") @RequestParam(
           value = "without-category", required = false,
@@ -106,8 +105,7 @@ public interface PageController {
               response = Error.class),
           @ApiResponse(code = 500, message = "Internal Server Error.", response = Void.class)})
 
-  @RequestMapping(value = "/api/v1/pages/{pageId}", produces = {"application/json"},
-      consumes = {"application/json"}, method = RequestMethod.GET)
+  @RequestMapping(value = "/api/v1/pages/{pageId}", produces = {"application/json"}, method = RequestMethod.GET)
   ResponseEntity<PostDTO> apiV1PostsPageIdGetUsingGET(
       @ApiParam(value = "Unique identifier of a Page;",
           required = true) @PathVariable("pageId") Long pageId)

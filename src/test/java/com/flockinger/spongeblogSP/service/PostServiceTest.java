@@ -199,7 +199,7 @@ public class PostServiceTest extends BaseServiceTest {
 
   @Test
   @FlywayTest(locationsForMigrate = {"/db/testfill/"})
-  public void testCreatePost_withValidPost_shouldCreateAndDeleteThenPost()
+  public void testCreatePost_withValidPost_shouldCreatePost()
       throws DuplicateEntityException, EntityIsNotExistingException, DependencyNotFoundException {
     Date freshDate = new Date();
 
@@ -228,6 +228,88 @@ public class PostServiceTest extends BaseServiceTest {
     assertNotNull("validate saved post category not null", savedPost.getCategory());
     assertEquals("validate correct saved post category name", "sub category", savedPost.getCategory().getName());
     assertEquals("validate correct saved post category parent id", 1l, savedPost.getCategory().getParentId().longValue());
+    // verifying values
+    assertEquals("validate correct saved post content", "Some fresh new content...", savedPost.getContent());
+    assertNotNull("validate saved post content has created date", savedPost.getCreated());
+    assertNotNull("validate saved post content has modified date", savedPost.getModified());
+    assertEquals("validaste correct saved post status", PostStatus.PUBLIC, savedPost.getStatus());
+    assertEquals("validaste correct saved post title", "Fresh out of the box", savedPost.getTitle());
+    // verifying tags
+    assertNotNull("validate saved post tags not null", savedPost.getTags());
+    assertEquals("validate saved post tags size", 1, savedPost.getTags().size());
+    assertEquals("validate saved post tag name", "fancy", savedPost.getTags().stream().findFirst().get().getName());
+  }
+  
+  @Test
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testCreatePost_withValidPostNullCategory_shouldCreatePost()
+      throws DuplicateEntityException, EntityIsNotExistingException, DependencyNotFoundException {
+    Date freshDate = new Date();
+
+    PostDTO freshPost = new PostDTO();
+    freshPost.setAuthor(getTestUser(1l));
+    freshPost.setCategory(null);
+    freshPost.setContent("Some fresh new content...");
+    freshPost.setCreated(freshDate);
+    freshPost.setModified(freshDate);
+    freshPost.setStatus(PostStatus.PUBLIC);
+    freshPost.setTitle("Fresh out of the box");
+    freshPost.setTags(ImmutableList.of(getTag(1l)));
+
+    // create new Post
+    Long freshId = service.createPost(freshPost).getPostId();
+
+    PostDTO savedPost = service.getPost(freshId);
+
+    assertNotNull("validate returned saved post not null", savedPost);
+    // verifying author
+    assertNotNull("validate saved post author not null", savedPost.getAuthor());
+    assertEquals("validate correct saved post author email", "flo@kinger.cc", savedPost.getAuthor().getEmail());
+    assertEquals("validate correct saved post author nickname", "daflo", savedPost.getAuthor().getNickName());
+    assertNotNull("validate correct saved post author has registered date", savedPost.getAuthor().getRegistered());
+    // verifying category
+    assertNull("validate saved post category not null", savedPost.getCategory());
+    // verifying values
+    assertEquals("validate correct saved post content", "Some fresh new content...", savedPost.getContent());
+    assertNotNull("validate saved post content has created date", savedPost.getCreated());
+    assertNotNull("validate saved post content has modified date", savedPost.getModified());
+    assertEquals("validaste correct saved post status", PostStatus.PUBLIC, savedPost.getStatus());
+    assertEquals("validaste correct saved post title", "Fresh out of the box", savedPost.getTitle());
+    // verifying tags
+    assertNotNull("validate saved post tags not null", savedPost.getTags());
+    assertEquals("validate saved post tags size", 1, savedPost.getTags().size());
+    assertEquals("validate saved post tag name", "fancy", savedPost.getTags().stream().findFirst().get().getName());
+  }
+  
+  @Test
+  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
+  public void testCreatePost_withValidPostEmptyCategory_shouldCreatePost()
+      throws DuplicateEntityException, EntityIsNotExistingException, DependencyNotFoundException {
+    Date freshDate = new Date();
+
+    PostDTO freshPost = new PostDTO();
+    freshPost.setAuthor(getTestUser(1l));
+    freshPost.setCategory(new CategoryDTO());
+    freshPost.setContent("Some fresh new content...");
+    freshPost.setCreated(freshDate);
+    freshPost.setModified(freshDate);
+    freshPost.setStatus(PostStatus.PUBLIC);
+    freshPost.setTitle("Fresh out of the box");
+    freshPost.setTags(ImmutableList.of(getTag(1l)));
+
+    // create new Post
+    Long freshId = service.createPost(freshPost).getPostId();
+
+    PostDTO savedPost = service.getPost(freshId);
+
+    assertNotNull("validate returned saved post not null", savedPost);
+    // verifying author
+    assertNotNull("validate saved post author not null", savedPost.getAuthor());
+    assertEquals("validate correct saved post author email", "flo@kinger.cc", savedPost.getAuthor().getEmail());
+    assertEquals("validate correct saved post author nickname", "daflo", savedPost.getAuthor().getNickName());
+    assertNotNull("validate correct saved post author has registered date", savedPost.getAuthor().getRegistered());
+    // verifying category
+    assertNull("validate saved post category not null", savedPost.getCategory());
     // verifying values
     assertEquals("validate correct saved post content", "Some fresh new content...", savedPost.getContent());
     assertNotNull("validate saved post content has created date", savedPost.getCreated());

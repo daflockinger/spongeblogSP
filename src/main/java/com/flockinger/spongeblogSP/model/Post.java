@@ -55,7 +55,7 @@ public class Post extends BaseModel {
   @ManyToOne(fetch = FetchType.EAGER)
   private User author;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(optional=true, fetch = FetchType.EAGER)
   private Category category;
 
   @ManyToMany(fetch = FetchType.EAGER)

@@ -8,17 +8,17 @@ server:
 # Connection url for the database "netgloo_blog"
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/spongeblog?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    url: ${DB_URL:jdbc:mysql://localhost:3306/spongeblog?useSSL=false&useUnicode=yes&characterEncoding=UTF-8}
 # Username and password
-    username: root
-    password: root
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
 # Keep the connection alive if idle for a long time (needed in production)
     testWhileIdle: true
     validationQuery: SELECT 1
 # Show or not log for each sql query
   jpa: 
     database: mysql
-#    show-sql: true
+    show-sql: ${SQL_QUERY_LOG:false}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -49,7 +49,7 @@ spring:
 ###
 
 flyway:
-  baseline-on-migrate: true
+  baseline-on-migrate: ${FLYWAY_MIGRATE:true}
 
 
 #logging:
@@ -58,25 +58,25 @@ flyway:
     
 blog:
   paging:
-    default-page: 0
-    default-items-per-page: 5
-  preview-text-size: 50
+    default-page: ${BLOG_DEFAULT_PAGE:0}
+    default-items-per-page: ${BLOG_DEFAULT_ITEMS_PER_PAGE:5}
+  preview-text-size: ${BLOG_PREVIEW_TEXT_SIZE:50}
   security:
-    allowed-origin: ${ALLOWED_ORIGIN:http://localhost:4200}
+    allowed-origin: ${ALLOWED_CORS_ORIGIN:http://localhost:4200}
 
   
 google:
   client:
-    clientId: not-my-real-client-id-this-time
-    clientSecret: not-my-real-secret-this-time
-    accessTokenUri: https://www.googleapis.com/oauth2/v3/token
-    userAuthorizationUri: https://accounts.google.com/o/oauth2/auth
-  finalTargetUrl: http://localhost:4200/admin/login
-  verificationUrl: https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=
+    clientId: ${OAUTH_CLIENT_ID:dontcommittherealclientidagain}
+    clientSecret: ${OAUTH_CLIENT_SECRET:dontcommittherealsecretagain}
+    accessTokenUri: ${OAUTH_CLIENT_TOKEN_URI:https://www.googleapis.com/oauth2/v3/token}
+    userAuthorizationUri: ${OAUTH_CLIENT_AUTH_URI:https://accounts.google.com/o/oauth2/auth}
+  finalTargetUrl: ${OAUTH_CLIENT_REDIRECT_URL:http://localhost:4200/admin/login}
+  verificationUrl: ${OAUTH_CLIENT_VERIFICATION_URL:https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=}
 
 security:
   basic:
-    enabled: true
+    enabled: ${SECURITY_ENABLED:true}
       
 #### Test Profile
 ---
@@ -89,17 +89,3 @@ flyway:
 
 blog:
   preview-text-size: 7
-
-
-#### Production Profile
----
-spring: 
-  profiles: production
-  
-blog:
-  paging:
-    default-page: 0
-    default-items-per-page: 5
-  preview-text-size: 50
-  
-    

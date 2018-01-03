@@ -1,7 +1,6 @@
 package com.flockinger.spongeblogSP.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -9,11 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.jwt.Jwt;
-import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -21,17 +17,19 @@ import org.springframework.security.oauth2.common.exceptions.InvalidTokenExcepti
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
+
+import com.jayway.jsonpath.PathNotFoundException;
 
 public class OpenIdFilter extends AbstractAuthenticationProcessingFilter {
-  public OAuth2RestOperations restTemplate;
-
+  private OAuth2RestOperations restTemplate;
+  private JwtTokenUtils utils;
+  
   public OpenIdFilter(String defaultFilterProcessesUrl,
-      AuthenticationManager authenticationManager, String finalTargetUrl) {
+      AuthenticationManager authenticationManager, String finalTargetUrl, JwtTokenUtils utils) {
     super(defaultFilterProcessesUrl);
     setAuthenticationManager(authenticationManager);
     setAuthenticationSuccessHandler(new JwtCookieAuthenticationSuccessHandler(finalTargetUrl));
+    this.utils = utils;
   }
 
   @Override
@@ -45,18 +43,15 @@ public class OpenIdFilter extends AbstractAuthenticationProcessingFilter {
       throw new BadCredentialsException("Could not obtain access token", e);
     }
     try {
-      final String idToken = accessToken.getAdditionalInformation().get("id_token").toString();
-      final Jwt tokenDecoded = JwtHelper.decode(idToken);
-      DocumentContext tokenContext = JsonPath.parse(tokenDecoded.getClaims());
-      return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(
-          tokenContext.read("$.email"), idToken, new ArrayList<>()));
-    } catch (final InvalidTokenException e) {
+      return getAuthenticationManager().authenticate(utils.createAuthentiaction(utils.extractIdToken(accessToken)));
+    }  catch (final InvalidTokenException e) {
       throw new BadCredentialsException("Could not obtain user details from token", e);
+    } catch (final PathNotFoundException e) {
+      throw new BadCredentialsException("Token is missing the identifying email field", e);
     }
   }
 
-  public void setRestTemplate(OAuth2RestTemplate restTemplate2) {
-    restTemplate = restTemplate2;
+  public void setRestTemplate(OAuth2RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
   }
-
 }
