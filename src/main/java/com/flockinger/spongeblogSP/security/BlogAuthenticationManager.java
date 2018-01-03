@@ -23,8 +23,8 @@ public class BlogAuthenticationManager implements AuthenticationManager {
 
   @Autowired
   private UserService userService;
-  
-  private RestTemplate restTemplate = new RestTemplate();
+  @Autowired
+  private RestTemplate restTemplate;
   
   @Value("${google.verificationUrl}")
   private String verificationUrl;
@@ -32,7 +32,7 @@ public class BlogAuthenticationManager implements AuthenticationManager {
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     BlogAuthentication wrapper = new BlogAuthentication(authentication);
-    String userLogin = null;
+    String userLogin = "";
     if(authentication.getPrincipal() != null) {
       userLogin = authentication.getPrincipal().toString();
     }

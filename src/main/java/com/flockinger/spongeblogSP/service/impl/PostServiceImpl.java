@@ -145,7 +145,9 @@ public class PostServiceImpl implements PostService {
       throw getDependencyException("User", user.getUserId());
     }
     CategoryDTO category = post.getCategory();
-    if (category != null && !categoryDao.exists(category.getCategoryId())) {
+    if (category != null && category.getCategoryId() == null) {
+      post.setCategory(null);
+    } else if (category != null && !categoryDao.exists(category.getCategoryId())) {
       throw getDependencyException("Category", category.getCategoryId());
     }
     List<TagDTO> tags = post.getTags();

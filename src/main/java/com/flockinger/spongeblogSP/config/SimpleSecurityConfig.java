@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.flockinger.spongeblogSP.security.HeaderTokenAuthFilter;
+import com.flockinger.spongeblogSP.security.JwtTokenUtils;
 import com.flockinger.spongeblogSP.security.OpenIdFilter;
 
 
@@ -54,11 +55,11 @@ public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
   private String finalTargetUrl;
 
   @Autowired
-  OAuth2ClientContext oauth2ClientContext;
-
+  private OAuth2ClientContext oauth2ClientContext;
   @Autowired
-  AuthenticationManager authenticationManager;
-
+  private AuthenticationManager authenticationManager;
+  @Autowired
+  private JwtTokenUtils tokenUtils;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -66,14 +67,11 @@ public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
     .addFilterAfter(new OAuth2ClientContextFilter(),
         AbstractPreAuthenticatedProcessingFilter.class)
         .addFilterAfter(ssoFilter(), OAuth2ClientContextFilter.class)
-        .addFilterAfter(new HeaderTokenAuthFilter("__", authenticationManager), OpenIdFilter.class)
-        .httpBasic()
-        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")).and()
+        .addFilterAfter(new HeaderTokenAuthFilter("__", authenticationManager, tokenUtils), OpenIdFilter.class)
         .authorizeRequests()
         .antMatchers(HttpMethod.GET, "/api/v1/users/info/**")
         .permitAll().antMatchers(HttpMethod.GET, "/api/v1/users/*").hasAuthority("ADMIN")
         .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ADMIN")
-        //.antMatchers(HttpMethod.GET, "/api/v1/posts/author/**").hasAnyAuthority("ADMIN", "AUTHOR")
         .antMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
         .antMatchers(HttpMethod.PUT, "/api/v1/posts").hasAnyAuthority("ADMIN", "AUTHOR")
         .antMatchers(HttpMethod.DELETE, "/api/v1/posts/*").hasAnyAuthority("ADMIN", "AUTHOR")
@@ -85,11 +83,10 @@ public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .logout().logoutUrl("/admin/logout").logoutSuccessUrl("/").permitAll().and().cors()
         .and().csrf().disable();
-        //.and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());   
   }
   
   private Filter ssoFilter() {
-    OpenIdFilter filter = new OpenIdFilter("/login", authenticationManager, finalTargetUrl);
+    OpenIdFilter filter = new OpenIdFilter("/login", authenticationManager, finalTargetUrl, tokenUtils);
     OAuth2RestTemplate template = new OAuth2RestTemplate(google(), oauth2ClientContext);
     filter.setRestTemplate(template);
     return filter;
@@ -103,7 +100,6 @@ public class SimpleSecurityConfig extends WebSecurityConfigurerAdapter {
     details.setAccessTokenUri(accessTokenUri);
     details.setUserAuthorizationUri(userAuthorizationUri);
     details.setScope(Arrays.asList("openid", "email"));
-    //details.setPreEstablishedRedirectUri(redirectUri);
     details.setUseCurrentUri(true);
     return details;
   }

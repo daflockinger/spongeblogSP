@@ -1,8 +1,6 @@
 package com.flockinger.spongeblogSP.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,51 +11,52 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.jwt.Jwt;
-import org.springframework.security.jwt.JwtHelper;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 
 public class HeaderTokenAuthFilter extends AbstractAuthenticationProcessingFilter {
 
+  private final static String AUTHENTICATION_HEADER_NAME = "Authorization";
+  private JwtTokenUtils tokenUtils;
+  
   public HeaderTokenAuthFilter(String defaultFilterProcessesUrl,
-      AuthenticationManager authenticationManager) {
+      AuthenticationManager authenticationManager, JwtTokenUtils tokenUtils) {
     super(defaultFilterProcessesUrl);
     setAuthenticationManager(authenticationManager);
+    this.tokenUtils = tokenUtils;
   }
 
   @Override
   public Authentication attemptAuthentication(HttpServletRequest request,
       HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    Enumeration<String> headers = request.getHeaderNames();
+    final String authenticationHeader = request.getHeader(AUTHENTICATION_HEADER_NAME);
     
-    if (authentication == null && StringUtils.isNotEmpty(request.getHeader("Authorization"))) {
-      authentication = getAuthByRequestHeader(request);
+    if (authentication == null && StringUtils.isNotEmpty(authenticationHeader)) {
+      authentication = getAuthByRequestHeader(authenticationHeader);
     }
     return authentication;
   }
 
-  private Authentication getAuthByRequestHeader(HttpServletRequest request) {
-    String authValue = request.getHeader("Authorization");
-
-    authValue = StringUtils.substringAfter(authValue, " ");
-    final Jwt tokenDecoded = JwtHelper.decode(authValue);
-    DocumentContext tokenContext = JsonPath.parse(tokenDecoded.getClaims());
-
-    return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(
-        tokenContext.read("$.email"), authValue, new ArrayList<>()));
+  private Authentication getAuthByRequestHeader(String authenticationHeader) {
+    authenticationHeader = StringUtils.substringAfter(authenticationHeader, " ");
+    
+    try {
+      return getAuthenticationManager().authenticate(tokenUtils.createAuthentiaction(authenticationHeader));
+    }  catch (final InvalidTokenException e) {
+      throw new BadCredentialsException("Could not obtain user details from token", e);
+    } catch (final PathNotFoundException e) {
+      throw new BadCredentialsException("Token is missing the identifying email field", e);
+    }
   }
-
   
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
