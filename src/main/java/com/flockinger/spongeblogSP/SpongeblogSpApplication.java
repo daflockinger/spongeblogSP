@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
-public class SpongeblogSpApplication { 
+public class SpongeblogSpApplication {
 
   @RequestMapping(value = "/")
   public void index(HttpServletResponse response) throws IOException {
