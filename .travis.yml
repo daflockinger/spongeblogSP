@@ -7,6 +7,5 @@ before_install:
 - mysql -e 'drop database if exists testspongeblog;'
 - mysql -e 'create database testspongeblog;'
 - mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('root');"
-- mysql -e "SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('root');"
 script:
 - mvn test -B
