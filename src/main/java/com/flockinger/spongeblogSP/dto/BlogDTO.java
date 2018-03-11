@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.hateoas.ResourceSupport;
 
 import com.flockinger.spongeblogSP.model.enums.BlogStatus;
 
@@ -15,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * BlogDTO
  */
-public class BlogDTO extends ResourceSupport {
+public class BlogDTO {
 
   @NotEmpty
   private String name = null;

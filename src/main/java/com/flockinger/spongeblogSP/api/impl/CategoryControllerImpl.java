@@ -33,7 +33,7 @@ public class CategoryControllerImpl implements CategoryController {
   @Autowired
   private RequestValidator validator;
 
-  public ResponseEntity<?> apiV1CategoriesCategoryIdDelete(
+  public ResponseEntity<Void> apiV1CategoriesCategoryIdDelete(
       @ApiParam(value = "Unique identifier of a Category;",
           required = true) @PathVariable("categoryId") Long categoryId)
       throws EntityIsNotExistingException, OrphanedDependingEntitiesException {
@@ -49,7 +49,7 @@ public class CategoryControllerImpl implements CategoryController {
     return new ResponseEntity<CategoryDTO>(service.getCategory(categoryId), HttpStatus.OK);
   }
 
-  public ResponseEntity<?> apiV1CategoriesChildrenParentCategoryIdGet(
+  public ResponseEntity<List<CategoryDTO>> apiV1CategoriesChildrenParentCategoryIdGet(
       @ApiParam(value = "Unique identifier of the parent Category;",
           required = true) @PathVariable("parentCategoryId") Long parentCategoryId)
       throws EntityIsNotExistingException {
@@ -58,13 +58,13 @@ public class CategoryControllerImpl implements CategoryController {
     return new ResponseEntity<List<CategoryDTO>>(children, HttpStatus.OK);
   }
 
-  public ResponseEntity<?> apiV1CategoriesGet() {
+  public ResponseEntity<List<CategoryDTO>> apiV1CategoriesGet() {
 
     List<CategoryDTO> categories = service.getAllCategories();
     return new ResponseEntity<List<CategoryDTO>>(categories, HttpStatus.OK);
   }
 
-  public ResponseEntity<?> apiV1CategoriesPost(
+  public ResponseEntity<CategoryDTO> apiV1CategoriesPost(
       @ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
       BindingResult bindingResult)
       throws DtoValidationFailedException, DependencyNotFoundException {
@@ -74,7 +74,7 @@ public class CategoryControllerImpl implements CategoryController {
     return new ResponseEntity<CategoryDTO>(createdCategory, HttpStatus.CREATED);
   }
 
-  public ResponseEntity<?> apiV1CategoriesPut(
+  public ResponseEntity<Void> apiV1CategoriesPut(
       @ApiParam(value = "", required = true) @Valid @RequestBody CategoryDTO categoryEdit,
       BindingResult bindingResult) throws EntityIsNotExistingException,
       DtoValidationFailedException, DependencyNotFoundException {
@@ -85,7 +85,7 @@ public class CategoryControllerImpl implements CategoryController {
     return new ResponseEntity<Void>(HttpStatus.OK);
   }
 
-  public ResponseEntity<?> apiV1CategoriesRewindCategoryIdPut(
+  public ResponseEntity<Void> apiV1CategoriesRewindCategoryIdPut(
       @ApiParam(value = "Unique identifier of a Category;",
           required = true) @PathVariable("categoryId") Long categoryId)
       throws NoVersionFoundException {

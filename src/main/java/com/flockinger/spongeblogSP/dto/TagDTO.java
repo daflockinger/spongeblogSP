@@ -1,7 +1,6 @@
 package com.flockinger.spongeblogSP.dto;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.hateoas.ResourceSupport;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -9,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
  * TagDTO
  */
 
-public class TagDTO extends ResourceSupport {
+public class TagDTO {
 
   private Long tagId = null;
 

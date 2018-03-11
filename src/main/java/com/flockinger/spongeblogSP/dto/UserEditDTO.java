@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.hateoas.ResourceSupport;
 
 import com.flockinger.spongeblogSP.model.enums.UserRole;
 
@@ -19,7 +18,7 @@ import io.swagger.annotations.ApiModelProperty;
  * UserEditDTO
  */
 
-public class UserEditDTO extends ResourceSupport {
+public class UserEditDTO {
 
   private Long userId = null;
 

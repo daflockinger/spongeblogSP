@@ -3,14 +3,13 @@ package com.flockinger.spongeblogSP.dto;
 import java.util.List;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.hateoas.ResourceSupport;
 
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * CategoryDTO
  */
-public class CategoryDTO extends ResourceSupport {
+public class CategoryDTO {
 
   private Long categoryId = null;
 

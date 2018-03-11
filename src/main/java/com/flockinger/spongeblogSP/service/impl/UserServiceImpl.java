@@ -22,7 +22,6 @@ import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dao.UserDAO;
 import com.flockinger.spongeblogSP.dto.BlogAuthority;
 import com.flockinger.spongeblogSP.dto.BlogUserDetails;
-import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
@@ -158,14 +157,6 @@ public class UserServiceImpl implements UserService {
 
     return userDetails;
   }
-
-
-  @Override
-  public Boolean isLoginCorrect(LoginDTO credentials) {
-    User logInUser = dao.findByLoginAndPassword(credentials.getLogin(), credentials.getPassword());
-    return logInUser != null;
-  }
-
 
   @Override
   public void rewind(Long id) throws NoVersionFoundException {

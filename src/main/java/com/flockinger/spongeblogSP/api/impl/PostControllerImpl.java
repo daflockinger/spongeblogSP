@@ -2,13 +2,9 @@ package com.flockinger.spongeblogSP.api.impl;
 
 import static com.flockinger.spongeblogSP.config.BlogConfigurationConstants.PAGING_DEFAULT_ITEMS_PER_PAGE_KEY;
 import static com.flockinger.spongeblogSP.config.BlogConfigurationConstants.PAGING_DEFAULT_PAGE_KEY;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -24,7 +20,6 @@ import com.flockinger.spongeblogSP.api.PostController;
 import com.flockinger.spongeblogSP.api.util.RequestValidator;
 import com.flockinger.spongeblogSP.dto.Paging;
 import com.flockinger.spongeblogSP.dto.PostDTO;
-import com.flockinger.spongeblogSP.dto.PostPreviewDTO;
 import com.flockinger.spongeblogSP.dto.PostsPage;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
 import com.flockinger.spongeblogSP.exception.DtoValidationFailedException;
@@ -45,8 +40,6 @@ public class PostControllerImpl implements PostController {
   @Autowired
   private RequestValidator validator;
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
   public ResponseEntity<?> apiV1PostsAuthorUserIdGet(
       @ApiParam(value = "Unique identifier of a User;",
           required = true) @PathVariable("userId") Long userId,
@@ -59,7 +52,6 @@ public class PostControllerImpl implements PostController {
     validator.assertPaging(page, size);
     PostsPage posts =
         service.getPostsFromAuthorId(userId, new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -77,7 +69,6 @@ public class PostControllerImpl implements PostController {
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getPostsFromAuthorIdWithStatus(userId, PostStatus.valueOf(status),
         new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -93,7 +84,6 @@ public class PostControllerImpl implements PostController {
     validator.assertPaging(page, size);
     PostsPage posts =
         service.getPostsFromCategoryId(categoryId, new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -111,7 +101,6 @@ public class PostControllerImpl implements PostController {
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getPostsFromCategoryIdWithStatus(categoryId,
         PostStatus.valueOf(status), new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -127,7 +116,6 @@ public class PostControllerImpl implements PostController {
     validator.assertPaging(page, size);
     PostsPage posts =
         service.getPostsFromTagId(tagId, new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -145,7 +133,6 @@ public class PostControllerImpl implements PostController {
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getPostsFromTagIdWithStatus(tagId, PostStatus.valueOf(status),
         new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -158,7 +145,6 @@ public class PostControllerImpl implements PostController {
 
     validator.assertPaging(page, size);
     PostsPage posts = service.getAllPosts(new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -169,7 +155,7 @@ public class PostControllerImpl implements PostController {
 
     validator.validateRequestBody(bindingResult);
     PostDTO createdPost = service.createPost(postEdit);
-    return new ResponseEntity<PostDTO>(addSelfLinkToPost(createdPost), HttpStatus.CREATED);
+    return new ResponseEntity<PostDTO>(createdPost, HttpStatus.CREATED);
   }
 
   public ResponseEntity<?> apiV1PostsPostIdDelete(
@@ -186,7 +172,7 @@ public class PostControllerImpl implements PostController {
           required = true) @PathVariable("postId") Long postId)
       throws EntityIsNotExistingException {
 
-    PostDTO post = addSelfLinkToPost(service.getPost(postId));
+    PostDTO post = service.getPost(postId);
     return new ResponseEntity<PostDTO>(post, HttpStatus.OK);
   }
 
@@ -222,29 +208,7 @@ public class PostControllerImpl implements PostController {
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getAllPostsWithStatus(PostStatus.valueOf(status),
         new Paging(page, getSortingByDateDesc(), size));
-    posts.getPreviewPosts().forEach(post -> addSelfLink(post));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
-  }
-
-
-  private PostDTO addSelfLinkToPost(PostDTO post) {
-    try {
-      post.add(linkTo(methodOn(PostControllerImpl.class).apiV1PostsPostIdGet(post.getPostId()))
-          .withSelfRel());
-    } catch (EntityIsNotExistingException e) {
-      logger.error("Not found after Persisting. Should not happen.");
-    }
-    return post;
-  }
-
-  private PostPreviewDTO addSelfLink(PostPreviewDTO post) {
-    try {
-      post.add(linkTo(methodOn(PostControllerImpl.class).apiV1PostsPostIdGet(post.getPostId()))
-          .withSelfRel());
-    } catch (EntityIsNotExistingException e) {
-      logger.error("Not found after Persisting. Should not happen.");
-    }
-    return post;
   }
 
   private Sort getSortingByDateDesc() {

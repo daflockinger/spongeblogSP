@@ -2,14 +2,12 @@ package com.flockinger.spongeblogSP.dto;
 
 import java.util.Date;
 
-import org.springframework.hateoas.ResourceSupport;
-
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * UserInfoDTO
  */
-public class UserInfoDTO extends ResourceSupport {
+public class UserInfoDTO {
 
   private Long userId = null;
   private String nickName = null;

@@ -1,7 +1,6 @@
 package com.flockinger.spongeblogSP.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
@@ -238,42 +236,6 @@ public class UserServiceTest extends BaseServiceTest {
   public void testDeleteUser_withNotExistingId_shouldThrowNotFoundException()
       throws EntityIsNotExistingException {
     service.deleteUser(12345l);
-  }
-
-  @Test
-  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
-  public void testIsLoginCorrect_withValidCredentials_shouldReturnTrue() {
-    LoginDTO login = new LoginDTO();
-    login.setLogin("flo");
-    login.setPassword("secret");
-    assertTrue(service.isLoginCorrect(login));
-  }
-
-  @Test
-  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
-  public void testIsLoginCorrect_withWrongUserAndPass_shouldReturnFalse() {
-    LoginDTO login = new LoginDTO();
-    login.setLogin("hacker");
-    login.setPassword("1234");
-    assertFalse(service.isLoginCorrect(login));
-  }
-
-  @Test
-  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
-  public void testIsLoginCorrect_withWrongUser_shouldReturnFalse() {
-    LoginDTO login = new LoginDTO();
-    login.setLogin("hacker");
-    login.setPassword("secret");
-    assertFalse(service.isLoginCorrect(login));
-  }
-
-  @Test
-  @FlywayTest(locationsForMigrate = {"/db/testfill/"})
-  public void testIsLoginCorrect_withWrongPass_shouldReturnFalse() {
-    LoginDTO login = new LoginDTO();
-    login.setLogin("flo");
-    login.setPassword("1234");
-    assertFalse(service.isLoginCorrect(login));
   }
 
   @Test

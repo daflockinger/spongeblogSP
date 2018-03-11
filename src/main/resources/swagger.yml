@@ -1946,10 +1946,6 @@ definitions:
         type: integer
         format: int64
         description: Unique identifier.
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/Link'
       pageId:
         type: integer
         format: int64
@@ -1972,10 +1968,6 @@ definitions:
   TagDTO:
     type: object
     properties:
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/Link'
       name:
         type: string
         description: Tag name.
@@ -1989,10 +1981,6 @@ definitions:
       email:
         type: string
         description: Email of User.
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/Link'
       login:
         type: string
         description: Login name of the User.
@@ -2046,10 +2034,6 @@ definitions:
         type: string
         format: date-time
         description: Creation date of Post in long.
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/Link'
       modified:
         type: string
         format: date-time
@@ -2107,10 +2091,6 @@ definitions:
         type: string
         format: date-time
         description: Creation date of Post in long.
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/Link'
       modified:
         type: string
         format: date-time
@@ -2143,10 +2123,6 @@ definitions:
       email:
         type: string
         description: Email of User.
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/Link'
       nickName:
         type: string
         description: Display nickname of the User.
@@ -2158,22 +2134,9 @@ definitions:
         type: integer
         format: int64
         description: Unique identifier.
-  Link:
-    type: object
-    properties:
-      href:
-        type: string
-      rel:
-        type: string
-      templated:
-        type: boolean
   BlogDTO:
     type: object
     properties:
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/Link'
       name:
         type: string
         example: 'null'
