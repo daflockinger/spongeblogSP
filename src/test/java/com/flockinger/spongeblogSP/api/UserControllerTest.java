@@ -23,8 +23,9 @@ import java.util.Date;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.flockinger.spongeblogSP.dto.BlogAuthority;
 import com.flockinger.spongeblogSP.dto.BlogUserDetails;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
@@ -81,8 +82,7 @@ public class UserControllerTest extends BaseControllerTest {
   @Test
   public void testApiV1UsersNameUserNameGet_withValidId_shouldReturnUser() throws Exception {
     BlogUserDetails details = new BlogUserDetails();
-    BlogAuthority auth = new BlogAuthority();
-    auth.setAuthority("ADMIN");
+    GrantedAuthority auth = new SimpleGrantedAuthority("ADMIN");
     details.setAuthorities(ImmutableList.of(auth));
     
     when(service.loadUserByUsername(anyString())).thenReturn(details);

@@ -1,6 +1,9 @@
 package com.flockinger.spongeblogSP.security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.matches;
@@ -16,11 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.web.client.RestTemplate;
 
-import com.flockinger.spongeblogSP.dto.BlogAuthority;
 import com.flockinger.spongeblogSP.dto.BlogUserDetails;
 import com.flockinger.spongeblogSP.service.BaseServiceTest;
 import com.flockinger.spongeblogSP.service.UserService;
@@ -44,7 +47,7 @@ public class BlogAuthenticationManagerTest extends BaseServiceTest {
     
     BlogUserDetails details = new BlogUserDetails();
     details.setEnabled(true);
-    details.setAuthorities(ImmutableList.of(new BlogAuthority()));
+    details.setAuthorities(ImmutableList.of(new SimpleGrantedAuthority("ADMIN")));
     when(userService.loadUserByUsername(matches(userLogin))).thenReturn(details);
     when(restTemplate.getForEntity(anyString(), any())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
     
@@ -67,7 +70,7 @@ public class BlogAuthenticationManagerTest extends BaseServiceTest {
     
     BlogUserDetails details = new BlogUserDetails();
     details.setEnabled(true);
-    details.setAuthorities(ImmutableList.of(new BlogAuthority()));
+    details.setAuthorities(ImmutableList.of(new SimpleGrantedAuthority("ADMIN")));
     when(userService.loadUserByUsername(matches(userLogin))).thenReturn(details);
     when(restTemplate.getForEntity(anyString(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     
@@ -82,7 +85,7 @@ public class BlogAuthenticationManagerTest extends BaseServiceTest {
     
     BlogUserDetails details = new BlogUserDetails();
     details.setEnabled(true);
-    details.setAuthorities(ImmutableList.of(new BlogAuthority()));
+    details.setAuthorities(ImmutableList.of(new SimpleGrantedAuthority("ADMIN")));
     when(userService.loadUserByUsername(matches(userLogin))).thenThrow(UsernameNotFoundException.class);
     when(restTemplate.getForEntity(anyString(), any())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
     
