@@ -30,10 +30,8 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest
 @WebAppConfiguration
 @ActiveProfiles(profiles = {"default", "test"})
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
-    FlywayTestExecutionListener.class, MockitoTestExecutionListener.class,
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, MockitoTestExecutionListener.class,
     ResetMocksTestExecutionListener.class})
-@FlywayTest(invokeCleanDB = false)
 public abstract class BaseControllerTest {
 
   protected MediaType jsonContentType = new MediaType(MediaType.APPLICATION_JSON.getType(),

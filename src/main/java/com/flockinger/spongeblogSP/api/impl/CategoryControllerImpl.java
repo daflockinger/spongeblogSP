@@ -1,14 +1,9 @@
 package com.flockinger.spongeblogSP.api.impl;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +33,6 @@ public class CategoryControllerImpl implements CategoryController {
   @Autowired
   private RequestValidator validator;
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
   public ResponseEntity<?> apiV1CategoriesCategoryIdDelete(
       @ApiParam(value = "Unique identifier of a Category;",
           required = true) @PathVariable("categoryId") Long categoryId)
@@ -53,8 +46,7 @@ public class CategoryControllerImpl implements CategoryController {
       @ApiParam(value = "Unique identifier of a Category;",
           required = true) @PathVariable("categoryId") Long categoryId)
       throws EntityIsNotExistingException {
-    return new ResponseEntity<CategoryDTO>(addSelfAndParentLink(service.getCategory(categoryId)),
-        HttpStatus.OK);
+    return new ResponseEntity<CategoryDTO>(service.getCategory(categoryId), HttpStatus.OK);
   }
 
   public ResponseEntity<?> apiV1CategoriesChildrenParentCategoryIdGet(
@@ -63,14 +55,12 @@ public class CategoryControllerImpl implements CategoryController {
       throws EntityIsNotExistingException {
 
     List<CategoryDTO> children = service.getCategoriesFromParent(parentCategoryId);
-    children.forEach(cat -> addSelfAndParentLink(cat));
     return new ResponseEntity<List<CategoryDTO>>(children, HttpStatus.OK);
   }
 
   public ResponseEntity<?> apiV1CategoriesGet() {
 
     List<CategoryDTO> categories = service.getAllCategories();
-    categories.forEach(cat -> addSelfAndParentLink(cat));
     return new ResponseEntity<List<CategoryDTO>>(categories, HttpStatus.OK);
   }
 
@@ -81,8 +71,7 @@ public class CategoryControllerImpl implements CategoryController {
 
     validator.validateRequestBody(bindingResult);
     CategoryDTO createdCategory = service.createCategory(categoryEdit);
-    return new ResponseEntity<CategoryDTO>(addSelfAndParentLink(createdCategory),
-        HttpStatus.CREATED);
+    return new ResponseEntity<CategoryDTO>(createdCategory, HttpStatus.CREATED);
   }
 
   public ResponseEntity<?> apiV1CategoriesPut(
@@ -102,21 +91,5 @@ public class CategoryControllerImpl implements CategoryController {
       throws NoVersionFoundException {
     service.rewind(categoryId);
     return new ResponseEntity<Void>(HttpStatus.OK);
-  }
-
-
-  private CategoryDTO addSelfAndParentLink(CategoryDTO category) {
-    try {
-      category.add(linkTo(methodOn(CategoryControllerImpl.class, category.getCategoryId())
-          .apiV1CategoriesCategoryIdGet(category.getCategoryId())).withSelfRel());
-
-      if (category.getParentId() != null) {
-        category.add(linkTo(methodOn(CategoryControllerImpl.class)
-            .apiV1CategoriesCategoryIdGet(category.getParentId())).withRel("parent"));
-      }
-    } catch (EntityIsNotExistingException e) {
-      logger.error("Not found after Persisting. Should not happen.");
-    }
-    return category;
   }
 }
