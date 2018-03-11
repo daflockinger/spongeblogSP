@@ -13,6 +13,8 @@ import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.flockinger.spongeblogSP.dao.PostDAO;
 import com.flockinger.spongeblogSP.dao.UserDAO;
-import com.flockinger.spongeblogSP.dto.BlogAuthority;
 import com.flockinger.spongeblogSP.dto.BlogUserDetails;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
@@ -150,8 +151,8 @@ public class UserServiceImpl implements UserService {
     BlogUserDetails userDetails = mapUserDetails(user);
     userDetails.setEnabled(user.getRegistered() != null);
 
-    List<BlogAuthority> authorities = user.getRoles().stream()
-        .map(role -> new BlogAuthority(role.name())).collect(Collectors.toList());
+    List<GrantedAuthority> authorities = user.getRoles().stream()
+        .map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
 
     userDetails.setAuthorities(authorities);
 

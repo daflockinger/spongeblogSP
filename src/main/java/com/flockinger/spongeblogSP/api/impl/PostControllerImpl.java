@@ -6,6 +6,7 @@ import static com.flockinger.spongeblogSP.config.BlogConfigurationConstants.PAGI
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.flockinger.spongeblogSP.api.PostController;
 import com.flockinger.spongeblogSP.api.util.RequestValidator;
-import com.flockinger.spongeblogSP.dto.Paging;
 import com.flockinger.spongeblogSP.dto.PostDTO;
 import com.flockinger.spongeblogSP.dto.PostsPage;
 import com.flockinger.spongeblogSP.exception.DependencyNotFoundException;
@@ -51,7 +51,7 @@ public class PostControllerImpl implements PostController {
 
     validator.assertPaging(page, size);
     PostsPage posts =
-        service.getPostsFromAuthorId(userId, new Paging(page, getSortingByDateDesc(), size));
+        service.getPostsFromAuthorId(userId, new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -68,7 +68,7 @@ public class PostControllerImpl implements PostController {
     validator.assertPaging(page, size);
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getPostsFromAuthorIdWithStatus(userId, PostStatus.valueOf(status),
-        new Paging(page, getSortingByDateDesc(), size));
+        new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -83,7 +83,7 @@ public class PostControllerImpl implements PostController {
 
     validator.assertPaging(page, size);
     PostsPage posts =
-        service.getPostsFromCategoryId(categoryId, new Paging(page, getSortingByDateDesc(), size));
+        service.getPostsFromCategoryId(categoryId, new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -100,7 +100,7 @@ public class PostControllerImpl implements PostController {
     validator.assertPaging(page, size);
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getPostsFromCategoryIdWithStatus(categoryId,
-        PostStatus.valueOf(status), new Paging(page, getSortingByDateDesc(), size));
+        PostStatus.valueOf(status), new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -115,7 +115,7 @@ public class PostControllerImpl implements PostController {
 
     validator.assertPaging(page, size);
     PostsPage posts =
-        service.getPostsFromTagId(tagId, new Paging(page, getSortingByDateDesc(), size));
+        service.getPostsFromTagId(tagId, new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -132,7 +132,7 @@ public class PostControllerImpl implements PostController {
     validator.assertPaging(page, size);
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getPostsFromTagIdWithStatus(tagId, PostStatus.valueOf(status),
-        new Paging(page, getSortingByDateDesc(), size));
+        new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -144,7 +144,7 @@ public class PostControllerImpl implements PostController {
       throws DtoValidationFailedException {
 
     validator.assertPaging(page, size);
-    PostsPage posts = service.getAllPosts(new Paging(page, getSortingByDateDesc(), size));
+    PostsPage posts = service.getAllPosts(new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
@@ -207,7 +207,7 @@ public class PostControllerImpl implements PostController {
     validator.assertPaging(page, size);
     validator.assertStatus(PostStatus.class, status);
     PostsPage posts = service.getAllPostsWithStatus(PostStatus.valueOf(status),
-        new Paging(page, getSortingByDateDesc(), size));
+        new PageRequest(page, size, getSortingByDateDesc()));
     return new ResponseEntity<PostsPage>(posts, HttpStatus.OK);
   }
 
