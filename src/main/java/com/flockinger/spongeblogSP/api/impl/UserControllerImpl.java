@@ -1,14 +1,9 @@
 package com.flockinger.spongeblogSP.api.impl;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,16 +31,12 @@ public class UserControllerImpl implements UserController {
 
   @Autowired
   private UserService service;
-
   @Autowired
   private RequestValidator validator;
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public ResponseEntity<List<UserEditDTO>> apiV1UsersGet() {
 
     List<UserEditDTO> users = service.getAllUsers();
-    users.forEach(user -> addSelfLink(user));
     return new ResponseEntity<List<UserEditDTO>>(users, HttpStatus.OK);
   }
 
@@ -55,7 +46,7 @@ public class UserControllerImpl implements UserController {
       throws EntityIsNotExistingException {
 
     UserInfoDTO userInfo = service.getUserInfo(userId);
-    return new ResponseEntity<UserInfoDTO>(addSelfLink(userInfo), HttpStatus.OK);
+    return new ResponseEntity<UserInfoDTO>(userInfo, HttpStatus.OK);
   }
 
   public ResponseEntity<UserEditDTO> apiV1UsersPost(
@@ -64,7 +55,7 @@ public class UserControllerImpl implements UserController {
 
     validator.validateRequestBody(bindingResult);
     UserEditDTO user = service.createUser(userEdit);
-    return new ResponseEntity<UserEditDTO>(addSelfLink(user), HttpStatus.CREATED);
+    return new ResponseEntity<UserEditDTO>(user, HttpStatus.CREATED);
   }
 
   public ResponseEntity<Void> apiV1UsersPut(
@@ -102,32 +93,12 @@ public class UserControllerImpl implements UserController {
       throws EntityIsNotExistingException {
 
     UserEditDTO user = service.getUser(userId);
-    return new ResponseEntity<UserEditDTO>(addSelfLink(user), HttpStatus.OK);
+    return new ResponseEntity<UserEditDTO>(user, HttpStatus.OK);
   }
 
   public ResponseEntity<UserDetails> apiV1UsersNameUserNameGet(
       @ApiParam(value = "Email of the user.", required = true) @RequestParam(value = "address",
           required = true) String email) {
     return new ResponseEntity<UserDetails>(service.loadUserByUsername(email), HttpStatus.OK);
-  }
-
-  private UserEditDTO addSelfLink(UserEditDTO user) {
-    try {
-      user.add(linkTo(methodOn(UserControllerImpl.class).apiV1UsersUserIdGet(user.getUserId()))
-          .withSelfRel());
-    } catch (EntityIsNotExistingException e) {
-      logger.error("Not found after Persisting. Should not happen.");
-    }
-    return user;
-  }
-
-  private UserInfoDTO addSelfLink(UserInfoDTO user) {
-    try {
-      user.add(linkTo(methodOn(UserControllerImpl.class).apiV1UsersInfoUserIdGet(user.getUserId()))
-          .withSelfRel());
-    } catch (EntityIsNotExistingException e) {
-      logger.error("Not found after Persisting. Should not happen.");
-    }
-    return user;
   }
 }

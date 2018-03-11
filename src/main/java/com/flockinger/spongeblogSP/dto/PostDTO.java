@@ -8,7 +8,6 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.hateoas.ResourceSupport;
 
 import com.flockinger.spongeblogSP.model.enums.PostStatus;
 
@@ -17,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * PostDTO
  */
-public class PostDTO extends ResourceSupport {
+public class PostDTO {
 
   private Long postId = null;
 

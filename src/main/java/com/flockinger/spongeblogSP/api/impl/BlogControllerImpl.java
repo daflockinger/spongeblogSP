@@ -1,12 +1,7 @@
 package com.flockinger.spongeblogSP.api.impl;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,29 +29,27 @@ public class BlogControllerImpl implements BlogController {
   @Autowired
   private RequestValidator validator;
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
-  public ResponseEntity<?> apiV1BlogDelete() throws EntityIsNotExistingException {
+  public ResponseEntity<Void> apiV1BlogDelete() throws EntityIsNotExistingException {
 
     service.deleteBlog();
     return new ResponseEntity<Void>(HttpStatus.OK);
   }
 
-  public ResponseEntity<?> apiV1BlogGet() throws EntityIsNotExistingException {
-    return new ResponseEntity<BlogDTO>(addSelfLink(service.getBlog()), HttpStatus.OK);
+  public ResponseEntity<BlogDTO> apiV1BlogGet() throws EntityIsNotExistingException {
+    return new ResponseEntity<BlogDTO>(service.getBlog(), HttpStatus.OK);
   }
 
-  public ResponseEntity<?> apiV1BlogPost(
+  public ResponseEntity<BlogDTO> apiV1BlogPost(
       @ApiParam(value = "", required = true) @Valid @RequestBody BlogDTO blogEdit,
       BindingResult bindingResult) throws DtoValidationFailedException, DuplicateEntityException {
 
     validator.validateRequestBody(bindingResult);
     BlogDTO createdBlog = service.createBlog(blogEdit);
-    return new ResponseEntity<BlogDTO>(addSelfLink(createdBlog), HttpStatus.CREATED);
+    return new ResponseEntity<BlogDTO>(createdBlog, HttpStatus.CREATED);
   }
 
-  public ResponseEntity<?> apiV1BlogPut(
+  public ResponseEntity<Void> apiV1BlogPut(
       @ApiParam(value = "", required = true) @Valid @RequestBody BlogDTO blogEdit,
       BindingResult bindingResult)
       throws DtoValidationFailedException, EntityIsNotExistingException {
@@ -66,19 +59,8 @@ public class BlogControllerImpl implements BlogController {
     return new ResponseEntity<Void>(HttpStatus.OK);
   }
 
-  public ResponseEntity<?> apiV1BlogRewindPut() throws NoVersionFoundException {
-
+  public ResponseEntity<Void> apiV1BlogRewindPut() throws NoVersionFoundException {
     service.rewind(null);
     return new ResponseEntity<Void>(HttpStatus.OK);
-  }
-
-
-  private BlogDTO addSelfLink(BlogDTO blog) {
-    try {
-      blog.add(linkTo(methodOn(BlogControllerImpl.class).apiV1BlogGet()).withSelfRel());
-    } catch (EntityIsNotExistingException e) {
-      logger.error("Not found after Persisting. Should not happen.");
-    }
-    return blog;
   }
 }

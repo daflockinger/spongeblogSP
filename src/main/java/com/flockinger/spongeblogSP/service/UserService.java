@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import com.flockinger.spongeblogSP.dto.LoginDTO;
 import com.flockinger.spongeblogSP.dto.UserEditDTO;
 import com.flockinger.spongeblogSP.dto.UserInfoDTO;
 import com.flockinger.spongeblogSP.exception.DuplicateEntityException;
@@ -22,6 +21,4 @@ public interface UserService extends Versionable, UserDetailsService {
   void updateUser(UserEditDTO user) throws EntityIsNotExistingException, DuplicateEntityException;
 
   void deleteUser(Long id) throws EntityIsNotExistingException;
-
-  Boolean isLoginCorrect(LoginDTO credentials);
 }
